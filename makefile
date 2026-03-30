@@ -29,7 +29,9 @@
 CC = gcc
 
 CFLAGS = -g -Iinclude 
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+
+
 
 SRC = src
 EXE = exe

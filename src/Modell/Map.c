@@ -7,6 +7,7 @@ Map *Map_create()
     map->running = 1;
     map->width = WIDTH;
     map->height = HEIGHT;
+     
     map->tileSize = TILE_SIZE;
     ReadMap = fopen("link/Test.txt", "r");
     if (ReadMap)

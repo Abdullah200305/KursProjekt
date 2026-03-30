@@ -3,8 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define WIDTH 1280
-#define HEIGHT 720
+#define HEIGHT 600
+// #define WIDTH 1280
+// #define HEIGHT 720
 #define TILE_SIZE 32
 #define TIlE_COUNT_X (WIDTH / TILE_SIZE)
 #define TILE_COUNT_Y (HEIGHT / TILE_SIZE)

@@ -3,6 +3,7 @@
 
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height) {
+    printf("Initializing SDL...\n");
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
@@ -24,7 +25,12 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 }
 
 
-
+void Background_Image_Render(Renderer* r) {
+    SDL_Texture *img = IMG_LoadTexture(r->sdlRenderer,"link/Background.png");
+    SDL_Rect texr={0,0,WIDTH,HEIGHT};
+    SDL_RenderClear(r->sdlRenderer);
+    SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
+}
 
 
 
@@ -35,14 +41,15 @@ void Render_Map(Renderer* r, Map* map) {
             int tileType = map->mapBuffer[y][x];
             SDL_Rect tileRect = { x * map->tileSize, y * map->tileSize, map->tileSize, map->tileSize };
             switch (tileType) {
-                case 0: // Example: empty tile
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 255, 255); // White
+                case 0: 
+                    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+                    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 255, 0); // Transparent
                     break;
-                case 1: // Example: wall tile
+                case 1:
                     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255); // Black
                     break;
                 default:
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 25, 0, 0, 255); // Red for unknown tiles
+                    SDL_SetRenderDrawColor(r->sdlRenderer, 25, 0, 0, 255); 
                     break;
             }
             SDL_RenderFillRect(r->sdlRenderer, &tileRect);

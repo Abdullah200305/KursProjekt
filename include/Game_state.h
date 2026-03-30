@@ -18,6 +18,4 @@ typedef struct {
 } Game;
 
 
-
-
 #endif // GAME_STATE_H
