@@ -1,25 +1,52 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include "main.h"
-int main(int argc, char *argv[])
-{
-     int ab = 100;
-    // terminal output
-    printf("%d\n", ab);
-    fflush(stdout);
-        // done
+    int main(int argc, char *argv[])
+    {
+        Game* game;
+        Renderer renderer;
+        SDL_Event event;
+        game->map = Map_create();
+        game->state = GAME_STATE_PLAYING;
+        printf("Hello, World!\n");
+        fflush(stdout);
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("Hello, World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-    SDL_Delay(3000);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return 0;
-}
+
+
+        if(Renderer_Init(&renderer, "Hello, World!", game->map->width, game->map->height) != 0) {
+            return -1;
+        }
+          
+
+   
+        while (game->state == GAME_STATE_PLAYING)
+        {
+            while (SDL_PollEvent(&event))
+            {
+                switch (event.type)
+                {
+                case SDL_QUIT:
+                    game->state = GAME_STATE_GAME_OVER;
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+           Renderer_Clear(&renderer);
+           Render_Map(&renderer, game->map);
+           Renderer_Present(&renderer);
+          
+
+        }
+        
+
+
+
+        Map_destroy(game->map);
+        Renderer_Destroy(&renderer);
+        return 0;
+    }
+
 
 
