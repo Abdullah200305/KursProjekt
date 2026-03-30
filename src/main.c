@@ -1,13 +1,20 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include "main.h"
+#include "Player.h"
+
 int main(int argc, char *argv[])
 {
      int ab = 100;
     // terminal output
     printf("%d\n", ab);
+    
+
+    //snabbt terminal test om initPlayer funkar.
+    Player p;
+    initPlayer(&p, 100, 200);
+    printf("x: %.1f, y: %.1f, lives: %d, alive: %d\n", p.x, p.y, p.lives, p.alive);
     fflush(stdout);
-        // done
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *window = SDL_CreateWindow("Hello, World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
