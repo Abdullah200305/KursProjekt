@@ -1,1 +1,10 @@
 #include "Player.h"
+
+void initPlayer(Player *player, float x, float y){
+    player->x = x;
+    player->y = y;
+    player->vx = 0;
+    player->vy = 0;
+    player->lives = 3;
+    player->alive = 1;
+}
