@@ -11,5 +11,7 @@ typedef struct {
 } Player;
 
 void initPlayer(Player *player, float x, float y);
+void damagePlayer(Player *player);
+
 
 #endif
