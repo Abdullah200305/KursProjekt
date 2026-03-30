@@ -1,26 +1,25 @@
 CC = gcc
-CFLAGS = -g -Iinclude
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2 
-#LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -mwindows
+
+CFLAGS = -g -Iinclude 
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2
 
 SRC = src
 EXE = exe
-INC = include
-App = game
-# all .c files
-C_files = $(wildcard $(SRC)/*.c)
+APP = game
 
-# convert src/main.c → exe/main.o
-O_files = $(patsubst $(SRC)/%.c,$(EXE)/%.o,$(C_files))
+# find all .c files (Windows safe)
+C_FILES = $(wildcard $(SRC)/*.c) $(wildcard $(SRC)/*/*.c)
 
-# final program
-main: $(O_files)
-	$(CC) $(O_files) -o $(App) $(LDFLAGS)
+# convert to object files
+O_FILES = $(C_FILES:$(SRC)/%.c=$(EXE)/%.o)
 
-# compile rule
+main: $(O_FILES)
+	$(CC) $(O_FILES) -o $(APP) $(LDFLAGS)
+
+# compile rule (IMPORTANT FIX)
 $(EXE)/%.o: $(SRC)/%.c
-	@mkdir -p $(EXE)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(EXE) $(App)
+	rm -rf $(EXE) $(APP)

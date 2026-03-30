@@ -9,8 +9,6 @@ int main(int argc, char *argv[])
     fflush(stdout);
         // done
 
-    
-    
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *window = SDL_CreateWindow("Hello, World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
