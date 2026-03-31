@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
     setPlayerPosition(&p, 300, 400);
     printf("after set position -> x: %.1f, y: %.1f\n", p.x, p.y);
 
+    setPlayerVelocity(&p, 7, -3);
+    stopPlayer(&p);
+    updatePlayer(&p);
+    printf("after stop -> x: %.1f, y: %.1f, vx: %.1f, vy: %.1f\n", p.x, p.y, p.vx, p.vy);
+
     damagePlayer(&p);
     printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
 
@@ -36,6 +41,10 @@ int main(int argc, char *argv[])
     printf("after 3 hits -> lives: %d, alive: %d\n", p.lives, p.alive);
     
     printf("isPlayerAlive: %d\n", isPlayerAlive(&p));
+
+    resetPlayer(&p, 50, 60);
+    printf("after reset -> x: %.1f, y: %.1f, lives: %d, alive: %d, vx: %.1f, vy: %.1f\n",
+       p.x, p.y, p.lives, p.alive, p.vx, p.vy);
 
     
     

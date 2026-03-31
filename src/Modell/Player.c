@@ -55,3 +55,10 @@ void clampPlayerToMap(Player *player, float minX, float minY, float maxX, float 
         player->y = maxY;
     } 
 }
+void stopPlayer(Player *player) {
+    player->vx = 0;
+    player->vy = 0;
+}
+void resetPlayer(Player *player, float x, float y) {
+    initPlayer(player, x, y);
+}
