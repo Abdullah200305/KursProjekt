@@ -17,9 +17,13 @@ int main(int argc, char *argv[])
     printf("start -> lives: %d, alive: %d\n", p.lives, p.alive);
 
     setPlayerVelocity(&p, 5, -2);
-
     updatePlayer(&p);
     printf("after update -> x: %.1f, y: %.1f\n", p.x, p.y);
+
+    p.x = -20;
+    p.y = 900;
+    clampPlayerToMap(&p, 0, 0, 1280, 720);
+    printf("after clamp -> x: %.1f, y: %.1f\n", p.x, p.y);
 
     damagePlayer(&p);
     printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
@@ -30,8 +34,9 @@ int main(int argc, char *argv[])
     
     printf("isPlayerAlive: %d\n", isPlayerAlive(&p));
 
+    
+    
     fflush(stdout);
-
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *window = SDL_CreateWindow("Hello, World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);

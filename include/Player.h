@@ -15,5 +15,7 @@ void damagePlayer(Player *player);
 void updatePlayer(Player *player);
 void setPlayerVelocity(Player *player, float vx, float vy);
 int isPlayerAlive(Player *player);
+void clampPlayerToMap(Player *player, float minX, float minY, float maxX, float maxY);
+
 
 #endif

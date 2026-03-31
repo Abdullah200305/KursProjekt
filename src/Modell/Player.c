@@ -34,3 +34,20 @@ void setPlayerVelocity(Player *player, float vx, float vy) {
 int isPlayerAlive(Player *player){
     return player->alive;
 }
+void clampPlayerToMap(Player *player, float minX, float minY, float maxX, float maxY){
+       if (player->x < minX) {
+        player->x = minX;
+    }
+
+    if (player->y < minY) {
+        player->y = minY;
+    }
+
+    if (player->x > maxX) {
+        player->x = maxX;
+    }
+
+    if (player->y > maxY) {
+        player->y = maxY;
+    } 
+}
