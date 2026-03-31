@@ -5,6 +5,8 @@ void initPlayer(Player *player, float x, float y){
     player->y = y;
     player->vx = 0;
     player->vy = 0;
+    player->width = 0;
+    player->height = 0;
     player->lives = 3;
     player->alive = 1;
 }
@@ -25,15 +27,6 @@ void damagePlayer(Player *player) {
 void updatePlayer(Player *player){
     player->x += player->vx;
     player->y += player->vy;
-}
-
-void setPlayerVelocity(Player *player, float vx, float vy) {
-    player->vx = vx;
-    player->vy = vy;
-}
-void setPlayerPosition(Player *player, float x, float y) {
-    player->x = x;
-    player->y = y;
 }
 int isPlayerAlive(Player *player){
     return player->alive;
@@ -67,7 +60,7 @@ void killPlayer(Player *player) {
     player->alive = 0;
 }
 
-//Implementation av getters metoden
+//Implementation av getters metoder
 
 float getPlayerX(Player *player) {
     return player->x;
@@ -84,7 +77,29 @@ float getPlayerVelocityX(Player *player) {
 float getPlayerVelocityY(Player *player) {
     return player->vy;
 }
+float getPlayerWidth(Player *player) {
+    return player->width;
+}
+
+float getPlayerHeight(Player *player) {
+    return player->height;
+}
 
 int getPlayerLives(Player *player) {
     return player->lives;
+}
+
+//Implementation av setters metoder
+
+void setPlayerVelocity(Player *player, float vx, float vy) {
+    player->vx = vx;
+    player->vy = vy;
+}
+void setPlayerPosition(Player *player, float x, float y) {
+    player->x = x;
+    player->y = y;
+}
+void setPlayerSize(Player *player, float width, float height) {
+    player->width = width;
+    player->height = height;
 }

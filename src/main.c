@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
     printf("after kill -> lives: %d, alive: %d\n", p.lives, p.alive);
     
     resetPlayer(&p, 50, 60);
-setPlayerVelocity(&p, 8, -4);
+    setPlayerVelocity(&p, 8, -4);
 
-printf("getters -> x: %.1f, y: %.1f, vx: %.1f, vy: %.1f, lives: %d, alive: %d\n",
+    printf("getters -> x: %.1f, y: %.1f, vx: %.1f, vy: %.1f, lives: %d, alive: %d\n",
        getPlayerX(&p),
        getPlayerY(&p),
        getPlayerVelocityX(&p),
@@ -59,6 +59,11 @@ printf("getters -> x: %.1f, y: %.1f, vx: %.1f, vy: %.1f, lives: %d, alive: %d\n"
        getPlayerLives(&p),
        isPlayerAlive(&p));
     
+
+    setPlayerSize(&p, 64, 96);
+    printf("size -> width: %.1f, height: %.1f\n", getPlayerWidth(&p), getPlayerHeight(&p)); 
+       
+
     fflush(stdout);
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *window = SDL_CreateWindow("Hello, World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
