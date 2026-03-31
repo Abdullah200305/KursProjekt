@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     damagePlayer(&p);
     damagePlayer(&p);
     printf("after 3 hits -> lives: %d, alive: %d\n", p.lives, p.alive);
+    
+    printf("isPlayerAlive: %d\n", isPlayerAlive(&p));
 
     fflush(stdout);
 

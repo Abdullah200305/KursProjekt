@@ -31,3 +31,6 @@ void setPlayerVelocity(Player *player, float vx, float vy) {
     player->vx = vx;
     player->vy = vy;
 }
+int isPlayerAlive(Player *player){
+    return player->alive;
+}

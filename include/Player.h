@@ -14,5 +14,6 @@ void initPlayer(Player *player, float x, float y);
 void damagePlayer(Player *player);
 void updatePlayer(Player *player);
 void setPlayerVelocity(Player *player, float vx, float vy);
+int isPlayerAlive(Player *player);
 
 #endif
