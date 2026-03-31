@@ -1,12 +1,12 @@
 #include "Map.h"
 
-Map *Map_create()
+Map *Map_create(int width, int height)
 {
     Map *map = (Map *)malloc(sizeof(Map));
     FILE *ReadMap;
     map->running = 1;
-    map->width = WIDTH;
-    map->height = HEIGHT;
+    map->width = width;
+    map->height = height;
      
     map->tileSize = TILE_SIZE;
     ReadMap = fopen("link/Test.txt", "r");

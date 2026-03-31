@@ -8,6 +8,7 @@
 typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
+    SDL_Texture* backgroundTexture;
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
