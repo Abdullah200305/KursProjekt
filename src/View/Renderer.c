@@ -32,7 +32,25 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     return 0;
 }
 
+// test to see if the renderer work.
+void Renderer_Clear(Renderer* r) {
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    SDL_RenderClear(r->sdlRenderer);
+}
 
+void Renderer_Present(Renderer* r) {
+    SDL_RenderPresent(r->sdlRenderer);
+}
+
+void Renderer_Destroy(Renderer* r) {
+    SDL_DestroyRenderer(r->sdlRenderer);
+    SDL_DestroyWindow(r->window);
+    SDL_Quit();
+}
+
+
+
+//******************  Map stuff  *******************//
 void Background_Image_Render(Renderer* r) {
    
     SDL_Texture* img = r->backgroundTexture;
@@ -40,8 +58,6 @@ void Background_Image_Render(Renderer* r) {
     SDL_RenderClear(r->sdlRenderer);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
-
-
 // Render the map based on the map buffer to make collision
 void Render_Map(Renderer* r, Map* map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
@@ -72,20 +88,3 @@ void Render_Map(Renderer* r, Map* map) {
     }
 }
 
-
-
-// test to see if the renderer work.
-void Renderer_Clear(Renderer* r) {
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
-    SDL_RenderClear(r->sdlRenderer);
-}
-
-void Renderer_Present(Renderer* r) {
-    SDL_RenderPresent(r->sdlRenderer);
-}
-
-void Renderer_Destroy(Renderer* r) {
-    SDL_DestroyRenderer(r->sdlRenderer);
-    SDL_DestroyWindow(r->window);
-    SDL_Quit();
-}
