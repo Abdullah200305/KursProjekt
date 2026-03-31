@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
     clampPlayerToMap(&p, 0, 0, 1280, 720);
     printf("after clamp -> x: %.1f, y: %.1f\n", p.x, p.y);
 
+    setPlayerPosition(&p, 300, 400);
+    printf("after set position -> x: %.1f, y: %.1f\n", p.x, p.y);
+
     damagePlayer(&p);
     printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
 

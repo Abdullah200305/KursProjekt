@@ -31,6 +31,10 @@ void setPlayerVelocity(Player *player, float vx, float vy) {
     player->vx = vx;
     player->vy = vy;
 }
+void setPlayerPosition(Player *player, float x, float y) {
+    player->x = x;
+    player->y = y;
+}
 int isPlayerAlive(Player *player){
     return player->alive;
 }
