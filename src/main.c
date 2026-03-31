@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
     //snabbt terminal test om initPlayer funkar.
     Player p;
     initPlayer(&p, 100, 200);
+    damagePlayer(&p);
+    printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
     printf("x: %.1f, y: %.1f, lives: %d, alive: %d\n", p.x, p.y, p.lives, p.alive);
     fflush(stdout);
 
