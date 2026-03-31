@@ -20,3 +20,8 @@ void damagePlayer(Player *player){
         player->alive = 0;
     }
 }
+
+void updatePlayer(Player *player){
+    player->x += player->vx;
+    player->y += player->vy;
+}
