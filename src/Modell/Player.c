@@ -62,3 +62,7 @@ void stopPlayer(Player *player) {
 void resetPlayer(Player *player, float x, float y) {
     initPlayer(player, x, y);
 }
+void killPlayer(Player *player) {
+    player->lives = 0;
+    player->alive = 0;
+}

@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
     resetPlayer(&p, 50, 60);
     printf("after reset -> x: %.1f, y: %.1f, lives: %d, alive: %d, vx: %.1f, vy: %.1f\n",
        p.x, p.y, p.lives, p.alive, p.vx, p.vy);
-
+    killPlayer(&p);
+    printf("after kill -> lives: %d, alive: %d\n", p.lives, p.alive);
     
     
     fflush(stdout);
