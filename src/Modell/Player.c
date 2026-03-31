@@ -9,13 +9,14 @@ void initPlayer(Player *player, float x, float y){
     player->alive = 1;
 }
 
-void damagePlayer(Player *player){
-    player->lives--;
-    if(player->lives <=0){
-        player->alive = 0;
+void damagePlayer(Player *player) {
+    if (player->alive == 0) {
+        return;
     }
-    player ->lives--;
-    if(player->lives <= 0){
+
+    player->lives--;
+
+    if (player->lives <= 0) {
         player->lives = 0;
         player->alive = 0;
     }

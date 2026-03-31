@@ -14,6 +14,13 @@ int main(int argc, char *argv[])
     Player p;
     initPlayer(&p, 100, 200);
 
+    printf("start -> lives: %d, alive: %d\n", p.lives, p.alive);
+
+    p.vx = 5;
+    p.vy = -2;
+    updatePlayer(&p);
+    printf("after update -> x: %.1f, y: %.1f\n", p.x, p.y);
+
     damagePlayer(&p);
     printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
 
@@ -21,7 +28,6 @@ int main(int argc, char *argv[])
     damagePlayer(&p);
     printf("after 3 hits -> lives: %d, alive: %d\n", p.lives, p.alive);
 
-    printf("x: %.1f, y: %.1f, lives: %d, alive: %d\n", p.x, p.y, p.lives, p.alive);
     fflush(stdout);
 
     SDL_Init(SDL_INIT_VIDEO);
