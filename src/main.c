@@ -10,11 +10,17 @@ int main(int argc, char *argv[])
     printf("%d\n", ab);
     
 
-    //snabbt terminal test om initPlayer funkar.
+    //snabbt terminal test om player.c funktioner funkar.
     Player p;
     initPlayer(&p, 100, 200);
+
     damagePlayer(&p);
     printf("after 1 hit -> lives: %d, alive: %d\n", p.lives, p.alive);
+
+    damagePlayer(&p);
+    damagePlayer(&p);
+    printf("after 3 hits -> lives: %d, alive: %d\n", p.lives, p.alive);
+
     printf("x: %.1f, y: %.1f, lives: %d, alive: %d\n", p.x, p.y, p.lives, p.alive);
     fflush(stdout);
 
