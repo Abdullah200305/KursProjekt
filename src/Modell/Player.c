@@ -66,3 +66,25 @@ void killPlayer(Player *player) {
     player->lives = 0;
     player->alive = 0;
 }
+
+//Implementation av getters metoden
+
+float getPlayerX(Player *player) {
+    return player->x;
+}
+
+float getPlayerY(Player *player) {
+    return player->y;
+}
+
+float getPlayerVelocityX(Player *player) {
+    return player->vx;
+}
+
+float getPlayerVelocityY(Player *player) {
+    return player->vy;
+}
+
+int getPlayerLives(Player *player) {
+    return player->lives;
+}

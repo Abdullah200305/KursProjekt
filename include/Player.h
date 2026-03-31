@@ -21,4 +21,12 @@ void stopPlayer(Player *player);
 void resetPlayer(Player *player, float x, float y);
 void killPlayer(Player *player);
 
+//Getters metoder
+
+float getPlayerX(Player *player);
+float getPlayerY(Player *player);
+float getPlayerVelocityX(Player *player);
+float getPlayerVelocityY(Player *player);
+int getPlayerLives(Player *player);
+
 #endif

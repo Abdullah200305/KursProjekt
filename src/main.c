@@ -48,6 +48,16 @@ int main(int argc, char *argv[])
     killPlayer(&p);
     printf("after kill -> lives: %d, alive: %d\n", p.lives, p.alive);
     
+    resetPlayer(&p, 50, 60);
+setPlayerVelocity(&p, 8, -4);
+
+printf("getters -> x: %.1f, y: %.1f, vx: %.1f, vy: %.1f, lives: %d, alive: %d\n",
+       getPlayerX(&p),
+       getPlayerY(&p),
+       getPlayerVelocityX(&p),
+       getPlayerVelocityY(&p),
+       getPlayerLives(&p),
+       isPlayerAlive(&p));
     
     fflush(stdout);
     SDL_Init(SDL_INIT_VIDEO);
