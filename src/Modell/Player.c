@@ -14,4 +14,9 @@ void damagePlayer(Player *player){
     if(player->lives <=0){
         player->alive = 0;
     }
+    player ->lives--;
+    if(player->lives <= 0){
+        player->lives = 0;
+        player->alive = 0;
+    }
 }

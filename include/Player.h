@@ -12,6 +12,6 @@ typedef struct {
 
 void initPlayer(Player *player, float x, float y);
 void damagePlayer(Player *player);
-
+void updatePlayer(Player *player);
 
 #endif

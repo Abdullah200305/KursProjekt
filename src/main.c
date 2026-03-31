@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     printf("%d\n", ab);
     
 
-    //snabbt terminal test om player.c funktioner funkar.
+    //snabbt terminal tester om player.c funktioner funkar.
     Player p;
     initPlayer(&p, 100, 200);
 
