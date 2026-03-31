@@ -26,3 +26,8 @@ void updatePlayer(Player *player){
     player->x += player->vx;
     player->y += player->vy;
 }
+
+void setPlayerVelocity(Player *player, float vx, float vy) {
+    player->vx = vx;
+    player->vy = vy;
+}

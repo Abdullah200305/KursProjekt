@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
 
     printf("start -> lives: %d, alive: %d\n", p.lives, p.alive);
 
-    p.vx = 5;
-    p.vy = -2;
+    setPlayerVelocity(&p, 5, -2);
+
     updatePlayer(&p);
     printf("after update -> x: %.1f, y: %.1f\n", p.x, p.y);
 
