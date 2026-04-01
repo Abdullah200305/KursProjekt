@@ -48,6 +48,8 @@ void Renderer_Present(Renderer* r) {
 void Renderer_Destroy(Renderer* r) {
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
+    SDL_DestroyTexture(r->backgroundTexture);
+    SDL_DestroyTexture(r->playerTexture);
     SDL_Quit();
 }
 
@@ -69,24 +71,28 @@ void Render_Map(Renderer* r, Map* map) {
             SDL_Rect tileRect = { x * map->tileSize, y * map->tileSize, map->tileSize, map->tileSize };
             switch (tileType) {
                 case 0: 
-                    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+                    // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+                  
                     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255,0, 125); // Transparent
                     break;
                 case 1:
-                    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+                    // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
                     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 0); // Black
                     break;
                 case 2:
+                
                     SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);    
                     break; 
                 case 3:
+                
                     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 255, 255);   
                     break;      
                 default:
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 255, 255); 
+                    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 125, 255, 255); 
+                 
                     break;
             }
-            SDL_RenderFillRect(r->sdlRenderer, &tileRect);
+            SDL_RenderDrawRect(r->sdlRenderer, &tileRect);
         }
     }
 }
@@ -97,24 +103,30 @@ void Render_Map(Renderer* r, Map* map) {
 //******************  Player stuff  *******************//
 void Render_Player(Renderer* r, Player* player) {
     SDL_Texture *img = r->playerTexture;
-    img = NULL;
-    // if (r->playerTexture==NULL)
-    // {
-    //    printf("Failed to load player texture: %s\n", SDL_GetError());
-    // }
-    // if (img==NULL)
-    // {
-    //    printf("noooo to load player texture: %s\n", SDL_GetError());
-    // }
-    
-
-    
-
-
-
-
-
-    SDL_Rect playerRect = { (int)player->x, (int)player->y, player->width, player->height };
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255); // Yellow
+    SDL_Rect playerRect = { (int)player->x, (int)player->y, 32, 32 };// will be changed
+    SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
     SDL_RenderFillRect(r->sdlRenderer, &playerRect);
+    SDL_RenderCopy(r->sdlRenderer, img, NULL, &playerRect);
+
+
+   
+  // sencor four /// for testing 
+    // SDL_Rect top = { (int)player->x+64/2, (int)player->y, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &top); 
+
+    // SDL_Rect left = { (int)player->x, (int)player->y+64/2, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &left); 
+
+    // SDL_Rect right = { (int)player->x+64-1, (int)player->y+64/2, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &right); 
+
+    // SDL_Rect bottom = { (int)player->x+64/2, (int)player->y+64-1, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &bottom); 
+
+
+  
 }

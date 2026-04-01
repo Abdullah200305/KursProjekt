@@ -9,9 +9,11 @@
         printf("Starting game...\n");
         game_init(&game, &renderer); // update game state and initialize renderer
         
-        
-        
-        
+        game.numPlayers = 2; // Set the number of players in the game
+        initPlayer(&game.players[0], 230, 300);   // fel place muse change later
+
+        initPlayer(&game.players[1], 270, 300);   // fel place muse change later
+     
         printf("Entering game loop...\n");
         game_loop(&game, &renderer); // start game loop
         game_cleanup(&game, &renderer); // clean up resources
