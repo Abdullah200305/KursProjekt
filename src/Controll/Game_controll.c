@@ -6,6 +6,7 @@ void game_update(Game* game, Renderer* renderer) {
         Background_Image_Render(renderer); 
         // Renderer_Clear(renderer); 
         Render_Map(renderer, game->map);
+        Render_Player(renderer, game->player);
         Renderer_Present(renderer);
  
 }

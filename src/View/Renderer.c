@@ -16,17 +16,20 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
     if (!r->sdlRenderer) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
-        SDL_DestroyWindow(r->window);
-        SDL_Quit();
+        Renderer_Destroy(r);
         return -1;
     }
    
     r->backgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
     if (!r->backgroundTexture) {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
-        SDL_DestroyRenderer(r->sdlRenderer);
-        SDL_DestroyWindow(r->window);
-        SDL_Quit();
+        Renderer_Destroy(r);
+        return -1;
+    }
+    r->playerTexture = IMG_LoadTexture(r->sdlRenderer, "link/Player.png");
+    if (!r->playerTexture) {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
         return -1;
     }
     return 0;
@@ -88,3 +91,30 @@ void Render_Map(Renderer* r, Map* map) {
     }
 }
 
+
+
+
+//******************  Player stuff  *******************//
+void Render_Player(Renderer* r, Player* player) {
+    SDL_Texture *img = r->playerTexture;
+    img = NULL;
+    if (r->playerTexture==NULL)
+    {
+       printf("Failed to load player texture: %s\n", SDL_GetError());
+    }
+    if (img==NULL)
+    {
+       printf("noooo to load player texture: %s\n", SDL_GetError());
+    }
+    
+
+    
+
+
+
+
+
+    SDL_Rect playerRect = { (int)player->x, (int)player->y, player->width, player->height };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255); // Yellow
+    SDL_RenderFillRect(r->sdlRenderer, &playerRect);
+}

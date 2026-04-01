@@ -9,6 +9,7 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
     SDL_Texture* backgroundTexture;
+    SDL_Texture* playerTexture;
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
@@ -20,5 +21,9 @@ void Renderer_Destroy(Renderer* r);
 // Rendering to the map and background
 void Background_Image_Render(Renderer* r);
 void Render_Map(Renderer* r, Map* map);
+
+
+// Rendering the player
+void Render_Player(Renderer* r, Player* player);
 
 #endif // RENDERER_H

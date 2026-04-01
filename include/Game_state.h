@@ -4,6 +4,7 @@
 
 
 #include "Map.h"
+#include "Player.h"
 typedef enum {
     GAME_STATE_MENU,
     GAME_STATE_PLAYING,
@@ -15,6 +16,7 @@ typedef enum {
 typedef struct {
     GameState state;
     Map* map;
+    Player* player;
 } Game;
 
 
