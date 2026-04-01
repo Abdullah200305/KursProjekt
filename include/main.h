@@ -1,7 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
-
-#define a 100;
+#include "Game_controll.h"
 
 
 #endif // MAIN_H
