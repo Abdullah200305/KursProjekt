@@ -98,14 +98,14 @@ void Render_Map(Renderer* r, Map* map) {
 void Render_Player(Renderer* r, Player* player) {
     SDL_Texture *img = r->playerTexture;
     img = NULL;
-    if (r->playerTexture==NULL)
-    {
-       printf("Failed to load player texture: %s\n", SDL_GetError());
-    }
-    if (img==NULL)
-    {
-       printf("noooo to load player texture: %s\n", SDL_GetError());
-    }
+    // if (r->playerTexture==NULL)
+    // {
+    //    printf("Failed to load player texture: %s\n", SDL_GetError());
+    // }
+    // if (img==NULL)
+    // {
+    //    printf("noooo to load player texture: %s\n", SDL_GetError());
+    // }
     
 
     
