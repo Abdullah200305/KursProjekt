@@ -5,6 +5,7 @@
     {
         Game game; // model
         Renderer renderer; // view
+         InputState*input = Input_Init();
     
         printf("Starting game...\n");
         game_init(&game, &renderer); // update game state and initialize renderer

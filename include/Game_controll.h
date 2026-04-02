@@ -3,6 +3,7 @@
 
 #include "Game_state.h"
 #include "Renderer.h"
+#include "Input.h"
 
 void game_init(Game* game,Renderer* renderer);
 void game_update(Game* game, Renderer* renderer);

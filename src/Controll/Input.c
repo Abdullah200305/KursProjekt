@@ -1,14 +1,16 @@
 #include "Input.h"
 
-void Input_Init(InputState * input){
+ InputState* Input_Init(){
+    InputState *input = malloc(sizeof(InputState));
     input -> quit = false;
 
     input -> up = false;
     input -> down = false;
     input -> left = false;
     input -> right = false;
-
     input -> action = false;
+    
+    return input;
 }
 
 void Input_HandleEvents(InputState * input) {

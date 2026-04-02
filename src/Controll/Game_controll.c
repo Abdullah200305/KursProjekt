@@ -8,15 +8,17 @@ void game_loop(Game *game, Renderer *renderer)
     {
         // THis will need to be change after
         /// start
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                game->state = GAME_STATE_GAME_OVER;
-                break;
-            }
-        }
+        // while (SDL_PollEvent(&event))
+        // {
+        //     switch (event.type)
+        //     {
+        //     case SDL_QUIT:
+        //         game->state = GAME_STATE_GAME_OVER;
+        //         break;
+        //     }
+        // }
+
+        Input_HandleEvents(&input);
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
         /// you can move both payers at the same time, but you can only move one player at a time.
@@ -143,5 +145,6 @@ void game_init(Game *game, Renderer *renderer)
 {
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
+   
     Renderer_Init(renderer, "Hello, World!", game->map->width, game->map->height); // will be update to be as ADT
 }
