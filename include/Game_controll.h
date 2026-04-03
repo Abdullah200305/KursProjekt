@@ -3,10 +3,11 @@
 
 #include "Game_state.h"
 #include "Renderer.h"
+#include "Input.h"
 
-void game_init(Game* game,Renderer* renderer);
+void game_init(Game* game,Renderer* renderer,InputState *input);
 void game_update(Game* game, Renderer* renderer);
-void game_loop(Game* game, Renderer* renderer);
+void game_loop(Game* game, Renderer* renderer,InputState *input);
 void game_cleanup(Game* game, Renderer* renderer);
 
 

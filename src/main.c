@@ -5,10 +5,13 @@
     {
         Game game; // model
         Renderer renderer; // view
+        InputState input; // input state
     
         printf("Starting game...\n");
-        game_init(&game, &renderer); // update game state and initialize renderer
-        
+        game_init(&game, &renderer,&input); // update game state and initialize renderer
+       
+
+
         game.numPlayers = 2; // Set the number of players in the game
         initPlayer(&game.players[0], 230, 300);   // fel place muse change later
 

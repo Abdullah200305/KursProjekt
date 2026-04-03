@@ -14,9 +14,10 @@ typedef struct InputState {
     bool right;
 
     bool action;
+    SDL_Event event;
 } InputState;
 
-void Input_Init(InputState * input);
+InputState* Input_Init();
 void Input_HandleEvents(InputState * input);
 
 #endif // INPUT_H

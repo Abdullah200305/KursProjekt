@@ -1,13 +1,18 @@
 #include "Game_controll.h"
 
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
-void game_loop(Game *game, Renderer *renderer)
+void game_loop(Game *game, Renderer *renderer,InputState *input)
 {
     SDL_Event event;
     while (game->state != GAME_STATE_GAME_OVER)
     {
         // THis will need to be change after
         /// start
+        Input_HandleEvents(input,game);
+     
+      
+
+
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -17,6 +22,17 @@ void game_loop(Game *game, Renderer *renderer)
                 break;
             }
         }
+
+
+
+
+
+
+
+
+
+
+
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
         /// you can move both payers at the same time, but you can only move one player at a time.
@@ -139,9 +155,10 @@ void game_cleanup(Game *game, Renderer *renderer)
     Renderer_Destroy(renderer);
 }
 
-void game_init(Game *game, Renderer *renderer)
+void game_init(Game *game, Renderer *renderer,InputState *input)
 {
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
+    input = Input_Init();
     Renderer_Init(renderer, "Hello, World!", game->map->width, game->map->height); // will be update to be as ADT
 }

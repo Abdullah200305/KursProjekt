@@ -1,25 +1,31 @@
 #include "Input.h"
 
-void Input_Init(InputState * input){
-    input -> quit = false;
+InputState* Input_Init(){
+    InputState * input = malloc(sizeof(InputState));
+    if (!input) {
+        fprintf(stderr, "Failed to allocate memory for InputState\n");
+        return NULL;
+    }
 
+    input -> quit = false;
     input -> up = false;
     input -> down = false;
     input -> left = false;
     input -> right = false;
-
     input -> action = false;
+    input -> event = (SDL_Event){0};
+    return input;
 }
 
 void Input_HandleEvents(InputState * input) {
-    SDL_Event event;
-
-    while ( SDL_PollEvent(&event) ) {
-        if (event.type == SDL_QUIT) {
+   
+    while ( SDL_PollEvent(&input->event) ) {
+        input -> event = input->event;
+        if (input->event.type == SDL_QUIT) {
             input -> quit = true;
         }
-        else if (event.type == SDL_KEYDOWN) {
-            switch (event.key.keysym.sym) {
+        else if (input->event.type == SDL_KEYDOWN) {
+            switch (input->event.key.keysym.sym) {
                 case SDLK_PAGEUP:
                     input -> up = true;
                     break;
@@ -37,8 +43,8 @@ void Input_HandleEvents(InputState * input) {
                     break;
             }
         }
-        else if (event.type == SDL_KEYUP) {
-            switch (event.key.keysym.sym) {
+        else if (input->event.type == SDL_KEYUP) {
+            switch (input->event.key.keysym.sym) {
                 case SDLK_PAGEUP:
                     input -> up = false;
                     break;
