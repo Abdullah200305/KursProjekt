@@ -5,7 +5,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-typedef struct InputState {
+
+typedef struct{
     bool quit;
 
     bool up;
@@ -17,8 +18,14 @@ typedef struct InputState {
     SDL_Event event;
 } InputState;
 
+
+
+typedef struct{
+    InputState *input;
+} Event;
+
 InputState* Input_Init();
 void Input_HandleEvents(InputState * input);
-
+void Destroy_Input(InputState *input);
 #endif // INPUT_H
 

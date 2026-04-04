@@ -17,25 +17,32 @@ InputState* Input_Init(){
     return input;
 }
 
-void Input_HandleEvents(InputState * input) {
-   
-    while ( SDL_PollEvent(&input->event) ) {
-        input -> event = input->event;
-        if (input->event.type == SDL_QUIT) {
-            input -> quit = true;
-        }
-        else if (input->event.type == SDL_KEYDOWN) {
+
+
+void Destroy_Input(InputState *input){
+    free(input);
+}
+
+void Input_HandleEvents(InputState * input){    
+  while (SDL_PollEvent(&input->event)) {
+
+    if(input->event.type == SDL_QUIT) {
+         printf("QUIT detected!\n");
+        input->quit = true;
+    }
+
+ else if (input->event.type == SDL_KEYDOWN) {
             switch (input->event.key.keysym.sym) {
-                case SDLK_PAGEUP:
+                case SDLK_w:
                     input -> up = true;
                     break;
-                case SDLK_PAGEDOWN:
+                case SDLK_s:
                     input -> down = true;
                     break;
-                case SDLK_HOME:
+                case SDLK_a:
                     input -> left = true;
                     break;
-                case SDLK_END:
+                case SDLK_d:
                     input -> right = true;
                     break;
                 case SDLK_SPACE:
@@ -45,22 +52,22 @@ void Input_HandleEvents(InputState * input) {
         }
         else if (input->event.type == SDL_KEYUP) {
             switch (input->event.key.keysym.sym) {
-                case SDLK_PAGEUP:
+                case SDLK_w:
                     input -> up = false;
                     break;
-                case SDLK_PAGEDOWN:
+                case SDLK_s:
                     input -> down = false;
                     break;
-                case SDLK_HOME:
+                case SDLK_a:
                     input -> left = false;
                     break;
-                case SDLK_END:
+                case SDLK_d:
                     input -> right = false;
                     break;
                 case SDLK_SPACE:
                     input -> action = false;
                     break;
             }
-        }
-    }
+        }     
+}       
 }
