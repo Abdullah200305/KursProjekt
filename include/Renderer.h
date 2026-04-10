@@ -26,4 +26,7 @@ void Render_Map(Renderer* r, Map* map);
 // Rendering the player
 void Render_Player(Renderer* r, Player* player);
 
+//Rendering the lives
+void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY);
+
 #endif // RENDERER_H
