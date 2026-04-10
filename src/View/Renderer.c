@@ -130,3 +130,69 @@ void Render_Player(Renderer* r, Player* player) {
 
   
 }
+
+void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
+    int lives = getPlayerLives(player);
+    int size = 4;      // storlek på varje liten blockbit
+    int spacing = 30;  // avstånd mellan hjärtan
+
+    for (int h = 0; h < lives; h++) {
+        int x = startX + h * spacing;
+        int y = startY;
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+
+        // övre vänster
+        SDL_Rect a = {x + size, y, size, size};
+        SDL_Rect b = {x + 2 * size, y, size, size};
+
+        // övre höger
+        SDL_Rect c = {x + 4 * size, y, size, size};
+        SDL_Rect d = {x + 5 * size, y, size, size};
+
+        // andra raden
+        SDL_Rect e = {x, y + size, size, size};
+        SDL_Rect f = {x + size, y + size, size, size};
+        SDL_Rect g = {x + 2 * size, y + size, size, size};
+        SDL_Rect h1 = {x + 3 * size, y + size, size, size};
+        SDL_Rect i = {x + 4 * size, y + size, size, size};
+        SDL_Rect j = {x + 5 * size, y + size, size, size};
+        SDL_Rect k = {x + 6 * size, y + size, size, size};
+
+        // tredje raden
+        SDL_Rect l = {x + size, y + 2 * size, size, size};
+        SDL_Rect m = {x + 2 * size, y + 2 * size, size, size};
+        SDL_Rect n = {x + 3 * size, y + 2 * size, size, size};
+        SDL_Rect o = {x + 4 * size, y + 2 * size, size, size};
+        SDL_Rect p = {x + 5 * size, y + 2 * size, size, size};
+
+        // fjärde raden
+        SDL_Rect q = {x + 2 * size, y + 3 * size, size, size};
+        SDL_Rect r1 = {x + 3 * size, y + 3 * size, size, size};
+        SDL_Rect s = {x + 4 * size, y + 3 * size, size, size};
+
+        // nedersta spetsen
+        SDL_Rect t = {x + 3 * size, y + 4 * size, size, size};
+
+        SDL_RenderFillRect(r->sdlRenderer, &a);
+        SDL_RenderFillRect(r->sdlRenderer, &b);
+        SDL_RenderFillRect(r->sdlRenderer, &c);
+        SDL_RenderFillRect(r->sdlRenderer, &d);
+        SDL_RenderFillRect(r->sdlRenderer, &e);
+        SDL_RenderFillRect(r->sdlRenderer, &f);
+        SDL_RenderFillRect(r->sdlRenderer, &g);
+        SDL_RenderFillRect(r->sdlRenderer, &h1);
+        SDL_RenderFillRect(r->sdlRenderer, &i);
+        SDL_RenderFillRect(r->sdlRenderer, &j);
+        SDL_RenderFillRect(r->sdlRenderer, &k);
+        SDL_RenderFillRect(r->sdlRenderer, &l);
+        SDL_RenderFillRect(r->sdlRenderer, &m);
+        SDL_RenderFillRect(r->sdlRenderer, &n);
+        SDL_RenderFillRect(r->sdlRenderer, &o);
+        SDL_RenderFillRect(r->sdlRenderer, &p);
+        SDL_RenderFillRect(r->sdlRenderer, &q);
+        SDL_RenderFillRect(r->sdlRenderer, &r1);
+        SDL_RenderFillRect(r->sdlRenderer, &s);
+        SDL_RenderFillRect(r->sdlRenderer, &t);
+    }
+}
