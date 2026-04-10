@@ -12,7 +12,7 @@ void game_cleanup(Game* game, Renderer* renderer);
 
 
 // logic for the game will be here, such as collision, player movement, etc.
-void movePlayerWithOther(Player* p, Player* players, int numPlayers);
+void movePlayerWithOther(Player *p, Player players[], int count, Bomb *bomb);
 void movePlayer(Map *map, Player *p);
 
 #endif // GAME_CONTROLL_H
