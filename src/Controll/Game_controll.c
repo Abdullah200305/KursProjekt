@@ -1,4 +1,5 @@
 #include "Game_controll.h"
+#include "bombRelated.h"
 
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer)
@@ -64,7 +65,7 @@ void game_update(Game *game, Renderer *renderer)
 
         movePlayer(game->map, p);
 
-        movePlayerWithOther(p, game->players, game->numPlayers);
+        movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
     }
 
     // Render the game state
@@ -92,7 +93,7 @@ void game_update(Game *game, Renderer *renderer)
     Renderer_Present(renderer);
 }
 
-void movePlayerWithOther(Player *p, Player players[], int count)
+void movePlayerWithOther(Player *p, Player players[], int count, Bomb *bomb)
 {
    
     for (int i = 0; i < count; i++)
@@ -102,13 +103,20 @@ void movePlayerWithOther(Player *p, Player players[], int count)
         if (p != other)
         {
            
-            if (Player_collisionWithOtherPlayer(
-                    p->x, p->y,
-                    (int)other->x, (int)other->y))
-            {    // will make that boomb will go to the other player 
-                printf("Collision betwsssseen players detected!\n");
+            if (Player_collisionWithOtherPlayer(p->x, p->y,(int)other->x, (int)other->y))
+            {    // will make that bomb will go to the other player
+                int p_index     = (int)(p - players);
+                int other_index = i; 
+                printf("Collision between players detected!\n");
+                if(bomb->bombCarrier == p_index){
+                    bomb->bombCarrier = other_index;
+                    printf("Bomb carrier changed to player %d\n", other_index);
+                }
+                else if (bomb->bombCarrier == other_index) {
+                    bomb->bombCarrier = p_index;
+                    printf("Bomb carrier changed to player %d\n", p_index);
+                }
             }
-           
         }
     }
 }

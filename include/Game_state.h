@@ -5,6 +5,7 @@
 
 #include "Map.h"
 #include "Player.h"
+#include "bombRelated.h"
 typedef enum {
     GAME_STATE_MENU,
     GAME_STATE_PLAYING,
@@ -18,6 +19,7 @@ typedef struct {
     Map* map;
     Player players[Max_Players];
     int numPlayers;
+    Bomb bomb;
 } Game;
 
 
