@@ -11,11 +11,18 @@ void game_loop(Game *game, Renderer *renderer)
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
-            {
+{
             case SDL_QUIT:
                 game->state = GAME_STATE_GAME_OVER;
                 break;
+
+            case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_h)
+            {
+                damagePlayer(&game->players[0]);
             }
+            break;
+}
         }
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
@@ -63,10 +70,14 @@ void game_update(Game *game, Renderer *renderer)
     // Render the game state
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
+
     for (int i = 0; i < game->numPlayers; i++)
     {
         Render_Player(renderer, &game->players[i]);
     }
+
+    Render_PlayerLives(renderer, &game->players[0], 20, 20);
+    Render_PlayerLives(renderer, &game->players[1], 20, 50);
 
     Renderer_Present(renderer);
 }
