@@ -8,21 +8,26 @@
 #include <Player.h>
 
 
-typedef struct bomb_type *Bomb;
+struct{
+    float x;
+    float y;
+    int timer;
+    int bombCarrier;
+    int active; 
+}typedef Bomb;
 
+Bomb* createBomb(Player players[]);
+void destroyBomb(Bomb *pBomb);
 
-Bomb createBomb(Player players[]);
-void destroyBomb(Bomb pBomb);
-
-void resetBomb(Bomb pBomb, Player players[]);
-void updateBomb(Bomb pBomb, Player players[]);
-void bombExplosion(Bomb pBomb, Player players[]);
+void resetBomb(Bomb *pBomb, Player players[]);
+void updateBomb(Bomb *pBomb, Player players[]);
+void bombExplosion(Bomb *pBomb, Player players[]);
 
 //---------Getters--------//
-float getBombX(Bomb pBomb);
-float getBombY(Bomb pBomb);
-int getBombTimer(Bomb pBomb);
-int getBombCarrier(Bomb pBomb);
+float getBombX(Bomb *pBomb);
+float getBombY(Bomb *pBomb);
+int getBombTimer(Bomb *pBomb);
+int getBombCarrier(Bomb *pBomb);
 
 
 #endif 

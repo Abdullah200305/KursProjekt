@@ -2,16 +2,10 @@
 #include "Player.h"
 #include <stdlib.h>
 
-struct bomb_type{
-    float x;
-    float y;
-    int timer;
-    int bombCarrier;
-    int active; 
-};
 
-Bomb createBomb(Player players[]){
-    Bomb pBomb = malloc(sizeof(struct bomb_type));
+
+Bomb* createBomb(Player players[]){
+    Bomb *pBomb = malloc(sizeof(Bomb));
 
     if (pBomb == NULL) return NULL;
     
@@ -24,11 +18,11 @@ Bomb createBomb(Player players[]){
     return pBomb;
 }
 
-void destroyBomb(Bomb pBomb){
+void destroyBomb(Bomb *pBomb){
     free(pBomb);
 }
 
-void resetBomb(Bomb pBomb, Player players[]){
+void resetBomb(Bomb *pBomb, Player players[]){
     if(pBomb==NULL) return;
 
     pBomb->bombCarrier = rand() % 4;
@@ -39,7 +33,7 @@ void resetBomb(Bomb pBomb, Player players[]){
 
 }
 
-void bombExplosion(Bomb pBomb, Player players[]){
+void bombExplosion(Bomb *pBomb, Player players[]){
     if(pBomb == NULL) return;
 
     players[pBomb->bombCarrier].lives--;
@@ -51,7 +45,7 @@ void bombExplosion(Bomb pBomb, Player players[]){
     resetBomb(pBomb, players);
 }
 
-void updateBomb(Bomb pBomb, Player players[]){
+void updateBomb(Bomb *pBomb, Player players[]){
 
     if(pBomb == NULL) return;
     if(!pBomb->active) return;
@@ -65,18 +59,18 @@ void updateBomb(Bomb pBomb, Player players[]){
     }
 }
 
-float getBombX(Bomb pBomb) {
+float getBombX(Bomb *pBomb) {
     return pBomb->x;
 }
 
-float getBombY(Bomb pBomb) {
+float getBombY(Bomb *pBomb) {
     return pBomb->y;
 }
 
-int getBombTimer(Bomb pBomb) {
+int getBombTimer(Bomb *pBomb) {
     return pBomb->timer;
 }
 
-int getBombCarrier(Bomb pBomb) {
+int getBombCarrier(Bomb *pBomb) {
     return pBomb->bombCarrier;
 }
