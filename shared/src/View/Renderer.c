@@ -7,13 +7,15 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
     }
-    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width/2, height/2, SDL_WINDOW_RESIZABLE);
+    
     if (!r->window) {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
+    SDL_RenderSetLogicalSize(r->sdlRenderer, width, height);
     if (!r->sdlRenderer) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         Renderer_Destroy(r);

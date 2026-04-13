@@ -14,8 +14,11 @@
 
         // test only 
         client = client_net_init();
-        ClientConnection(client,"127.168.1.1",7777);
-        printf("connection is done!\n");
+       
+        printf("connection is done! %d \n", ClientConnection(client,"127.168.1.1",7777));
+
+
+
 
         Client_Send(client,&event.input,sizeof(InputState));
         printf("send info\n");
