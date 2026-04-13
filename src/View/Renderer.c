@@ -199,21 +199,55 @@ void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
 }
 
 void Render_Bomb(Renderer* r, Bomb* bomb) {
-    static int printed = 0;
-
-    if (!printed) {
-        printf("BOMB DEBUG -> x=%.2f y=%.2f active=%d carrier=%d timer=%d\n",
-               bomb->x, bomb->y, bomb->active, bomb->bombCarrier, bomb->timer);
-        printed = 1;
+    if (!bomb->active) {
+        return;
     }
 
+    /* Bomben */
     SDL_Rect bombRect = { (int)bomb->x, (int)bomb->y - 30, 30, 30 };
-
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 255, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 255, 255);   // lila bomb
     SDL_RenderFillRect(r->sdlRenderer, &bombRect);
 
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);       // svart kant
     SDL_RenderDrawRect(r->sdlRenderer, &bombRect);
+
+    /* Timer-bar ovanför bomben */
+    int maxTimer = 200;   // samma som i bombRelated.c
+    int barWidth = 30;
+    int barHeight = 6;
+    int barX = (int)bomb->x;
+    int barY = (int)bomb->y - 40;
+
+    if (bomb->timer < 0) {
+        bomb->timer = 0;
+    }
+    if (bomb->timer > maxTimer) {
+        bomb->timer = maxTimer;
+    }
+
+    int currentWidth = (bomb->timer * barWidth) / maxTimer;
+
+    /* Bakgrund till bar */
+    SDL_Rect barBg = { barX, barY, barWidth, barHeight };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &barBg);
+
+    /* Själva timern */
+    SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
+
+    if (bomb->timer > 120) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);      // grön
+    } else if (bomb->timer > 60) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);    // gul
+    } else {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);      // röd
+    }
+
+    SDL_RenderFillRect(r->sdlRenderer, &barFill);
+
+    /* Kant runt timern */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 }
 
 
