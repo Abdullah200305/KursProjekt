@@ -198,20 +198,22 @@ void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
 
 }
 
-    void Render_Bomb(Renderer* r, Bomb* bomb){
-        if (!bomb->active) {
-        return;
-        }
+void Render_Bomb(Renderer* r, Bomb* bomb) {
+    static int printed = 0;
 
-        SDL_Rect bombRect = { (int)bomb->x + 8, (int)bomb->y + 8, 16, 16 };
+    if (!printed) {
+        printf("BOMB DEBUG -> x=%.2f y=%.2f active=%d carrier=%d timer=%d\n",
+               bomb->x, bomb->y, bomb->active, bomb->bombCarrier, bomb->timer);
+        printed = 1;
+    }
 
-        if (bomb->timer <= 60) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);   // röd nära explosion
-        } else {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255); // gul annars
-        }
+    SDL_Rect bombRect = { (int)bomb->x, (int)bomb->y - 30, 30, 30 };
 
-        SDL_RenderFillRect(r->sdlRenderer, &bombRect);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 255, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &bombRect);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &bombRect);
 }
 
 

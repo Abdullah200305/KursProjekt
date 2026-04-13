@@ -82,6 +82,8 @@ void game_update(Game *game, Renderer *renderer)
         }
     }
 
+    Render_Bomb(renderer, &game->bomb);
+
     if (isPlayerAlive(&game->players[0]))
     {
         Render_PlayerLives(renderer, &game->players[0], 20, 20);
