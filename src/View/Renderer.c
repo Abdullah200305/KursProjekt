@@ -7,12 +7,13 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
     }
-    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if (!r->window) {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
+
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
     if (!r->sdlRenderer) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
@@ -32,7 +33,16 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
+
     return 0;
+}
+
+void getScale(Renderer* r, float* scaleX, float* scaleY) {
+    int w, h;
+    SDL_GetWindowSize(r->window, &w, &h);
+
+    *scaleX = (float)w / WIDTH;
+    *scaleY = (float)h / HEIGHT;
 }
 
 // test to see if the renderer work.
@@ -57,9 +67,13 @@ void Renderer_Destroy(Renderer* r) {
 
 //******************  Map stuff  *******************//
 void Background_Image_Render(Renderer* r) {
-   
     SDL_Texture* img = r->backgroundTexture;
-    SDL_Rect texr={0,0,WIDTH,HEIGHT};
+
+    int w, h;
+    SDL_GetWindowSize(r->window, &w, &h);
+
+    SDL_Rect texr = {0, 0, w, h};
+
     SDL_RenderClear(r->sdlRenderer);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
@@ -68,7 +82,12 @@ void Render_Map(Renderer* r, Map* map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
         for (int x = 0; x < TIlE_COUNT_X; x++) {
             int tileType = map->mapBuffer[y][x];
-            SDL_Rect tileRect = { x * map->tileSize, y * map->tileSize, map->tileSize, map->tileSize };
+
+            float scaleX, scaleY;
+            getScale(r, &scaleX, &scaleY);
+
+            SDL_Rect tileRect = {x * map->tileSize * scaleX, y * map->tileSize * scaleY, map->tileSize * scaleX, map->tileSize * scaleY};
+
             switch (tileType) {
                 case 0: 
                     // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
@@ -103,7 +122,17 @@ void Render_Map(Renderer* r, Map* map) {
 //******************  Player stuff  *******************//
 void Render_Player(Renderer* r, Player* player) {
     SDL_Texture *img = r->playerTexture;
-    SDL_Rect playerRect = { (int)player->x, (int)player->y, 32, 32 };// will be changed
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    SDL_Rect playerRect = 
+    {
+        player->x * scaleX,
+        player->y * scaleY,
+        32 * scaleX,
+        32 * scaleY
+    };
+    
     SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
     SDL_RenderFillRect(r->sdlRenderer, &playerRect);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &playerRect);

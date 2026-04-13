@@ -16,7 +16,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height);
 void Renderer_Clear(Renderer* r);
 void Renderer_Present(Renderer* r);
 void Renderer_Destroy(Renderer* r);
-
+void getScale(Renderer* r, float* scaleX, float* scaleY);
 
 // Rendering to the map and background
 void Background_Image_Render(Renderer* r);
