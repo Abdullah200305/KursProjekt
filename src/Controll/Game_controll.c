@@ -56,6 +56,27 @@ void game_loop(Game *game, Renderer *renderer)
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
     }
+    const char *message = "Game over! Click OK to close.";
+
+    if (isPlayerAlive(&game->players[0]) && !isPlayerAlive(&game->players[1]))
+    {
+        message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+    }
+    else if (isPlayerAlive(&game->players[1]) && !isPlayerAlive(&game->players[0]))
+    {
+        message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+    }
+    else if (!isPlayerAlive(&game->players[0]) && !isPlayerAlive(&game->players[1]))
+    {
+        message = "Game over!\nBoth players died.\nClick OK to close.";
+    }
+
+    SDL_ShowSimpleMessageBox(
+        SDL_MESSAGEBOX_INFORMATION,
+        "Game Over",
+        message,
+        renderer->window
+    );
 }
 
 void game_update(Game *game, Renderer *renderer)
