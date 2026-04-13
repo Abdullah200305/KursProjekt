@@ -67,7 +67,10 @@ void game_update(Game *game, Renderer *renderer)
 
         movePlayer(game->map, p);
 
-        movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+        if (i == game->bomb.bombCarrier)
+        {
+            movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+        }
     }
 
     updateBomb(&game->bomb, game->players);
