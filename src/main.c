@@ -17,6 +17,8 @@
         game.bomb.active = 1;
         game.bomb.timer = 200;
         game.bomb.bombCarrier = 0;
+        game.bomb.exploding = 0;
+    game.bomb.explosionTimer = 0;
         game.bomb.x = game.players[0].x;
         game.bomb.y = game.players[0].y;
        

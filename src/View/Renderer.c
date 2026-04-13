@@ -199,6 +199,23 @@ void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
 }
 
 void Render_Bomb(Renderer* r, Bomb* bomb) {
+    /* ===== Explosion visas först ===== */
+    if (bomb->exploding) {
+        SDL_Rect explosionOuter = { (int)bomb->x - 20, (int)bomb->y - 50, 70, 70 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
+        SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
+
+        SDL_Rect explosionInner = { (int)bomb->x - 8, (int)bomb->y - 38, 46, 46 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
+        SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+        SDL_RenderDrawRect(r->sdlRenderer, &explosionOuter);
+
+        return;
+    }
+
+    /* ===== Om bomben inte är aktiv, rita inget ===== */
     if (!bomb->active) {
         return;
     }
@@ -209,10 +226,10 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
 
     /* ===== Bombkropp ===== */
     SDL_Rect body = { bodyX, bodyY, 24, 24 };
-    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);   // svart kropp
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderFillRect(r->sdlRenderer, &body);
 
-    /* Lite highlight så den inte ser platt ut */
+    /* Lite highlight */
     SDL_Rect shine = { bodyX + 4, bodyY + 4, 6, 6 };
     SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
     SDL_RenderFillRect(r->sdlRenderer, &shine);
@@ -221,7 +238,7 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &body);
 
-    /* ===== Toppdel / metallfäste ===== */
+    /* ===== Toppdel ===== */
     SDL_Rect cap = { bodyX + 8, bodyY - 4, 8, 5 };
     SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
     SDL_RenderFillRect(r->sdlRenderer, &cap);
@@ -230,18 +247,18 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
     SDL_RenderDrawRect(r->sdlRenderer, &cap);
 
     /* ===== Säkring ===== */
-    SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);   // brun säkring
+    SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);
     SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
     SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
 
     /* ===== Gnista ===== */
     if ((bomb->timer / 5) % 2 == 0) {
         SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);   // orange
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark1);
 
         SDL_Rect spark2 = { bodyX + 23, bodyY - 10, 2, 2 };
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);   // gul
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark2);
     }
 

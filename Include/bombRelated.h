@@ -13,7 +13,9 @@ struct{
     float y;
     int timer;
     int bombCarrier;
-    int active; 
+    int active;
+    int exploding;
+    int explosionTimer;
 }typedef Bomb;
 
 Bomb* createBomb(Player players[]);

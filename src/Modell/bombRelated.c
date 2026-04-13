@@ -12,6 +12,8 @@ Bomb* createBomb(Player players[]){
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
     pBomb->timer = 200;
     pBomb->active = 1;
+    pBomb->exploding = 0;
+    pBomb->explosionTimer = 0;
     pBomb->x = players[pBomb->bombCarrier].x;
     pBomb->y = players[pBomb->bombCarrier].y;
 
@@ -24,23 +26,38 @@ void resetBomb(Bomb *pBomb, Player players[]){
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
     pBomb->timer = 200;
     pBomb->active = 1;
+    pBomb->exploding = 0;
+    pBomb->explosionTimer = 0;
     pBomb->x = players[pBomb->bombCarrier].x;
     pBomb->y = players[pBomb->bombCarrier].y;
 }
 
 void bombExplosion(Bomb *pBomb, Player players[]){
     if(pBomb == NULL) return;
-    if(!pBomb->active) return;
+    if(pBomb->exploding) return;
 
     damagePlayer(&players[pBomb->bombCarrier]);
-    resetBomb(pBomb, players);
+
+    pBomb->active = 0;
+    pBomb->exploding = 1;
+    pBomb->explosionTimer = 20;
 }
 
-void updateBomb(Bomb *pBomb, Player players[]){
 
+void updateBomb(Bomb *pBomb, Player players[]){
     if(pBomb == NULL) return;
+
+    if (pBomb->exploding) {
+        pBomb->explosionTimer--;
+
+        if (pBomb->explosionTimer <= 0) {
+            resetBomb(pBomb, players);
+        }
+        return;
+    }
+
     if(!pBomb->active) return;
-    
+
     pBomb->x = players[pBomb->bombCarrier].x;
     pBomb->y = players[pBomb->bombCarrier].y;
     pBomb->timer--;
