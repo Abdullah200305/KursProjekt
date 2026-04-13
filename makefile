@@ -48,7 +48,7 @@ main: $(O_FILES)
 
 # compile rule (IMPORTANT FIX)
 $(EXE)/%.o: $(SRC)/%.c
-	@mkdir -p $(dir $@)
+	@if not exist "$(dir $@)" mkdir "$(dir $@)"
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
