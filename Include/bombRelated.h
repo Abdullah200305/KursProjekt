@@ -5,21 +5,20 @@
 #include <stdlib.h>
 #include <time.h>
 
+typedef struct bomb_type *Bomb;
 
-typedef struct{
-    float x;
-    float y;
-    int timer;
-    int bombCarrier;
-    int active; //vem som har bomb, 1=bomb, 0=ingen bomb
+Bomb createBomb(Player players[]);
+void destroyBomb(Bomb pBomb);
 
-}Bomb;
+void resetBomb(Bomb pBomb, Player players[]);
+void updateBomb(Bomb pBomb, Player players[]);
+void bombExplosion(Bomb pBomb, Player players[]);
 
-void initBomb(Bomb *pBomb, Player players[]);
-void bombExplosion(Bomb *pBomb, Player players[]);
-void updateBomb(Bomb *pBomb, Player players[]);
-
-
+//---------Getters--------//
+float getBombX(Bomb pBomb);
+float getBombY(Bomb pBomb);
+int getBombTimer(Bomb pBomb);
+int getBombCarrier(Bomb pBomb);
 
 
 #endif 
