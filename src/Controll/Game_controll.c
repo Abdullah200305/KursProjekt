@@ -70,6 +70,8 @@ void game_update(Game *game, Renderer *renderer)
         movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
     }
 
+    updateBomb(&game->bomb, game->players);
+
     // Render the game state
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
