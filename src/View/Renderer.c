@@ -203,49 +203,76 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
         return;
     }
 
-    /* Bomben */
-    SDL_Rect bombRect = { (int)bomb->x, (int)bomb->y - 30, 30, 30 };
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 255, 255);   // lila bomb
-    SDL_RenderFillRect(r->sdlRenderer, &bombRect);
+    int maxTimer = 200;
+    int bodyX = (int)bomb->x + 2;
+    int bodyY = (int)bomb->y - 28;
 
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);       // svart kant
-    SDL_RenderDrawRect(r->sdlRenderer, &bombRect);
+    /* ===== Bombkropp ===== */
+    SDL_Rect body = { bodyX, bodyY, 24, 24 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);   // svart kropp
+    SDL_RenderFillRect(r->sdlRenderer, &body);
 
-    /* Timer-bar ovanför bomben */
-    int maxTimer = 200;   // samma som i bombRelated.c
-    int barWidth = 30;
-    int barHeight = 6;
-    int barX = (int)bomb->x;
-    int barY = (int)bomb->y - 40;
+    /* Lite highlight så den inte ser platt ut */
+    SDL_Rect shine = { bodyX + 4, bodyY + 4, 6, 6 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &shine);
 
-    if (bomb->timer < 0) {
-        bomb->timer = 0;
+    /* Kontur */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &body);
+
+    /* ===== Toppdel / metallfäste ===== */
+    SDL_Rect cap = { bodyX + 8, bodyY - 4, 8, 5 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &cap);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &cap);
+
+    /* ===== Säkring ===== */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);   // brun säkring
+    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
+    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
+
+    /* ===== Gnista ===== */
+    if ((bomb->timer / 5) % 2 == 0) {
+        SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);   // orange
+        SDL_RenderFillRect(r->sdlRenderer, &spark1);
+
+        SDL_Rect spark2 = { bodyX + 23, bodyY - 10, 2, 2 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);   // gul
+        SDL_RenderFillRect(r->sdlRenderer, &spark2);
     }
-    if (bomb->timer > maxTimer) {
-        bomb->timer = maxTimer;
-    }
 
-    int currentWidth = (bomb->timer * barWidth) / maxTimer;
+    /* ===== Timer-bar ===== */
+    int barWidth = 24;
+    int barHeight = 5;
+    int barX = bodyX;
+    int barY = bodyY - 12;
 
-    /* Bakgrund till bar */
+    int safeTimer = bomb->timer;
+    if (safeTimer < 0) safeTimer = 0;
+    if (safeTimer > maxTimer) safeTimer = maxTimer;
+
+    int currentWidth = (safeTimer * barWidth) / maxTimer;
+
     SDL_Rect barBg = { barX, barY, barWidth, barHeight };
     SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
     SDL_RenderFillRect(r->sdlRenderer, &barBg);
 
-    /* Själva timern */
     SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
 
-    if (bomb->timer > 120) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);      // grön
-    } else if (bomb->timer > 60) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);    // gul
+    if (safeTimer > 120) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
+    } else if (safeTimer > 60) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
     } else {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);      // röd
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
     }
 
     SDL_RenderFillRect(r->sdlRenderer, &barFill);
 
-    /* Kant runt timern */
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 }
