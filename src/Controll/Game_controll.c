@@ -95,6 +95,20 @@ void game_update(Game *game, Renderer *renderer)
     {
         Render_PlayerLives(renderer, &game->players[1], 20, 50);
     }
+    int aliveCount = 0;
+
+    for (int i = 0; i < game->numPlayers; i++)
+    {
+        if (isPlayerAlive(&game->players[i]))
+        {
+            aliveCount++;
+        }
+    }
+
+    if (aliveCount <= 1)
+    {
+        game->state = GAME_STATE_GAME_OVER;
+    }
 
     Renderer_Present(renderer);
 }
