@@ -195,4 +195,23 @@ void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
         SDL_RenderFillRect(r->sdlRenderer, &s);
         SDL_RenderFillRect(r->sdlRenderer, &t);
     }
+
 }
+
+    void Render_Bomb(Renderer* r, Bomb* bomb){
+        if (!bomb->active) {
+        return;
+        }
+
+        SDL_Rect bombRect = { (int)bomb->x + 8, (int)bomb->y + 8, 16, 16 };
+
+        if (bomb->timer <= 60) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);   // röd nära explosion
+        } else {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255); // gul annars
+        }
+
+        SDL_RenderFillRect(r->sdlRenderer, &bombRect);
+}
+
+
