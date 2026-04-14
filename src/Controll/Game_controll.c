@@ -56,6 +56,27 @@ void game_loop(Game *game, Renderer *renderer)
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
     }
+    const char *message = "Game over! Click OK to close.";
+
+    if (isPlayerAlive(&game->players[0]) && !isPlayerAlive(&game->players[1]))
+    {
+        message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+    }
+    else if (isPlayerAlive(&game->players[1]) && !isPlayerAlive(&game->players[0]))
+    {
+        message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+    }
+    else if (!isPlayerAlive(&game->players[0]) && !isPlayerAlive(&game->players[1]))
+    {
+        message = "Game over!\nBoth players died.\nClick OK to close.";
+    }
+
+    SDL_ShowSimpleMessageBox(
+        SDL_MESSAGEBOX_INFORMATION,
+        "Game Over",
+        message,
+        renderer->window
+    );
 }
 
 void game_update(Game *game, Renderer *renderer)
@@ -67,8 +88,13 @@ void game_update(Game *game, Renderer *renderer)
 
         movePlayer(game->map, p);
 
-        movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+        if (i == game->bomb.bombCarrier)
+        {
+            movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+        }
     }
+
+    updateBomb(&game->bomb, game->players);
 
     // Render the game state
     Background_Image_Render(renderer);
@@ -82,6 +108,8 @@ void game_update(Game *game, Renderer *renderer)
         }
     }
 
+    Render_Bomb(renderer, &game->bomb);
+
     if (isPlayerAlive(&game->players[0]))
     {
         Render_PlayerLives(renderer, &game->players[0], 20, 20);
@@ -90,6 +118,20 @@ void game_update(Game *game, Renderer *renderer)
     if (isPlayerAlive(&game->players[1]))
     {
         Render_PlayerLives(renderer, &game->players[1], 20, 50);
+    }
+    int aliveCount = 0;
+
+    for (int i = 0; i < game->numPlayers; i++)
+    {
+        if (isPlayerAlive(&game->players[i]))
+        {
+            aliveCount++;
+        }
+    }
+
+    if (aliveCount <= 1)
+    {
+        game->state = GAME_STATE_GAME_OVER;
     }
 
     Renderer_Present(renderer);
