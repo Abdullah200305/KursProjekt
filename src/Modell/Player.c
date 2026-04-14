@@ -1,6 +1,23 @@
 #include "Player.h"
 
-void initPlayer(Player *player, float x, float y){
+struct  Player_type{
+    float x;
+    float y;
+    float vx;   //velocity x
+    float vy;   //velocity y
+    float width;
+    float height;
+    int lives;  //nr of lives
+    int alive;  //alive = 1 => alive or alive = 0 => dead
+};
+
+
+
+
+
+
+
+void initPlayer(Player player, float x, float y){
     player->x = x;
     player->y = y;
     player->vx = 0;
@@ -11,7 +28,7 @@ void initPlayer(Player *player, float x, float y){
     player->alive = 1;
 }
 
-void damagePlayer(Player *player) {
+void damagePlayer(Player player) {
     if (player->alive == 0) {
         return;
     }
@@ -24,14 +41,14 @@ void damagePlayer(Player *player) {
     }
 }
 
-void updatePlayer(Player *player){
+void updatePlayer(Player player){
     player->x += player->vx;
     player->y += player->vy;
 }
-int isPlayerAlive(Player *player){
+int isPlayerAlive(Player player){
     return player->alive;
 }
-void clampPlayerToMap(Player *player, float minX, float minY, float maxX, float maxY){
+void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY){
        if (player->x < minX) {
         player->x = minX;
     }
@@ -48,58 +65,58 @@ void clampPlayerToMap(Player *player, float minX, float minY, float maxX, float 
         player->y = maxY;
     } 
 }
-void stopPlayer(Player *player) {
+void stopPlayer(Player player) {
     player->vx = 0;
     player->vy = 0;
 }
-void resetPlayer(Player *player, float x, float y) {
+void resetPlayer(Player player, float x, float y) {
     initPlayer(player, x, y);
 }
-void killPlayer(Player *player) {
+void killPlayer(Player player) {
     player->lives = 0;
     player->alive = 0;
 }
 
 //Implementation av getters metoder
 
-float getPlayerX(Player *player) {
+float getPlayerX(Player player) {
     return player->x;
 }
 
-float getPlayerY(Player *player) {
+float getPlayerY(Player player) {
     return player->y;
 }
 
-float getPlayerVelocityX(Player *player) {
+float getPlayerVelocityX(Player player) {
     return player->vx;
 }
 
-float getPlayerVelocityY(Player *player) {
+float getPlayerVelocityY(Player player) {
     return player->vy;
 }
-float getPlayerWidth(Player *player) {
+float getPlayerWidth(Player player) {
     return player->width;
 }
 
-float getPlayerHeight(Player *player) {
+float getPlayerHeight(Player player) {
     return player->height;
 }
 
-int getPlayerLives(Player *player) {
+int getPlayerLives(Player player) {
     return player->lives;
 }
 
 //Implementation av setters metoder
 
-void setPlayerVelocity(Player *player, float vx, float vy) {
+void setPlayerVelocity(Player player, float vx, float vy) {
     player->vx = vx;
     player->vy = vy;
 }
-void setPlayerPosition(Player *player, float x, float y) {
+void setPlayerPosition(Player player, float x, float y) {
     player->x = x;
     player->y = y;
 }
-void setPlayerSize(Player *player, float width, float height) {
+void setPlayerSize(Player player, float width, float height) {
     player->width = width;
     player->height = height;
 }

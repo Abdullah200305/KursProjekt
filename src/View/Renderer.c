@@ -33,7 +33,6 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
-
     return 0;
 }
 
@@ -78,15 +77,15 @@ void Background_Image_Render(Renderer* r) {
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
 // Render the map based on the map buffer to make collision
-void Render_Map(Renderer* r, Map* map) {
+void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
         for (int x = 0; x < TIlE_COUNT_X; x++) {
-            int tileType = map->mapBuffer[y][x];
+              int tileType = getMapBufferItems(map,x,y);
 
             float scaleX, scaleY;
             getScale(r, &scaleX, &scaleY);
 
-            SDL_Rect tileRect = {x * map->tileSize * scaleX, y * map->tileSize * scaleY, map->tileSize * scaleX, map->tileSize * scaleY};
+            SDL_Rect tileRect = {x * getTileSize(map) * scaleX, y * getTileSize(map) * scaleY, getTileSize(map) * scaleX, getTileSize(map) * scaleY};
 
             switch (tileType) {
                 case 0: 
@@ -120,15 +119,16 @@ void Render_Map(Renderer* r, Map* map) {
 
 
 //******************  Player stuff  *******************//
-void Render_Player(Renderer* r, Player* player) {
+void Render_Player(Renderer* r, Player player) {
     SDL_Texture *img = r->playerTexture;
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
     SDL_Rect playerRect = 
     {
-        player->x * scaleX,
-        player->y * scaleY,
+       
+        getPlayerX(player) * scaleX,
+        getPlayerY(player) * scaleY,
         32 * scaleX,
         32 * scaleY
     };
@@ -160,7 +160,7 @@ void Render_Player(Renderer* r, Player* player) {
   
 }
 
-void Render_PlayerLives(Renderer* r, Player* player, int startX, int startY) {
+void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
     int lives = getPlayerLives(player);
     int size = 4;      // storlek på varje liten blockbit
     int spacing = 30;  // avstånd mellan hjärtan
