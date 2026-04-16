@@ -5,7 +5,7 @@
 typedef struct Player_type *Player;
 
 
-
+// server will call all these 
 Player initPlayer(float x, float y);
 void damagePlayer(Player player);
 void updatePlayer(Player player);
@@ -14,6 +14,7 @@ void clampPlayerToMap(Player player, float minX, float minY, float maxX, float m
 void stopPlayer(Player player);
 // void resetPlayer(Player player, float x, float y);
 void killPlayer(Player player);
+//////////////////////
 
 
 //Getters metoder
@@ -35,9 +36,7 @@ void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
 
 
-void setPlayerLives(Player player);
 
-void setPlayerAlive(Player player);
 
 
 #endif

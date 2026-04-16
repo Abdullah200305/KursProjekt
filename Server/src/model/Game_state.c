@@ -7,10 +7,10 @@
 // };
 // #define Max_Players 4
 
-// struct Game_type{
-//     GameState state;
-//     Map map;
-//     Player players[Max_Players];
-//     int numPlayers;
-//     Bomb bomb;
-// };
+struct Game_type{
+    GameState state;
+    Map map;
+    Player players[Max_Players];
+    int numPlayers;
+    Bomb bomb;
+};

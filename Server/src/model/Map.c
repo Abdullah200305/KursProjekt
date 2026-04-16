@@ -10,8 +10,6 @@ struct Map_type{
 };
 
 
- 
-
 
 int getTileSize(Map map){
     return map->tileSize;

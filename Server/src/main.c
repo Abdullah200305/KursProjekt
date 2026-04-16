@@ -3,25 +3,7 @@
 #include "main.h"
     int main(int argc, char *argv[])
     {
-        // Game game; // model
-        // Renderer renderer; // view
-       
-
-        // InputState*input = Input_Init();
-       
-    
-        // printf("Starting game...\n");
-        // game_init(&game, &renderer); // update game state and initialize renderer
-    
-       
-       
-
-
-
-        // printf("Entering game loop...\n");
-        // game_loop(&game, &renderer,&event); // start game loop
-        // game_cleanup(&game, &renderer,&event); // clean up resources
-        // return 0;
+        
     }
 
 

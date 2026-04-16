@@ -1,7 +1,5 @@
 #include "collision.h"
 
-
-
 int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2) {
     // Simple AABB 
   return (
