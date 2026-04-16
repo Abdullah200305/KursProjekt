@@ -3,6 +3,7 @@
 
 #include "Game_state.h"
 #include "Renderer.h"
+#include "Input.h"
 
 // sub controlls 
 #include "Input.h"
@@ -17,7 +18,9 @@ void game_cleanup(Game *game, Renderer *renderer,Event *event);
 void  Player_handleInput(Game *game,InputState *input);
 
 // logic for the game will be here, such as collision, player movement, etc.
-void movePlayerWithOther(Player* p, Player* players, int numPlayers);
-void movePlayer(Map *map, Player *p);
+//void movePlayerWithOther(Player p, Player players[], int count, Bomb *bomb);
+
+void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb bomb);
+void movePlayer(Map map, Player p);
 
 #endif // GAME_CONTROLL_H

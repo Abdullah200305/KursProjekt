@@ -1,8 +1,34 @@
 #include "..\..\shared\Include\Map.h"
 
-Map *Map_create(int width, int height)
+
+struct Map_type{
+    int running;
+    int width;
+    int height;
+    int tileSize;
+    int mapBuffer[TILE_COUNT_Y][TIlE_COUNT_X];
+};
+
+
+ 
+
+
+int getTileSize(Map map){
+    return map->tileSize;
+}
+int getHeight(Map map){
+return map->height;
+}
+int getWidth(Map map){
+    return map->width;
+}
+int getMapBufferItems(Map map,int x,int y){
+    return map->mapBuffer[y][x];
+}
+
+Map Map_create(int width, int height)
 {
-    Map *map = (Map *)malloc(sizeof(Map));
+    Map map = malloc(sizeof(struct Map_type));
     FILE *ReadMap;
     map->running = 1;
     map->width = width;
@@ -37,12 +63,10 @@ Map *Map_create(int width, int height)
 }
 
 
-void Map_destroy(Map *map)
+void Map_destroy(Map map)
 {
     free(map);
 }
-
-
 
 int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2) {
     // Simple AABB 
@@ -54,8 +78,7 @@ int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2) {
     );
 }
 
-
-int Collision_Map(Map *map, float x, float y)
+int Collision_Map(Map map, float x, float y)
 {
     float left   = x;
     float right  = x + 32 - 1; // update
@@ -82,7 +105,7 @@ int Collision_Map(Map *map, float x, float y)
     return 0;
 }
 
-int checkCollision(Map *map, int x, int y) {
+int checkCollision(Map map, int x, int y) {
     switch (map->mapBuffer[y][x])
     {
     case 1:    

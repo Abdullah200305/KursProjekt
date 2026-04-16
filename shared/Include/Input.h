@@ -7,17 +7,20 @@
 
 
 typedef struct{
-    int type;
-    bool quit;
 
+    bool quit;
     bool up;
     bool down;
     bool left;
     bool right;
-
     bool action;
-    SDL_Event event;
+
+
 } InputState;
+
+InputState* Input_Init();
+
+void Input_HandleEvents(InputState * input);
 
 
 

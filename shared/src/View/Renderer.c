@@ -7,13 +7,15 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
     }
-    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width/2, height/2, SDL_WINDOW_RESIZABLE);
-    
+
+    r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
     if (!r->window) {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
+
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
     SDL_RenderSetLogicalSize(r->sdlRenderer, width, height);
     if (!r->sdlRenderer) {
@@ -35,6 +37,14 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
     }
     return 0;
+}
+
+void getScale(Renderer* r, float* scaleX, float* scaleY) {
+    int w, h;
+    SDL_GetWindowSize(r->window, &w, &h);
+
+    *scaleX = (float)w / WIDTH;
+    *scaleY = (float)h / HEIGHT;
 }
 
 // test to see if the renderer work.
@@ -59,18 +69,27 @@ void Renderer_Destroy(Renderer* r) {
 
 //******************  Map stuff  *******************//
 void Background_Image_Render(Renderer* r) {
-   
     SDL_Texture* img = r->backgroundTexture;
-    SDL_Rect texr={0,0,WIDTH,HEIGHT};
+
+    int w, h;
+    SDL_GetWindowSize(r->window, &w, &h);
+
+    SDL_Rect texr = {0, 0, w, h};
+
     SDL_RenderClear(r->sdlRenderer);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
 // Render the map based on the map buffer to make collision
-void Render_Map(Renderer* r, Map* map) {
+void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
         for (int x = 0; x < TIlE_COUNT_X; x++) {
-            int tileType = map->mapBuffer[y][x];
-            SDL_Rect tileRect = { x * map->tileSize, y * map->tileSize, map->tileSize, map->tileSize };
+              int tileType = getMapBufferItems(map,x,y);
+
+            float scaleX, scaleY;
+            getScale(r, &scaleX, &scaleY);
+
+            SDL_Rect tileRect = {x * getTileSize(map) * scaleX, y * getTileSize(map) * scaleY, getTileSize(map) * scaleX, getTileSize(map) * scaleY};
+
             switch (tileType) {
                 case 0: 
                     // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
@@ -103,9 +122,20 @@ void Render_Map(Renderer* r, Map* map) {
 
 
 //******************  Player stuff  *******************//
-void Render_Player(Renderer* r, Player* player) {
+void Render_Player(Renderer* r, Player player) {
     SDL_Texture *img = r->playerTexture;
-    SDL_Rect playerRect = { (int)player->x, (int)player->y, 32, 32 };// will be changed
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    SDL_Rect playerRect = 
+    {
+       
+        getPlayerX(player) * scaleX,
+        getPlayerY(player) * scaleY,
+        32 * scaleX,
+        32 * scaleY
+    };
+    
     SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
     SDL_RenderFillRect(r->sdlRenderer, &playerRect);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &playerRect);
@@ -132,3 +162,168 @@ void Render_Player(Renderer* r, Player* player) {
 
   
 }
+
+void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
+    int lives = getPlayerLives(player);
+    int size = 4;      // storlek på varje liten blockbit
+    int spacing = 30;  // avstånd mellan hjärtan
+
+    for (int h = 0; h < lives; h++) {
+        int x = startX + h * spacing;
+        int y = startY;
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+
+        // övre vänster
+        SDL_Rect a = {x + size, y, size, size};
+        SDL_Rect b = {x + 2 * size, y, size, size};
+
+        // övre höger
+        SDL_Rect c = {x + 4 * size, y, size, size};
+        SDL_Rect d = {x + 5 * size, y, size, size};
+
+        // andra raden
+        SDL_Rect e = {x, y + size, size, size};
+        SDL_Rect f = {x + size, y + size, size, size};
+        SDL_Rect g = {x + 2 * size, y + size, size, size};
+        SDL_Rect h1 = {x + 3 * size, y + size, size, size};
+        SDL_Rect i = {x + 4 * size, y + size, size, size};
+        SDL_Rect j = {x + 5 * size, y + size, size, size};
+        SDL_Rect k = {x + 6 * size, y + size, size, size};
+
+        // tredje raden
+        SDL_Rect l = {x + size, y + 2 * size, size, size};
+        SDL_Rect m = {x + 2 * size, y + 2 * size, size, size};
+        SDL_Rect n = {x + 3 * size, y + 2 * size, size, size};
+        SDL_Rect o = {x + 4 * size, y + 2 * size, size, size};
+        SDL_Rect p = {x + 5 * size, y + 2 * size, size, size};
+
+        // fjärde raden
+        SDL_Rect q = {x + 2 * size, y + 3 * size, size, size};
+        SDL_Rect r1 = {x + 3 * size, y + 3 * size, size, size};
+        SDL_Rect s = {x + 4 * size, y + 3 * size, size, size};
+
+        // nedersta spetsen
+        SDL_Rect t = {x + 3 * size, y + 4 * size, size, size};
+
+        SDL_RenderFillRect(r->sdlRenderer, &a);
+        SDL_RenderFillRect(r->sdlRenderer, &b);
+        SDL_RenderFillRect(r->sdlRenderer, &c);
+        SDL_RenderFillRect(r->sdlRenderer, &d);
+        SDL_RenderFillRect(r->sdlRenderer, &e);
+        SDL_RenderFillRect(r->sdlRenderer, &f);
+        SDL_RenderFillRect(r->sdlRenderer, &g);
+        SDL_RenderFillRect(r->sdlRenderer, &h1);
+        SDL_RenderFillRect(r->sdlRenderer, &i);
+        SDL_RenderFillRect(r->sdlRenderer, &j);
+        SDL_RenderFillRect(r->sdlRenderer, &k);
+        SDL_RenderFillRect(r->sdlRenderer, &l);
+        SDL_RenderFillRect(r->sdlRenderer, &m);
+        SDL_RenderFillRect(r->sdlRenderer, &n);
+        SDL_RenderFillRect(r->sdlRenderer, &o);
+        SDL_RenderFillRect(r->sdlRenderer, &p);
+        SDL_RenderFillRect(r->sdlRenderer, &q);
+        SDL_RenderFillRect(r->sdlRenderer, &r1);
+        SDL_RenderFillRect(r->sdlRenderer, &s);
+        SDL_RenderFillRect(r->sdlRenderer, &t);
+    }
+
+}
+
+void Render_Bomb(Renderer* r, Bomb bomb) {
+    /* ===== Explosion visas först ===== */
+    if (getBombExploding(bomb)) {
+        SDL_Rect explosionOuter = { (int)getBombX(bomb) - 20, (int)getBombY(bomb) - 50, 70, 70 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
+        SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
+
+        SDL_Rect explosionInner = {  (int)getBombX(bomb) - 8, (int)getBombY(bomb) - 38, 46, 46 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
+        SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+        SDL_RenderDrawRect(r->sdlRenderer, &explosionOuter);
+
+        return;
+    }
+
+    /* ===== Om bomben inte är aktiv, rita inget ===== */
+    if (!getBombActive(bomb)) {
+        return;
+    }
+
+    int maxTimer = 200;
+    int bodyX = (int)getBombX(bomb) + 2;
+    int bodyY = (int)getBombY(bomb) - 28;
+
+    /* ===== Bombkropp ===== */
+    SDL_Rect body = { bodyX, bodyY, 24, 24 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &body);
+
+    /* Lite highlight */
+    SDL_Rect shine = { bodyX + 4, bodyY + 4, 6, 6 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &shine);
+
+    /* Kontur */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &body);
+
+    /* ===== Toppdel ===== */
+    SDL_Rect cap = { bodyX + 8, bodyY - 4, 8, 5 };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &cap);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &cap);
+
+    /* ===== Säkring ===== */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);
+    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
+    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
+
+    /* ===== Gnista ===== */
+    if ((getBombTimer(bomb) / 5) % 2 == 0) {
+        SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
+        SDL_RenderFillRect(r->sdlRenderer, &spark1);
+
+        SDL_Rect spark2 = { bodyX + 23, bodyY - 10, 2, 2 };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
+        SDL_RenderFillRect(r->sdlRenderer, &spark2);
+    }
+
+    /* ===== Timer-bar ===== */
+    int barWidth = 24;
+    int barHeight = 5;
+    int barX = bodyX;
+    int barY = bodyY - 12;
+
+    int safeTimer = getBombTimer(bomb);
+    if (safeTimer < 0) safeTimer = 0;
+    if (safeTimer > maxTimer) safeTimer = maxTimer;
+
+    int currentWidth = (safeTimer * barWidth) / maxTimer;
+
+    SDL_Rect barBg = { barX, barY, barWidth, barHeight };
+    SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &barBg);
+
+    SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
+
+    if (safeTimer > 120) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
+    } else if (safeTimer > 60) {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
+    } else {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    }
+
+    SDL_RenderFillRect(r->sdlRenderer, &barFill);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &barBg);
+}
+
+
