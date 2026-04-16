@@ -105,6 +105,9 @@ int getPlayerLives(Player player) {
     return player->lives;
 }
 
+int getPlayerAlive(Player player){
+    return player->alive;
+}
 //Implementation av setters metoder
 
 void setPlayerVelocity(Player player, float vx, float vy) {
@@ -118,4 +121,13 @@ void setPlayerPosition(Player player, float x, float y) {
 void setPlayerSize(Player player, float width, float height) {
     player->width = width;
     player->height = height;
+}
+
+
+
+void setPlayerLives(Player player){
+     player->lives--;
+}
+void setPlayerAlive(Player player){
+    player->alive=0;
 }
