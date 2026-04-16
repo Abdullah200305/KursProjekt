@@ -5,13 +5,13 @@
 #include "Renderer.h"
 #include "Input.h"
 
-// sub controlls 
-#include "Input.h"
 
-void game_init(Game* game,Renderer* renderer,Event *event);
+
+
+void game_init(Game* game,Renderer* renderer);
 void game_update(Game* game, Renderer* renderer);
-void game_loop(Game* game, Renderer* renderer,Event *event);
-void game_cleanup(Game *game, Renderer *renderer,Event *event);
+void game_loop(Game* game, Renderer* renderer,InputState event);
+void game_cleanup(Game *game, Renderer *renderer,InputState event);
 
 
 // input handling for player movement and actions

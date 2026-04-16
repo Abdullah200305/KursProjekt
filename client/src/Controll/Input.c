@@ -1,38 +1,52 @@
-#include "..\..\shared\Include\Input.h"
+#include "Input.h"
 
-InputState* Input_Init(){
-    InputState * input = malloc(sizeof(InputState));
+struct InputState_type{
+
+    bool quit;
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+    bool action;
+
+
+};
+
+
+
+InputState Input_Init(){
+    InputState  input = malloc(sizeof(struct InputState_type));
     if (!input) {
         fprintf(stderr, "Failed to allocate memory for InputState\n");
         return NULL;
     }
-    input -> type = 0;
+    
     input -> quit = false;
     input -> up = false;
     input -> down = false;
     input -> left = false;
     input -> right = false;
     input -> action = false;
-    input -> event = (SDL_Event){0};
     return input;
 }
 
 
 
-void Destroy_Input(InputState *input){
+void Destroy_Input(InputState input){
     free(input);
 }
 
-void Input_HandleEvents(InputState * input){    
-  while (SDL_PollEvent(&input->event)) {
+void Input_HandleEvents(InputState  input){
+  SDL_Event event;       
+  while (SDL_PollEvent(&event)) {
 
-    if(input->event.type == SDL_QUIT) {
+    if(event.type == SDL_QUIT) {
          printf("QUIT detected!\n");
         input->quit = true;
     }
 
- else if (input->event.type == SDL_KEYDOWN) {
-            switch (input->event.key.keysym.sym) {
+ else if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
                 case SDLK_w:
                     input -> up = true;
                     break;
@@ -50,8 +64,8 @@ void Input_HandleEvents(InputState * input){
                     break;
             }
         }
-        else if (input->event.type == SDL_KEYUP) {
-            switch (input->event.key.keysym.sym) {
+        else if (event.type == SDL_KEYUP) {
+            switch (event.key.keysym.sym) {
                 case SDLK_w:
                     input -> up = false;
                     break;
@@ -71,3 +85,5 @@ void Input_HandleEvents(InputState * input){
         }     
 }       
 }
+
+

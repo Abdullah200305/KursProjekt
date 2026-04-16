@@ -1,45 +1,31 @@
-#include <stdio.h>
-#include <SDL2/SDL.h>
-#include "..\Include\main.h"
-
+#include "main.h"
     int main(int argc, char *argv[])
     {
-        Client *client;
+        Client *c= client_net_init();
         Game game; // model
         Renderer renderer; // view
-        Event event; // input state
-        
+        InputState input = Input_Init();
+       
+    
         printf("Starting game...\n");
-        game_init(&game, &renderer, &event); // update game state and initialize renderer
-
-        // test only 
-        client = client_net_init();
+        game_init(&game, &renderer); // update game state and initialize renderer
+    
        
-        printf("connection is done! %d \n", ClientConnection(client,"127.168.1.1",7777));
-
-
-
-
-        Client_Send(client,&event.input,sizeof(InputState));
-        printf("send info\n");
        
-        
-
-         
 
 
 
 
-        game.numPlayers = 2; // Set the number of players in the game
-        initPlayer(&game.players[0], 230, 300);   // fel place muse change later
 
-        initPlayer(&game.players[1], 270, 300);   // fel place muse change later
-     
         printf("Entering game loop...\n");
-        game_loop(&game, &renderer,&event); // start game loop
-        game_cleanup(&game, &renderer,&event); // clean up resources
+        game_loop(&game, &renderer,input); // start game loop
+        game_cleanup(&game, &renderer,input); // clean up resources
         return 0;
     }
+
+
+
+
 
 
 

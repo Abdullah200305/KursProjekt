@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <Player.h>
+#include "Player.h"
 
 typedef struct Bomb_type *Bomb;
 

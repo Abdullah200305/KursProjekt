@@ -1,4 +1,4 @@
-#include "..\..\shared\Include\Player.h"
+#include "Player.h"
 
 struct  Player_type{
     float x;

@@ -6,30 +6,16 @@
 #include <stdbool.h>
 
 
-typedef struct{
+typedef struct InputState_type *InputState;
+InputState Input_Init();
 
-    bool quit;
-    bool up;
-    bool down;
-    bool left;
-    bool right;
-    bool action;
-
-
-} InputState;
-
-InputState* Input_Init();
-
-void Input_HandleEvents(InputState * input);
+void Input_HandleEvents(InputState  input);
 
 
 
-typedef struct{
-    InputState *input;
-} Event;
 
-InputState* Input_Init();
-void Input_HandleEvents(InputState * input);
-void Destroy_Input(InputState *input);
+
+void Input_HandleEvents(InputState input);
+void Destroy_Input(InputState input);
 #endif // INPUT_H
 

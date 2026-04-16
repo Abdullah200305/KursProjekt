@@ -1,4 +1,4 @@
-#include "..\..\shared\Include\Map.h"
+#include "Map.h"
 
 
 struct Map_type{
@@ -35,10 +35,9 @@ Map Map_create(int width, int height)
     map->height = height;
      
     map->tileSize = 16;
-    ReadMap = fopen("../shared/link/Test.txt", "r");
+    ReadMap = fopen("link/Test.txt", "r");
     if (ReadMap)
     {
-       
         int item;
         for (int y = 0; y < TILE_COUNT_Y; y++)
         {

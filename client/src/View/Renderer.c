@@ -1,4 +1,4 @@
-#include "..\..\shared\Include\Renderer.h"
+#include "Renderer.h"
 
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height) {
@@ -7,9 +7,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
     }
-
     r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-
     if (!r->window) {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -17,20 +15,19 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     }
 
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
-    SDL_RenderSetLogicalSize(r->sdlRenderer, width, height);
     if (!r->sdlRenderer) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         Renderer_Destroy(r);
         return -1;
     }
    
-    r->backgroundTexture = IMG_LoadTexture(r->sdlRenderer, "../shared/link/Island.png");
+    r->backgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
     if (!r->backgroundTexture) {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
         Renderer_Destroy(r);
         return -1;
     }
-    r->playerTexture = IMG_LoadTexture(r->sdlRenderer, "../shared/link/Player.png");
+    r->playerTexture = IMG_LoadTexture(r->sdlRenderer, "link/Player.png");
     if (!r->playerTexture) {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
         Renderer_Destroy(r);
