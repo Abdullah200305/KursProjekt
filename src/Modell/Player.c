@@ -14,18 +14,17 @@ struct  Player_type{
 
 
 
-
-
-
-void initPlayer(Player player, float x, float y){
-    player->x = x;
-    player->y = y;
-    player->vx = 0;
-    player->vy = 0;
-    player->width = 0;
-    player->height = 0;
-    player->lives = 3;
-    player->alive = 1;
+ 
+Player initPlayer(float x, float y)
+{
+    Player p = malloc(sizeof(struct Player_type));
+    p->x = x;
+    p->y = y;
+    p->vx = 0;
+    p->vy = 0;
+    p->lives = 3;
+    p->alive = 1;
+    return p;
 }
 
 void damagePlayer(Player player) {
@@ -69,9 +68,9 @@ void stopPlayer(Player player) {
     player->vx = 0;
     player->vy = 0;
 }
-void resetPlayer(Player player, float x, float y) {
-    initPlayer(player, x, y);
-}
+// void resetPlayer(Player player, float x, float y) {
+//     initPlayer(player, x, y);
+// }
 void killPlayer(Player player) {
     player->lives = 0;
     player->alive = 0;

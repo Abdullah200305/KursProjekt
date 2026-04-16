@@ -10,20 +10,7 @@
     
         printf("Starting game...\n");
         game_init(&game, &renderer); // update game state and initialize renderer
-      game.numPlayers = 2;
-
-
-        game.numPlayers = 2; // Set the number of players in the game
-        initPlayer(game.players[0], 230, 300);   // fel place muse change later
-        initPlayer(game.players[1], 270, 300);   // fel place muse change later
-       
-        game.bomb.active = 1;
-        game.bomb.timer = 200;
-        game.bomb.bombCarrier = 0;
-        game.bomb.exploding = 0;
-        game.bomb.explosionTimer = 0;
-        game.bomb.x = getPlayerX(game.players[0]);
-        game.bomb.y = getPlayerY(game.players[0]);
+    
        
        
 

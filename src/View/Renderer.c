@@ -227,14 +227,14 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
 
 }
 
-void Render_Bomb(Renderer* r, Bomb* bomb) {
+void Render_Bomb(Renderer* r, Bomb bomb) {
     /* ===== Explosion visas först ===== */
-    if (bomb->exploding) {
-        SDL_Rect explosionOuter = { (int)bomb->x - 20, (int)bomb->y - 50, 70, 70 };
+    if (getBombExploding(bomb)) {
+        SDL_Rect explosionOuter = { (int)getBombX(bomb) - 20, (int)getBombY(bomb) - 50, 70, 70 };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
         SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
 
-        SDL_Rect explosionInner = { (int)bomb->x - 8, (int)bomb->y - 38, 46, 46 };
+        SDL_Rect explosionInner = {  (int)getBombX(bomb) - 8, (int)getBombY(bomb) - 38, 46, 46 };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
         SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
 
@@ -245,13 +245,13 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
     }
 
     /* ===== Om bomben inte är aktiv, rita inget ===== */
-    if (!bomb->active) {
+    if (!getBombActive(bomb)) {
         return;
     }
 
     int maxTimer = 200;
-    int bodyX = (int)bomb->x + 2;
-    int bodyY = (int)bomb->y - 28;
+    int bodyX = (int)getBombX(bomb) + 2;
+    int bodyY = (int)getBombY(bomb) - 28;
 
     /* ===== Bombkropp ===== */
     SDL_Rect body = { bodyX, bodyY, 24, 24 };
@@ -281,7 +281,7 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
     SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
 
     /* ===== Gnista ===== */
-    if ((bomb->timer / 5) % 2 == 0) {
+    if ((getBombTimer(bomb) / 5) % 2 == 0) {
         SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark1);
@@ -297,7 +297,7 @@ void Render_Bomb(Renderer* r, Bomb* bomb) {
     int barX = bodyX;
     int barY = bodyY - 12;
 
-    int safeTimer = bomb->timer;
+    int safeTimer = getBombTimer(bomb);
     if (safeTimer < 0) safeTimer = 0;
     if (safeTimer > maxTimer) safeTimer = maxTimer;
 

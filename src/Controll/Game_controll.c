@@ -103,20 +103,20 @@ void game_update(Game *game, Renderer *renderer)
         
         movePlayer(game->map, p);
 
-        if (i == game->bomb.bombCarrier)
+        if (i == getBombCarrier(game->bomb))
         {
              movePlayerWithOther(
                 p,                      // current player
                 i,                      // index of current player
                 game->players,          // all players
                 game->numPlayers,       // count
-                &game->bomb             // bomb pointer
+                game->bomb             // bomb pointer
             );
             //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
         }
     }
 
-    updateBomb(&game->bomb, game->players);
+    updateBomb(game->bomb, game->players);
 
 
 
@@ -140,7 +140,7 @@ void game_update(Game *game, Renderer *renderer)
             Render_Player(renderer, game->players[i]);
         }
     }
-    Render_Bomb(renderer, &game->bomb);
+    Render_Bomb(renderer, game->bomb);
 
 
 
@@ -185,7 +185,7 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb *bomb)
+void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb bomb)
 {
     for (int i = 0; i < count; i++)
     {
@@ -203,12 +203,14 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 
                 printf("Collision between players detected!\n");
 
-                if (bomb->bombCarrier == p_index) {
-                    bomb->bombCarrier = other_index;
+                if (getBombCarrier(bomb) == p_index) {
+                    setBombCarrier(bomb,other_index);
+                
                     printf("Bomb moved to player %d\n", other_index);
                 }
-                else if (bomb->bombCarrier == other_index) {
-                    bomb->bombCarrier = p_index;
+                else if (getBombCarrier(bomb) == other_index) {
+                    setBombCarrier(bomb,p_index);
+                    
                     printf("Bomb moved to player %d\n", p_index);
                 }
             }
@@ -306,6 +308,30 @@ void game_init(Game *game, Renderer *renderer)
 {
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
+    game->numPlayers = 2;
+    
+    
+
+    game->players[0] = initPlayer(230, 300);
+    game->players[1] = initPlayer(270, 300);
+
+
+    game->bomb = createBomb(game->players);
+      
+        // printf("%d hello ",getPlayerX(game->players[0]));
+        // game->bomb.active = 1;
+        // game->bomb.timer = 200;
+        // game->bomb.bombCarrier = 0;
+        // game->bomb.exploding = 0;
+        // game->bomb.explosionTimer = 0;
+        // game->bomb.x = getPlayerX(game->players[0]);
+        // game->bomb.y = getPlayerY(game->players[0]);
+
+
   
     Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+
+
+    
+       
 }

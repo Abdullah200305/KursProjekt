@@ -30,6 +30,6 @@ void Render_Player(Renderer* r, Player player);
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);
 
 //rendering bomb
-void Render_Bomb(Renderer* r, Bomb* bomb);
+void Render_Bomb(Renderer* r, Bomb bomb);
 
 #endif // RENDERER_H

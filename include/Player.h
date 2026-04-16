@@ -1,16 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
+#include <stdio.h>
+#include <stdlib.h>
 typedef struct Player_type *Player;
 
 
-void initPlayer(Player player, float x, float y);
+Player initPlayer(float x, float y);
 void damagePlayer(Player player);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY);
 void stopPlayer(Player player);
-void resetPlayer(Player player, float x, float y);
+// void resetPlayer(Player player, float x, float y);
 void killPlayer(Player player);
 
 //Getters metoder
