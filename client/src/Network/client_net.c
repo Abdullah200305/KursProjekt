@@ -1,0 +1,84 @@
+#include "client_net.h"
+#include <stdio.h>
+
+int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
+{
+    if (client == NULL) {
+        return -1;
+    }
+
+    client->connected = 0;
+    client->socket = NULL;
+    client->sendPacket = NULL;
+    client->recvPacket = NULL;
+
+    if (SDLNet_Init() < 0) {
+        printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    client->socket = SDLNet_UDP_Open(0);
+    if (client->socket == NULL) {
+        printf("SDLNet_UDP_Open failed: %s\n", SDLNet_GetError());
+        SDLNet_Quit();
+        return -1;
+    }
+
+    if (SDLNet_ResolveHost(&client->serverAddress, serverIP, port) < 0) {
+        printf("SDLNet_ResolveHost failed: %s\n", SDLNet_GetError());
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+        SDLNet_Quit();
+        return -1;
+    }
+
+    client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    client->recvPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+
+    if (client->sendPacket == NULL || client->recvPacket == NULL) {
+        printf("SDLNet_AllocPacket failed: %s\n", SDLNet_GetError());
+
+        if (client->sendPacket != NULL) {
+            SDLNet_FreePacket(client->sendPacket);
+            client->sendPacket = NULL;
+        }
+
+        if (client->recvPacket != NULL) {
+            SDLNet_FreePacket(client->recvPacket);
+            client->recvPacket = NULL;
+        }
+
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+        SDLNet_Quit();
+        return -1;
+    }
+
+    client->connected = 1;
+    return 0;
+}
+
+void ClientNet_Destroy(ClientNet *client)
+{
+    if (client == NULL) {
+        return;
+    }
+
+    if (client->sendPacket != NULL) {
+        SDLNet_FreePacket(client->sendPacket);
+        client->sendPacket = NULL;
+    }
+
+    if (client->recvPacket != NULL) {
+        SDLNet_FreePacket(client->recvPacket);
+        client->recvPacket = NULL;
+    }
+
+    if (client->socket != NULL) {
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+    }
+
+    client->connected = 0;
+    SDLNet_Quit();
+}

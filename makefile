@@ -29,7 +29,7 @@
 CC = gcc
 
 CFLAGS = -g -Iinclude 
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net
 
 
 
