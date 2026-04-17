@@ -116,7 +116,7 @@ void game_update(Game *game, Renderer *renderer)
         }
     }
 
-    updateBomb(game->bomb, game->players);
+    //updateBomb(game->bomb, game->players);
 
 
 

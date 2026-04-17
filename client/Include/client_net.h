@@ -2,8 +2,8 @@
 #define CLIENT_NET_H
 #include <SDL2/SDL_net.h>
 
-#include "..\..\shared\Include\Input.h"
-#include "..\..\shared\Include\Game_state.h"
+#include "Input.h"
+#include "Game_state.h"
 
 
 typedef struct {
@@ -21,16 +21,7 @@ typedef struct {
 
 } Client;
 
-typedef enum {
-    PACKET_JOIN_REQUEST = 0,
-    PACKET_JOIN_ACCEPT,
-    PACKET_INPUT,
-    PACKET_STATE
-} PacketType;
 
-typedef struct {
-    int type; // PACKET_JOIN_REQUEST
-} JoinRequestPacket;
 
 Client* client_net_init();
 int ClientConnection(Client *client, const char *serverIP, int port);

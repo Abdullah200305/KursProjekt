@@ -3,9 +3,11 @@
 
 
 #include "Server_net.h"
-
+#include "game.h"
 #include <stdio.h>
-#include <SDL2/SDL.h>
+
+
+
 
 #endif // SERVER_H
 

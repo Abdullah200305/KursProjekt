@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef MAP_H
+#define MAP_H
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -30,4 +30,4 @@ int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2);
 int Collision_Map(Map map, float x, float y);
 int checkCollision(Map map, int x, int y);
 
-#endif // GAME_H
+#endif // MAP_H
