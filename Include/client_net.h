@@ -7,6 +7,7 @@
 
 typedef struct ClientNet {
     int connected;
+    int clientId;
     UDPsocket socket;
     IPaddress serverAddress;
     UDPpacket *sendPacket;
@@ -14,12 +15,18 @@ typedef struct ClientNet {
 } ClientNet;
 
 typedef enum {
-    PACKET_JOIN_REQUEST = 1
+    PACKET_JOIN_REQUEST = 1,
+    PACKET_JOIN_ACCEPT = 2
 } PacketType;
 
 typedef struct {
     int type;
 } JoinRequestPacket;
+
+typedef struct {
+    int type;
+    int clientId;
+} JoinAcceptPacket;
 
 int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port);
 int ClientNet_SendJoinRequest(ClientNet *client);

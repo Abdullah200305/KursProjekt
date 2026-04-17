@@ -9,6 +9,7 @@ int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
     }
 
     client->connected = 0;
+    client->clientId = -1;
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
@@ -99,8 +100,23 @@ int ClientNet_TryReceive(ClientNet *client)
     }
 
     memcpy(&packetType, client->recvPacket->data, sizeof(int));
-    printf("[CLIENT] Received packet type: %d\n", packetType);
 
+    if (packetType == PACKET_JOIN_ACCEPT) {
+        JoinAcceptPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(JoinAcceptPacket)) {
+            printf("[CLIENT] JOIN_ACCEPT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(JoinAcceptPacket));
+        client->clientId = packet.clientId;
+
+        printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
+        return 1;
+    }
+
+    printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
 }
 
