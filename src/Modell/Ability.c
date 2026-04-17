@@ -44,7 +44,7 @@ void AbilitySystem_spawn(AbilitySystem *system, int mapWidth, int mapHeight)
         if (!system->items[i].active)
         {
             system->items[i].active = true;
-            system->items[i].type = (rand() % 3) + 1;
+            system->items[i].type = (rand() % 5) + 1;
             system->items[i].width = 32;
             system->items[i].height = 32;
             system->items[i].x = rand() % (mapWidth - system->items[i].width);

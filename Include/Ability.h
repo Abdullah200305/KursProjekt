@@ -10,6 +10,8 @@ typedef enum
 {
     ABILITY_NONE,
     ABILITY_SPEED,
+    ABILITY_FREEZE,
+    ABILITY_SLOW,
     ABILITY_SHIELD,
     ABILITY_SWAP,
 } AbilityType;
