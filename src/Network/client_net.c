@@ -81,6 +81,29 @@ int ClientNet_SendJoinRequest(ClientNet *client)
     return 0;
 }
 
+int ClientNet_TryReceive(ClientNet *client)
+{
+    int packetType;
+
+    if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
+        return -1;
+    }
+
+    if (SDLNet_UDP_Recv(client->socket, client->recvPacket) == 0) {
+        return 0;
+    }
+
+    if (client->recvPacket->len < (int)sizeof(int)) {
+        printf("[CLIENT] Received packet too small\n");
+        return 1;
+    }
+
+    memcpy(&packetType, client->recvPacket->data, sizeof(int));
+    printf("[CLIENT] Received packet type: %d\n", packetType);
+
+    return 1;
+}
+
 
 void ClientNet_Destroy(ClientNet *client)
 {

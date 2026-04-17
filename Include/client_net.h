@@ -23,6 +23,8 @@ typedef struct {
 
 int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port);
 int ClientNet_SendJoinRequest(ClientNet *client);
+int ClientNet_TryReceive(ClientNet *client);
 void ClientNet_Destroy(ClientNet *client);
+
 
 #endif

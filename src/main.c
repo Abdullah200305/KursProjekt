@@ -24,12 +24,24 @@ int main(int argc, char *argv[])
     }
 
     if (clientNetReady) {
-    if (ClientNet_SendJoinRequest(&clientNet) == 0) {
-        printf("[CLIENT] JOIN_REQUEST sent\n");
-    } else {
-        printf("[CLIENT] JOIN_REQUEST failed\n");
+        if (ClientNet_SendJoinRequest(&clientNet) == 0) {
+            printf("[CLIENT] JOIN_REQUEST sent\n");
+        } else {
+            printf("[CLIENT] JOIN_REQUEST failed\n");
+        }
+    }
+
+    if (clientNetReady) {
+    int receiveResult = ClientNet_TryReceive(&clientNet);
+
+    if (receiveResult == 0) {
+        printf("[CLIENT] No server response yet\n");
+    } else if (receiveResult < 0) {
+        printf("[CLIENT] Receive check failed\n");
     }
 }
+
+    
 
     AbilitySystem *system = AbilitySystem_create();
     AbilitySystem_init(system);
