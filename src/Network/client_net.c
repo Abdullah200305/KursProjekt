@@ -1,5 +1,6 @@
 #include "client_net.h"
 #include <stdio.h>
+#include <string.h>
 
 int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
 {
@@ -57,6 +58,29 @@ int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
     client->connected = 1;
     return 0;
 }
+
+int ClientNet_SendJoinRequest(ClientNet *client)
+{
+    JoinRequestPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL) {
+        return -1;
+    }
+
+    packet.type = PACKET_JOIN_REQUEST;
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0) {
+        printf("ClientNet_SendJoinRequest failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
 
 void ClientNet_Destroy(ClientNet *client)
 {

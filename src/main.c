@@ -23,6 +23,14 @@ int main(int argc, char *argv[])
         printf("[CLIENT] UDP init FAILED\n");
     }
 
+    if (clientNetReady) {
+    if (ClientNet_SendJoinRequest(&clientNet) == 0) {
+        printf("[CLIENT] JOIN_REQUEST sent\n");
+    } else {
+        printf("[CLIENT] JOIN_REQUEST failed\n");
+    }
+}
+
     AbilitySystem *system = AbilitySystem_create();
     AbilitySystem_init(system);
     AbilitySystem_spawn(system, 800, 600);

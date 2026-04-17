@@ -13,7 +13,16 @@ typedef struct ClientNet {
     UDPpacket *recvPacket;
 } ClientNet;
 
+typedef enum {
+    PACKET_JOIN_REQUEST = 1
+} PacketType;
+
+typedef struct {
+    int type;
+} JoinRequestPacket;
+
 int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port);
+int ClientNet_SendJoinRequest(ClientNet *client);
 void ClientNet_Destroy(ClientNet *client);
 
 #endif
