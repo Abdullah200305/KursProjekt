@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g -Iclient/include -I../shared/include
+CFLAGS = -g -IInclude -I../shared/Include
 LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net
 
 SRC = src
