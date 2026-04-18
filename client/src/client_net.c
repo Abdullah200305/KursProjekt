@@ -1,75 +1,161 @@
 #include "client_net.h"
+#include <stdio.h>
+#include <string.h>
 
+typedef struct ClientNet_type{
+    int connected;
+    int clientId;
+    UDPsocket socket;
+    IPaddress serverAddress;
+    UDPpacket *sendPacket;
+    UDPpacket *recvPacket;
+}
 
-
-Client* client_net_init()
+ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
 {
-    Client *client = (Client*)malloc(sizeof(Client));
-    if (!client) {
-        fprintf(stderr, "Failed to allocate memory for client\n");
+    ClientNet client = malloc(sizeof(struct ClientNet_type));
+    if (client == NULL) {
         return NULL;
     }
-    client->id = -1;
+
     client->connected = 0;
+    client->clientId = -1;
     client->socket = NULL;
-    client->serverIP = (IPaddress){0};
     client->sendPacket = NULL;
     client->recvPacket = NULL;
-    client->player = NULL;
-    client->input = NULL;
 
+    if (SDLNet_Init() < 0) {
+        printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
+        free(client);
+        return NULL;
+    }
+
+    client->socket = SDLNet_UDP_Open(0);
+    if (client->socket == NULL) {
+        printf("SDLNet_UDP_Open failed: %s\n", SDLNet_GetError());
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    if (SDLNet_ResolveHost(&client->serverAddress, serverIP, port) < 0) {
+        printf("SDLNet_ResolveHost failed: %s\n", SDLNet_GetError());
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    client->recvPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+
+    if (client->sendPacket == NULL || client->recvPacket == NULL) {
+        printf("SDLNet_AllocPacket failed: %s\n", SDLNet_GetError());
+
+        if (client->sendPacket != NULL) {
+            SDLNet_FreePacket(client->sendPacket);
+            client->sendPacket = NULL;
+        }
+
+        if (client->recvPacket != NULL) {
+            SDLNet_FreePacket(client->recvPacket);
+            client->recvPacket = NULL;
+        }
+
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    client->connected = 1;
     return client;
 }
 
-int ClientConnection(Client *client, const char *serverIP, int port) {
-    if (SDLNet_Init() != 0) {
-        printf("SDLNet_Init: %s\n", SDLNet_GetError());
-        return -1;
-    }
-    client->socket = SDLNet_UDP_Open(0); 
-    if (!client->socket) {
-        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+int ClientNet_SendJoinRequest(ClientNet client)
+{
+    JoinRequestPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL) {
         return -1;
     }
 
-    if (SDLNet_ResolveHost(&client->serverIP, serverIP, port) != 0) {
-        printf("SDLNet_ResolveHost error: %s\n", SDLNet_GetError());
+    packet.type = PACKET_JOIN_REQUEST;
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0) {
+        printf("ClientNet_SendJoinRequest failed: %s\n", SDLNet_GetError());
         return -1;
     }
-
-    client->recvPacket = SDLNet_AllocPacket(512);
-    client->sendPacket = SDLNet_AllocPacket(512);
 
     return 0;
 }
 
-
-
-
-
-void Client_Send(Client *client, void *data, int size)
+int ClientNet_TryReceive(ClientNet client)
 {
-    memcpy(client->sendPacket->data, data, size);
-    client->sendPacket->len = size;
-    client->sendPacket->address = client->serverIP;
-    SDLNet_UDP_Send(client->socket, -1, client->sendPacket);
-}
+    int packetType;
 
-int Server_Receive(Client *client) {
-    if (SDLNet_UDP_Recv(client->socket, client->recvPacket)) {
-        if (client->recvPacket->len >= sizeof(Packet)) {
-            memcpy(&client->packet, client->recvPacket->data, sizeof(Packet));
+    if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
+        return -1;
+    }
+
+    if (SDLNet_UDP_Recv(client->socket, client->recvPacket) == 0) {
+        return 0;
+    }
+
+    if (client->recvPacket->len < (int)sizeof(int)) {
+        printf("[CLIENT] Received packet too small\n");
+        return 1;
+    }
+
+    memcpy(&packetType, client->recvPacket->data, sizeof(int));
+
+    if (packetType == PACKET_JOIN_ACCEPT) {
+        JoinAcceptPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(JoinAcceptPacket)) {
+            printf("[CLIENT] JOIN_ACCEPT packet too small\n");
             return 1;
         }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(JoinAcceptPacket));
+        client->clientId = packet.clientId;
+
+        printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
+        return 1;
     }
-    return 0;
+
+    printf("[CLIENT] Received unknown packet type: %d\n", packetType);
+    return 1;
 }
 
 
+void ClientNet_Destroy(ClientNet client)
+{
+    if (client == NULL) {
+        return;
+    }
 
-void Destroy_Client(Client *client){
-    SDLNet_FreePacket(client->sendPacket);
-    SDLNet_FreePacket(client->recvPacket);
-    SDLNet_UDP_Close(client->socket);
-    free(client);
+    if (client->sendPacket != NULL) {
+        SDLNet_FreePacket(client->sendPacket);
+        client->sendPacket = NULL;
+    }
+
+    if (client->recvPacket != NULL) {
+        SDLNet_FreePacket(client->recvPacket);
+        client->recvPacket = NULL;
+    }
+
+    if (client->socket != NULL) {
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+    }
+
+    client->connected = 0;
+    SDLNet_Quit();
 }

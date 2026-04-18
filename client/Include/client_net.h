@@ -1,35 +1,21 @@
 #ifndef CLIENT_NET_H
 #define CLIENT_NET_H
+
 #include <SDL2/SDL_net.h>
+#include "network_protocol.h"
 
-#include "Input.h"
-#include "Game_state.h"
-#include "protocol.h"
+#define CLIENT_PACKET_SIZE 512
+
+typedef struct ClientNet_type *ClientNet;
 
 
-typedef struct {
-    int id;
-    int connected;
+ClientNet ClientNet_Init(const char *serverIP, Uint16 port);
+int ClientNet_SendJoinRequest(ClientNet client);
+int ClientNet_TryReceive(ClientNet client);
+void ClientNet_Destroy(ClientNet client);
 
-    UDPsocket socket;
-    IPaddress serverIP;
 
-    UDPpacket *sendPacket;
-    UDPpacket *recvPacket;
-    Packet packet; // will tell use which kinde of packet
-    Player *player;
-    InputState *input;
-
-} Client;
+#endif
 
 
 
-Client* client_net_init();
-int ClientConnection(Client *client, const char *serverIP, int port);
-
-
-void Destroy_Client(Client *client);
-void Client_Send(Client *client, void *data, int size);
-//void Send(Player* Player);
-// int Recv(Player* player);
-#endif // CLIENT_NET_H
