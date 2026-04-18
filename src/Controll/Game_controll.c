@@ -1,5 +1,6 @@
 #include "Game_controll.h"
 #include "bombRelated.h"
+#include "Ability.h"
 
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer)
@@ -26,12 +27,26 @@ void game_loop(Game *game, Renderer *renderer)
             break;
 }
         }
-
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
-
         // you can move both payers at the same time, but you can only move one player at a time.
         //this for the test.
        // PLAYER 1
+
+        playerMovement(game->players[0], SDL_SCANCODE_W, SDL_SCANCODE_S, SDL_SCANCODE_A, SDL_SCANCODE_D);
+        playerMovement(game->players[1], SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
+
+
+        const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+        if(state[SDL_SCANCODE_M])
+        {
+            setPlayerSpeedYX(game->players[0], 50, 34);
+        }
+
+        //old implementation of movement
+       /*
+        const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+
         stopPlayer(game->players[0]);
         if (state[SDL_SCANCODE_W])
             setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
@@ -41,7 +56,7 @@ void game_loop(Game *game, Renderer *renderer)
             setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
         if (state[SDL_SCANCODE_D])
             setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
-
+        
         // PLAYER 2
         stopPlayer(game->players[1]);
         if (state[SDL_SCANCODE_UP])
@@ -52,6 +67,7 @@ void game_loop(Game *game, Renderer *renderer)
             setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
         if (state[SDL_SCANCODE_RIGHT])
             setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
+        */
 
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
@@ -133,6 +149,36 @@ void game_update(Game *game, Renderer *renderer)
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
    
+
+
+
+
+
+    AbilitySystem_render(game->abilitySystem, renderer);
+
+    int currentPlayers = 2;
+
+    for (int i = 0; i < currentPlayers; i++)
+    {
+        AbilitySystem_checkPickup(game->abilitySystem, game->players[i]);
+    }
+
+    for (int i = 0; i < currentPlayers; i++)
+    {
+        if (getPlayerSpeedTimer(game->players[i]) > 0)
+        {
+            int speedTimer = getPlayerSpeedTimer(game->players[i]);
+            setPlayerSpeedTimer(game->players[i], --speedTimer);
+
+            if (getPlayerSpeedTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+    }    
+
+
+
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
@@ -259,7 +305,8 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX,getPlayerY(player));
+    int colx = Collision_Map(map, newX, getPlayerY(player));
+
     if (colx == 1 || colx == 2)
     {
         /// collision with tile type 1 or 2, stop player movement
@@ -278,7 +325,7 @@ void movePlayer(Map map, Player player)
     }
 
     float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map,getPlayerX(player), newY);
+    int coly = Collision_Map(map, getPlayerX(player), newY);
     if (coly == 1 || coly == 2)
     {
         /// collision with tile type 1 or 2, stop player movement
@@ -301,6 +348,7 @@ void game_cleanup(Game *game, Renderer *renderer)
 {
     Map_destroy(game->map);
     Renderer_Destroy(renderer);
+    AbilitySystem_destroy(game->abilitySystem);
 }
 
 
@@ -310,6 +358,9 @@ void game_init(Game *game, Renderer *renderer)
     game->state = GAME_STATE_PLAYING;
     game->numPlayers = 2;
     
+    game->abilitySystem = AbilitySystem_create();
+    AbilitySystem_init(game->abilitySystem);
+    AbilitySystem_spawn(game->abilitySystem, game->map);
     
 
     game->players[0] = initPlayer(230, 300);

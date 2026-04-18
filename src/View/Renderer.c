@@ -33,6 +33,14 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
+
+    r->abilityTextures[0] = NULL;
+    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/Ability_SPEED.png");
+    r->abilityTextures[2] = NULL;
+    r->abilityTextures[3] = NULL;
+    r->abilityTextures[4] = NULL;
+    r->abilityTextures[5] = NULL;
+    
     return 0;
 }
 
@@ -59,6 +67,15 @@ void Renderer_Destroy(Renderer* r) {
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
     SDL_DestroyTexture(r->playerTexture);
+
+    for (int i = 0; i < 6; i++) 
+    {
+        if (r->abilityTextures[i])
+        {
+            SDL_DestroyTexture(r->abilityTextures[i]);
+        }
+    }
+
     SDL_Quit();
 }
 
@@ -76,6 +93,8 @@ void Background_Image_Render(Renderer* r) {
     SDL_RenderClear(r->sdlRenderer);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
+
+
 // Render the map based on the map buffer to make collision
 void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {

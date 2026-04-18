@@ -3,18 +3,23 @@
 #include "Map.h"
 #include "Player.h"
 #include "bombRelated.h"
+
+typedef struct AbilitySystem AbilitySystem;
+
 typedef enum {
     GAME_STATE_MENU,
     GAME_STATE_PLAYING,
     GAME_STATE_PAUSED,
     GAME_STATE_GAME_OVER
 } GameState;
+
 #define Max_Players 4
 
 typedef struct {
     GameState state;
     Map map;
     Player players[Max_Players];
+    AbilitySystem *abilitySystem;
     
     int numPlayers;
     Bomb bomb;

@@ -1,9 +1,14 @@
 #include <stdio.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include "main.h"
 #include "Ability.h"
+
     int main(int argc, char *argv[])
     {
+
+        srand(time(NULL));
+
         Game game; // model
         Renderer renderer; // view
         InputState*input = Input_Init();
@@ -11,17 +16,9 @@
     
         printf("Starting game...\n");
         game_init(&game, &renderer); // update game state and initialize renderer
-    
-       
-        AbilitySystem *system = AbilitySystem_create();
-        AbilitySystem_init(system);
-        AbilitySystem_spawn(system, 800, 600);
 
         printf("Entering game loop...\n");
         game_loop(&game, &renderer); // start game loop
-
-        
-        AbilitySystem_destroy(system);
 
         game_cleanup(&game, &renderer); // clean up resources
         return 0;
