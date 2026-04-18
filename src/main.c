@@ -31,22 +31,14 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (clientNetReady) {
-        int receiveResult = ClientNet_TryReceive(&clientNet);
-
-        if (receiveResult == 0) {
-            printf("[CLIENT] No server response yet\n");
-        } else if (receiveResult < 0) {
-            printf("[CLIENT] Receive check failed\n");
-        }
-    }
+    
 
     AbilitySystem *system = AbilitySystem_create();
     AbilitySystem_init(system);
     AbilitySystem_spawn(system, 800, 600);
 
     printf("Entering game loop...\n");
-    game_loop(&game, &renderer);
+    game_loop(&game, &renderer, &clientNet);
 
     AbilitySystem_destroy(system);
 

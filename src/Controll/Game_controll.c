@@ -1,8 +1,8 @@
 #include "Game_controll.h"
 #include "bombRelated.h"
-
+#include "client_net.h"
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
-void game_loop(Game *game, Renderer *renderer)
+void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 {
     SDL_Event event;
     while (game->state != GAME_STATE_GAME_OVER)
@@ -26,7 +26,16 @@ void game_loop(Game *game, Renderer *renderer)
             break;
 }
         }
+        
+        if (clientNet != NULL)
+        {
+            int receiveResult = ClientNet_TryReceive(clientNet);
 
+            if (receiveResult < 0)
+            {
+                printf("[CLIENT] Receive check failed\n");
+            }
+        }
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
         // you can move both payers at the same time, but you can only move one player at a time.

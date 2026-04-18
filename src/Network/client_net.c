@@ -120,7 +120,6 @@ int ClientNet_TryReceive(ClientNet *client)
     return 1;
 }
 
-
 void ClientNet_Destroy(ClientNet *client)
 {
     if (client == NULL) {
@@ -143,5 +142,6 @@ void ClientNet_Destroy(ClientNet *client)
     }
 
     client->connected = 0;
+    client->clientId = -1;
     SDLNet_Quit();
 }
