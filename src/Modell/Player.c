@@ -34,7 +34,7 @@ Player initPlayer(float x, float y)
 
     p->speedY = 5;
     p->speedX = 5;
-    p->speedTimer = 300;
+    p->speedTimer = 0;
     return p;
 }
 

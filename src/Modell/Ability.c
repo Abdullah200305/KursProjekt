@@ -112,6 +112,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
             if (a->type == ABILITY_SPEED)
             {
                 setPlayerSpeedYX(player, 10, 10);
+                setPlayerSpeedTimer(player, 300);
             }
         }
     }
