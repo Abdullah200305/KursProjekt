@@ -2,14 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct ClientNet_type{
+struct ClientNet_type{
     int connected;
     int clientId;
     UDPsocket socket;
     IPaddress serverAddress;
     UDPpacket *sendPacket;
     UDPpacket *recvPacket;
-}
+};
+
+
 
 ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
 {
@@ -76,12 +78,14 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
 
 int ClientNet_SendJoinRequest(ClientNet client)
 {
-    JoinRequestPacket packet;
+    // JoinRequestPacket packet;
+    Packet packet;
+    
 
     if (client == NULL || client->socket == NULL || client->sendPacket == NULL) {
         return -1;
     }
-
+    
     packet.type = PACKET_JOIN_REQUEST;
 
     client->sendPacket->address = client->serverAddress;
@@ -116,15 +120,16 @@ int ClientNet_TryReceive(ClientNet client)
     memcpy(&packetType, client->recvPacket->data, sizeof(int));
 
     if (packetType == PACKET_JOIN_ACCEPT) {
-        JoinAcceptPacket packet;
+        Packet packet;
 
-        if (client->recvPacket->len < (int)sizeof(JoinAcceptPacket)) {
+        if (client->recvPacket->len < (int)sizeof(Packet)) {
             printf("[CLIENT] JOIN_ACCEPT packet too small\n");
             return 1;
         }
 
-        memcpy(&packet, client->recvPacket->data, sizeof(JoinAcceptPacket));
-        client->clientId = packet.clientId;
+        memcpy(&packet, client->recvPacket->data, sizeof(Packet));
+        
+        client->clientId = packet.playerId;
 
         printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
         return 1;

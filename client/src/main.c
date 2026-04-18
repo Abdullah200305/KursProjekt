@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     AbilitySystem_spawn(system, 800, 600);
 
     printf("Entering game loop...\n");
-    game_loop(&game, &renderer);
+    game_loop(&game, &renderer,input);
 
     AbilitySystem_destroy(system);
 
@@ -54,6 +54,6 @@ int main(int argc, char *argv[])
         ClientNet_Destroy(clientNet);
     }
 
-    game_cleanup(&game, &renderer);
+    game_cleanup(&game, &renderer,input);
     return 0;
 }

@@ -5,6 +5,7 @@
 
 typedef enum
 {
+    PACKET_JOIN_REQUEST,
     PACKET_CONNECT,
     PACKET_JOIN_ACCEPT,
     PACKET_INPUT,

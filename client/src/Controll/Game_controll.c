@@ -313,8 +313,8 @@ void game_init(Game *game, Renderer *renderer)
     
     
 
-    game->players[0] = initPlayer(230, 300);
-    game->players[1] = initPlayer(270, 300);
+    game->players[0] = initPlayer(230, 300,0);
+    game->players[1] = initPlayer(270, 300,1);
 
 
     game->bomb = createBomb(game->players);
