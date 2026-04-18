@@ -116,10 +116,37 @@ int ClientNet_TryReceive(ClientNet *client)
         return 1;
     }
 
+    if (packetType == PACKET_GAME_INIT) {
+        GameInitPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(GameInitPacket)) {
+            printf("[CLIENT] GAME_INIT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(GameInitPacket));
+
+        printf("[CLIENT] GAME_INIT received\n");
+        printf("[CLIENT] mapId = %d\n", packet.data.mapId);
+        printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+        printf("[CLIENT] yourClientId = %d\n", packet.data.yourClientId);
+        printf("[CLIENT] bombCarrier = %d\n", packet.data.bomb.bombCarrier);
+
+        for (int i = 0; i < packet.data.numPlayers && i < MAX_PLAYERS; i++) {
+            printf("[CLIENT] player %d -> x=%.1f y=%.1f lives=%d alive=%d\n",
+                   i,
+                   packet.data.players[i].x,
+                   packet.data.players[i].y,
+                   packet.data.players[i].lives,
+                   packet.data.players[i].alive);
+        }
+
+        return 1;
+    }
+
     printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
 }
-
 void ClientNet_Destroy(ClientNet *client)
 {
     if (client == NULL) {
