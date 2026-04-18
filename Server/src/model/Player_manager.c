@@ -8,31 +8,37 @@ struct PlayerManager_type
 };
 
 
+int PlayerManager_add(PlayerManager pm)
+{
+    if (pm->count >= MAX_PLAYERS) return -1;
+    int id = pm->count;
+    pm->players[id] = initPlayer(200, 300, id);
+    pm->count++;
+    return id;  
+}
 
 
+PlayerManager PlayerManager_init()
+{   
+PlayerManager pm = malloc(sizeof(struct PlayerManager_type));
+pm->count = 0;
+return pm;
+}
 
 
+  
 
-// void PlayerManager_init(PlayerManager *pm)
-// {
-//     pm->count = 0;
-// }
+void PlayerManager_remove(PlayerManager pm, int id){
+    if (id < 0 || id >= pm->count) return;
+    pm->players[id] = pm->players[pm->count - 1];
+    setPlayerId(pm->players[id],id);
+    pm->count--;
+    PlayerDestroy(pm->players[id]);
+}
 
-// int PlayerManager_add(PlayerManager *pm)
-// {
-//     if (pm->count >= MAX_PLAYERS)
-//         return -1;
-
-//     Player *p = &pm->players[pm->count];
-
-//     *p = initPlayer(0,0);  // or {0}
-
-//     p->id = pm->count;
-//     pm->count++;
-
-//     return p->id;
-// }
-
+void PlayerManager_destroy(PlayerManager pm){
+    free(pm);
+}
 
 
 

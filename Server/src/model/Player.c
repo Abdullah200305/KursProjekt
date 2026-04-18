@@ -9,9 +9,10 @@ struct  Player_type{
     float height;
     int lives;  //nr of lives
     int alive;  //alive = 1 => alive or alive = 0 => dead
+    int id;
 };
 
-Player initPlayer(float x, float y)
+Player initPlayer(float x, float y,int id)
 {
     Player p = malloc(sizeof(struct Player_type));
     p->x = x;
@@ -20,6 +21,7 @@ Player initPlayer(float x, float y)
     p->vy = 0;
     p->lives = 3;
     p->alive = 1;
+    p->id = id;
     return p;
 }
 
@@ -115,3 +117,11 @@ void setPlayerSize(Player player, float width, float height) {
     player->width = width;
     player->height = height;
 }
+void setPlayerId(Player player,int id){
+    player->id = id;
+}
+
+void PlayerDestroy(Player player){
+    free(player);
+}
+

@@ -38,10 +38,9 @@ Server server = malloc(sizeof(struct Server_type));
     server->recvPacket = NULL;
     server->clientCount = 0;
     server->gameStarted = 0;
-    PlayerManager_init(&server->playerManager);
+    server->playerManager=PlayerManager_init();
     return server;
 }
-
 
 Client Client_net_init(IPaddress ip, int id,int active){
 Client client = malloc(sizeof(struct Client_type));
@@ -99,33 +98,26 @@ void setGameStart(Server server,int gameStart){
     server->gameStarted = gameStart;
 }
 
-// void Server_Send(Server server, void *data, int size){
-//     memcpy(server->sendPacket->data, data, size);
-//     server->sendPacket->len = size;
-//     server->sendPacket->address = server->serverIP;
-//     SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
-// }
 
 
 
 
-int  Server_Receive(Server server){
-    if(SDLNet_UDP_Recv(server->socket,server->recvPacket)){
-        Packet packet;
-        memcpy(&packet,server->recvPacket->data,sizeof(Packet));
-        server->packet = packet;
-        return 1; 
+int Server_Receive(Server server) {
+    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+        if (server->recvPacket->len >= sizeof(Packet)) {
+            memcpy(&server->packet, server->recvPacket->data, sizeof(Packet));
+            return 1;
+        }
     }
-    return 0; 
+    return 0;
 }
-
 
 void Server_handlePackets(Server server){
      switch (getPacket(server).type)
     {
-        case PACKET_INPUT:
-            handle_input(server);
-            break;
+        // case PACKET_INPUT:
+        //     handle_input(server);
+        //     break;
 
         case PACKET_CONNECT:
             handle_Connect(server);
@@ -144,7 +136,6 @@ void handle_Connect(Server server)
 {
     if (server->clientCount >= MAX_CLIENTS)return;
     IPaddress addr = server->recvPacket->address;
-    // check duplicates
     for (int i = 0; i < server->clientCount; i++)
     {
         if (server->clients[i]->address.host == addr.host &&
@@ -156,18 +147,30 @@ void handle_Connect(Server server)
     int id = server->clientCount;
     server->clients[id] = Client_net_init(addr, id, 1);
     server->clientCount++;
-     printf("clinet joinded %d\n",id);
+    printf("clinet joinded %d\n",id);
+
+
+
+
+    Packet response = {PACKET_JOIN_ACCEPT,id}; 
+    printf("Join accept send to you\n");
+    Server_Send(server, addr,(void*) &response, sizeof(Packet));
+}
+
+void Server_Send(Server server,IPaddress clientIp, void *data, int size){
+    memcpy(server->sendPacket->data, data, size);
+    server->sendPacket->len = size;
+    server->sendPacket->address = clientIp;
+    SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
 }
 
 
 
 
 
-void  handle_input(Server server){
 
-}
-
-
+// void  handle_input(Server server){
+// }
 
 
 
@@ -186,8 +189,39 @@ void  handle_input(Server server){
 
 
 void Destroy_Server(Server server){
+    for (int i = 0; i < server->clientCount; i++) {
+        if (server->clients[i]) {
+            free(server->clients[i]);
+        }
+    }
+
     SDLNet_FreePacket(server->sendPacket);
     SDLNet_FreePacket(server->recvPacket);
     SDLNet_UDP_Close(server->socket);
     free(server);
 }
+
+
+
+
+// // Implement a basic Server_Send function
+// void Server_Send(Server server, IPaddress addr, void *data, int size) {
+//     if (size > server->sendPacket->maxlen) return; // Safety check
+//     memcpy(server->sendPacket->data, data, size);
+//     server->sendPacket->len = size;
+//     server->sendPacket->address = addr;
+//     SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
+// }
+
+
+
+
+
+// // In handle_Disconnect (assuming it's implemented), mark inactive and optionally free
+// void handle_Disconnect(Server server, Packet packet) {
+//     int id = packet.id; // Assuming Packet has an id field
+//     if (id >= 0 && id < server->clientCount && server->clients[id]) {
+//         server->clients[id]->active = 0;
+//         // Optionally: free(server->clients[id]); server->clients[id] = NULL;
+//     }
+// }

@@ -55,6 +55,16 @@ void Client_Send(Client *client, void *data, int size)
     SDLNet_UDP_Send(client->socket, -1, client->sendPacket);
 }
 
+int Server_Receive(Client *client) {
+    if (SDLNet_UDP_Recv(client->socket, client->recvPacket)) {
+        if (client->recvPacket->len >= sizeof(Packet)) {
+            memcpy(&client->packet, client->recvPacket->data, sizeof(Packet));
+            return 1;
+        }
+    }
+    return 0;
+}
+
 
 
 void Destroy_Client(Client *client){

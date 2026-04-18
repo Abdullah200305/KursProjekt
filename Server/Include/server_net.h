@@ -22,11 +22,11 @@ void setGameStart(Server server,int gameStart);
 
 
 int  Server_Receive(Server server);
-
+void Server_Send(Server server,IPaddress clientIp, void *data, int size);
 
  
 void Server_handlePackets(Server server);
-Client Client_net_init(IPaddress ip, int id,int active,Player player);
+Client Client_net_init(IPaddress ip, int id,int active);
 void handle_Connect(Server server);
 void handle_input(Server server);
 

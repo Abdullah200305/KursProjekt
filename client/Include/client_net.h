@@ -4,6 +4,7 @@
 
 #include "Input.h"
 #include "Game_state.h"
+#include "protocol.h"
 
 
 typedef struct {
@@ -15,7 +16,7 @@ typedef struct {
 
     UDPpacket *sendPacket;
     UDPpacket *recvPacket;
-
+    Packet packet; // will tell use which kinde of packet
     Player *player;
     InputState *input;
 

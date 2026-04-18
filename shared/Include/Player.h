@@ -6,7 +6,7 @@ typedef struct Player_type *Player;
 
 
 // server will call all these 
-Player initPlayer(float x, float y);
+Player initPlayer(float x, float y,int id);
 void damagePlayer(Player player);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
@@ -34,9 +34,9 @@ int getPlayerAlive(Player player);
 void setPlayerVelocity(Player player, float vx, float vy);
 void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
+void setPlayerId(Player player,int id);
 
-
-
+void PlayerDestroy(Player player);
 
 
 #endif

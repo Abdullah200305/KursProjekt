@@ -6,6 +6,7 @@
 typedef enum
 {
     PACKET_CONNECT,
+    PACKET_JOIN_ACCEPT,
     PACKET_INPUT,
     PACKET_DISCONNECT
 } PacketType;
@@ -17,3 +18,6 @@ typedef struct
 } Packet;
 
 #endif
+
+
+
