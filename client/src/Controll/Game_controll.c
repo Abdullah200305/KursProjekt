@@ -7,6 +7,50 @@ void game_loop(Game *game, Renderer *renderer,InputState input)
     SDL_Event event;
     while (game->state != GAME_STATE_GAME_OVER)
     {
+
+    
+
+   
+
+ 
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    
+//}
+//     if (clientNetReady) {
+//         int receiveResult = ClientNet_TryReceive(clientNet);
+//         if (receiveResult == 1) {
+//     printf("[CLIENT] Got server response!\n");
+   
+// }
+        // if (receiveResult == 0) {
+        //     printf("[CLIENT] No server response yet\n");
+        // } else if (receiveResult < 0) {
+        //     printf("[CLIENT] Receive check failed\n");
+        // }
+   // }
+
+
+
+
+
+
+
+
+
+
+
         // THis will need to be change after
         /// start
 
@@ -18,40 +62,40 @@ void game_loop(Game *game, Renderer *renderer,InputState input)
                 game->state = GAME_STATE_GAME_OVER;
                 break;
 
-            case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_h)
-            {
-                damagePlayer(game->players[0]);
-            }
-            break;
+            // case SDL_KEYDOWN:
+            // if (event.key.keysym.sym == SDLK_h)
+            // {
+            //     damagePlayer(game->players[0]);
+            // }
+            // break;
 }
         }
 
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
+    //     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-        // you can move both payers at the same time, but you can only move one player at a time.
-        //this for the test.
-       // PLAYER 1
-        stopPlayer(game->players[0]);
-        if (state[SDL_SCANCODE_W])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
-        if (state[SDL_SCANCODE_S])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
-        if (state[SDL_SCANCODE_A])
-            setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
-        if (state[SDL_SCANCODE_D])
-            setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
+    //     // you can move both payers at the same time, but you can only move one player at a time.
+    //     //this for the test.
+    //    // PLAYER 1
+    //     stopPlayer(game->players[0]);
+    //     if (state[SDL_SCANCODE_W])
+    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
+    //     if (state[SDL_SCANCODE_S])
+    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
+    //     if (state[SDL_SCANCODE_A])
+    //         setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
+    //     if (state[SDL_SCANCODE_D])
+    //         setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
 
-        // PLAYER 2
-        stopPlayer(game->players[1]);
-        if (state[SDL_SCANCODE_UP])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
-        if (state[SDL_SCANCODE_DOWN])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
-        if (state[SDL_SCANCODE_LEFT])
-            setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
-        if (state[SDL_SCANCODE_RIGHT])
-            setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
+    //     // PLAYER 2
+    //     stopPlayer(game->players[1]);
+    //     if (state[SDL_SCANCODE_UP])
+    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
+    //     if (state[SDL_SCANCODE_DOWN])
+    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
+    //     if (state[SDL_SCANCODE_LEFT])
+    //         setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
+    //     if (state[SDL_SCANCODE_RIGHT])
+    //         setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
 
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
@@ -97,24 +141,24 @@ void game_loop(Game *game, Renderer *renderer,InputState input)
 void game_update(Game *game, Renderer *renderer)
 {
     // // Update player position based on velocity and check for collisions
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        Player p = game->players[i];
+    // for (int i = 0; i < game->numPlayers; i++)
+    // {
+    //     Player p = game->players[i];
         
-        movePlayer(game->map, p);
+    //     movePlayer(game->map, p);
 
-        if (i == getBombCarrier(game->bomb))
-        {
-             movePlayerWithOther(
-                p,                      // current player
-                i,                      // index of current player
-                game->players,          // all players
-                game->numPlayers,       // count
-                game->bomb             // bomb pointer
-            );
-            //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
-        }
-    }
+    //     if (i == getBombCarrier(game->bomb))
+    //     {
+    //          movePlayerWithOther(
+    //             p,                      // current player
+    //             i,                      // index of current player
+    //             game->players,          // all players
+    //             game->numPlayers,       // count
+    //             game->bomb             // bomb pointer
+    //         );
+    //         //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+    //     }
+    // }
 
     //updateBomb(game->bomb, game->players);
 
@@ -133,14 +177,14 @@ void game_update(Game *game, Renderer *renderer)
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
    
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        if (isPlayerAlive(game->players[i]))
-        {
-            Render_Player(renderer, game->players[i]);
-        }
-    }
-    Render_Bomb(renderer, game->bomb);
+    // for (int i = 0; i < game->numPlayers; i++)
+    // {
+    //     if (isPlayerAlive(game->players[i]))
+    //     {
+    //         Render_Player(renderer, game->players[i]);
+    //     }
+    // }
+    // Render_Bomb(renderer, game->bomb);
 
 
 
@@ -155,29 +199,29 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-    if (isPlayerAlive(game->players[0]))
-    {
-        Render_PlayerLives(renderer, game->players[0], 20, 20);
-    }
+    // if (isPlayerAlive(game->players[0]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[0], 20, 20);
+    // }
 
-    if (isPlayerAlive(game->players[1]))
-    {
-        Render_PlayerLives(renderer, game->players[1], 20, 50);
-    }
-    int aliveCount = 0;
+    // if (isPlayerAlive(game->players[1]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[1], 20, 50);
+    // }
+    // int aliveCount = 0;
 
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        if (isPlayerAlive(game->players[i]))
-        {
-            aliveCount++;
-        }
-    }
+    // for (int i = 0; i < game->numPlayers; i++)
+    // {
+    //     if (isPlayerAlive(game->players[i]))
+    //     {
+    //         aliveCount++;
+    //     }
+    // }
 
-    if (aliveCount <= 1)
-    {
-        game->state = GAME_STATE_GAME_OVER;
-    }
+    // if (aliveCount <= 1)
+    // {
+    //     game->state = GAME_STATE_GAME_OVER;
+    // }
 
     Renderer_Present(renderer);
 }
@@ -185,38 +229,38 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb bomb)
-{
-    for (int i = 0; i < count; i++)
-    {
-        Player other = players[i];
+// void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb bomb)
+// {
+//     for (int i = 0; i < count; i++)
+//     {
+//         Player other = players[i];
 
-        if (player != other)
-        {
-            if (Player_collisionWithOtherPlayer(
-                    getPlayerX(player),
-                    getPlayerY(player),
-                    getPlayerX(other),
-                    getPlayerY(other)))
-            {
-                int other_index = i;
+//         if (player != other)
+//         {
+//             if (Player_collisionWithOtherPlayer(
+//                     getPlayerX(player),
+//                     getPlayerY(player),
+//                     getPlayerX(other),
+//                     getPlayerY(other)))
+//             {
+//                 int other_index = i;
 
-                printf("Collision between players detected!\n");
+//                 printf("Collision between players detected!\n");
 
-                if (getBombCarrier(bomb) == p_index) {
-                    setBombCarrier(bomb,other_index);
+//                 if (getBombCarrier(bomb) == p_index) {
+//                     setBombCarrier(bomb,other_index);
                 
-                    printf("Bomb moved to player %d\n", other_index);
-                }
-                else if (getBombCarrier(bomb) == other_index) {
-                    setBombCarrier(bomb,p_index);
+//                     printf("Bomb moved to player %d\n", other_index);
+//                 }
+//                 else if (getBombCarrier(bomb) == other_index) {
+//                     setBombCarrier(bomb,p_index);
                     
-                    printf("Bomb moved to player %d\n", p_index);
-                }
-            }
-        }
-    }
-}
+//                     printf("Bomb moved to player %d\n", p_index);
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 
@@ -256,69 +300,141 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 
 
 
-void movePlayer(Map map, Player player)
-{
-    float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX,getPlayerY(player));
-    if (colx == 1 || colx == 2)
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
-        if (colx == 3) // I will update so here will move slow
-        {
-            printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX / getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
-            setPlayerPosition(player, newX,getPlayerY(player));
-        }
-        else
-        {
-            setPlayerPosition(player, newX,getPlayerY(player));
-        }
-    }
+// void movePlayer(Map map, Player player)
+// {
+//     float newX = getPlayerX(player) + getPlayerVelocityX(player);
+//     int colx = Collision_Map(map, newX,getPlayerY(player));
+//     if (colx == 1 || colx == 2)
+//     {
+//         /// collision with tile type 1 or 2, stop player movement
+//     }
+//     else
+//     {
+//         if (colx == 3) // I will update so here will move slow
+//         {
+//             printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX / getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
+//             setPlayerPosition(player, newX,getPlayerY(player));
+//         }
+//         else
+//         {
+//             setPlayerPosition(player, newX,getPlayerY(player));
+//         }
+//     }
 
-    float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map,getPlayerX(player), newY);
-    if (coly == 1 || coly == 2)
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
-        if (coly == 3) // I will update so here will move slow
-        {
-            printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX /getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
-            setPlayerPosition(player, getPlayerX(player), newY);
-        }
-        else
-        {
-            setPlayerPosition(player,getPlayerX(player), newY);
-        }
-    }
-}
+//     float newY = getPlayerY(player) + getPlayerVelocityY(player);
+//     int coly = Collision_Map(map,getPlayerX(player), newY);
+//     if (coly == 1 || coly == 2)
+//     {
+//         /// collision with tile type 1 or 2, stop player movement
+//     }
+//     else
+//     {
+//         if (coly == 3) // I will update so here will move slow
+//         {
+//             printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX /getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
+//             setPlayerPosition(player, getPlayerX(player), newY);
+//         }
+//         else
+//         {
+//             setPlayerPosition(player,getPlayerX(player), newY);
+//         }
+//     }
+// }
 
 void game_cleanup(Game *game, Renderer *renderer,InputState input)
 {
     Destroy_Input(input);
-    Map_destroy(game->map);
+    Map_destroy(&game->map);
     Renderer_Destroy(renderer);
 }
 
 
-void game_init(Game *game, Renderer *renderer)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-    game->map = Map_create(WIDTH, HEIGHT);
-    game->state = GAME_STATE_PLAYING;
-    game->numPlayers = 2;
+    Packet packet;
+
+    int readyMap = 0;
+    int timeout = 0;
+
+    while (!readyMap && timeout < 600)
+    {
+        int result = ClientNet_TryReceive(clientNet, &packet);
+
+        if (result == 1)
+        {
+            printf("packet received: %d\n", packet.type);
+
+            switch (packet.type)
+            {
+                case PACKET_MAP_INIT:
+                {
+                    printf("[CLIENT] MAP received\n");
+
+                    game->map = packet.data.map;
+                   
+
     
-    
+                    readyMap = 1;
+                    break;
+                }
+            }
+        }
 
-    game->players[0] = initPlayer(230, 300,0);
-    game->players[1] = initPlayer(270, 300,1);
+        SDL_Delay(16);
+        timeout++;
+    }
 
+    if (!readyMap)
+    {
+        printf("[CLIENT] Failed to receive map (timeout)\n");
+        return;
+    }
 
-    game->bomb = createBomb(game->players);
-      
-      
-    Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+    printf("CLIENT MAP WIDTH = %d\n", getWidth(&game->map));
+    printf("PACKET SIZE = %zu\n", sizeof(Packet));
+    printf("[CLIENT] INIT COMPLETE\n");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     // game->map = Map_create(WIDTH, HEIGHT);
+//     game->state = GAME_STATE_PLAYING;
+//     game->numPlayers = 2;
+    
+    
+
+//     game->players[0] = initPlayer(230, 300,0);
+//     game->players[1] = initPlayer(270, 300,1);
+
+
+//     game->bomb = createBomb(game->players);
+      
+      
+//     Renderer_Init(renderer, "Hello, World!",WIDTH, HEIGHT); // will be update to be as ADT
+// }

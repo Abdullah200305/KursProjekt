@@ -13,7 +13,7 @@ struct ClientNet_type{
 
 
 
-ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
+ClientNet ClientNet_Init(const char *serverIP, int port)
 {
     ClientNet client = malloc(sizeof(struct ClientNet_type));
     if (client == NULL) {
@@ -25,6 +25,7 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
+   
 
     if (SDLNet_Init() < 0) {
         printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
@@ -100,44 +101,92 @@ int ClientNet_SendJoinRequest(ClientNet client)
     return 0;
 }
 
-int ClientNet_TryReceive(ClientNet client)
-{
-    int packetType;
+// int ClientNet_TryReceive(ClientNet client)
+// {
+//     Packet packet;
 
+//     if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
+//         return -1;
+//     }
+   
+//     if (SDLNet_UDP_Recv(client->socket, client->recvPacket) == -1) {
+      
+//         return 0;
+//     }
+
+//     // if (client->recvPacket->len < (int)sizeof(int)) {
+//     //     printf("[CLIENT] Received packet too small\n");
+//     //     return 1;
+//     // }
+
+//     memcpy(&packet, client->recvPacket->data, sizeof(Packet));
+//     if (packet.type == PACKET_JOIN_ACCEPT) {
+//         printf("%d cc",&packet.playerId);
+//         // if (client->recvPacket->len < (int)sizeof(Packet)) {
+//         //     printf("[CLIENT] JOIN_ACCEPT packet too small\n");
+//         //     return 1;
+//         // }
+//         client->clientId = packet.playerId;
+//         printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
+//         return 0;
+//     }
+
+//     // printf("[CLIENT] Received unknown packet type: %d\n", packet.type);
+//     // return 1;
+// }
+
+
+// int ClientNet_TryReceive(ClientNet client)
+// {
+//     Packet packet;
+//     if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
+//         return -1;
+//     }
+//     int result = SDLNet_UDP_Recv(client->socket, client->recvPacket);
+//     if (result <= 0) {
+//         return 0;
+//     }
+//     if (client->recvPacket->len < sizeof(Packet)) {
+//         printf("[CLIENT] Packet too small\n");
+//         return 0;
+//     }
+
+//     memcpy(&packet, client->recvPacket->data, sizeof(Packet));
+
+//     if (packet.type == PACKET_JOIN_ACCEPT) {
+//         client->clientId = packet.playerId;
+//         printf("[CLIENT] JOIN_ACCEPT received, clientId = %d /// willcome %d\n", client->clientId,packet.data.joinAccept);
+//         return 1;
+//     }
+
+//     return 0;
+// }
+
+int ClientNet_TryReceive(ClientNet client, Packet *packet)
+{
     if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
         return -1;
     }
 
-    if (SDLNet_UDP_Recv(client->socket, client->recvPacket) == 0) {
+    int result = SDLNet_UDP_Recv(client->socket, client->recvPacket);
+    if (result <= 0) {
         return 0;
     }
 
-    if (client->recvPacket->len < (int)sizeof(int)) {
-        printf("[CLIENT] Received packet too small\n");
-        return 1;
+    if (client->recvPacket->len < sizeof(Packet)) {
+        printf("[CLIENT] Packet too small\n");
+        return 0;
     }
 
-    memcpy(&packetType, client->recvPacket->data, sizeof(int));
+    memcpy(packet, client->recvPacket->data, sizeof(Packet));
 
-    if (packetType == PACKET_JOIN_ACCEPT) {
-        Packet packet;
-
-        if (client->recvPacket->len < (int)sizeof(Packet)) {
-            printf("[CLIENT] JOIN_ACCEPT packet too small\n");
-            return 1;
-        }
-
-        memcpy(&packet, client->recvPacket->data, sizeof(Packet));
-        
-        client->clientId = packet.playerId;
-
-        printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
-        return 1;
-    }
-
-    printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
 }
+
+
+
+
+
 
 
 void ClientNet_Destroy(ClientNet client)

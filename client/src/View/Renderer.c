@@ -79,7 +79,7 @@ void Background_Image_Render(Renderer* r) {
 // Render the map based on the map buffer to make collision
 void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
-        for (int x = 0; x < TIlE_COUNT_X; x++) {
+        for (int x = 0; x < TILE_COUNT_X; x++) {
               int tileType = getMapBufferItems(map,x,y);
 
             float scaleX, scaleY;

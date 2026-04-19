@@ -17,6 +17,7 @@ int getGameStart(Server server);
 int getClientCount(Server server);
 
 
+void Server_sendInitState(Server server);
 
 void setGameStart(Server server,int gameStart);
 
