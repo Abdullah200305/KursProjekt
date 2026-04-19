@@ -9,7 +9,7 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
     SDL_Texture* backgroundTexture;
-    SDL_Texture* playerTexture;
+    SDL_Texture *playerTexture[4];
     SDL_Texture *abilityTextures[6];
 } Renderer;
 
@@ -25,7 +25,7 @@ void Render_Map(Renderer* r, Map map);
 
 
 // Rendering the player
-void Render_Player(Renderer* r, Player player);
+void Render_Player(Renderer* r, Player player, int playerIndex);
 
 //Rendering the lives
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);

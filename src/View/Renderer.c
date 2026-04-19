@@ -27,13 +27,21 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
-    r->playerTexture = IMG_LoadTexture(r->sdlRenderer, "link/Player.png");
-    if (!r->playerTexture) {
-        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+    
+    //SPELARE
+    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player.png");
+    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player2.png");
+    //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3.png");
+    //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4.png");
+    for(int i = 0; i < 2; i++){
+        if (!r->playerTexture[i]) {
+        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
         Renderer_Destroy(r);
         return -1;
+        }
     }
 
+    //ABILITIES
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/Ability_SPEED.png");
     r->abilityTextures[2] = NULL;
@@ -66,7 +74,14 @@ void Renderer_Destroy(Renderer* r) {
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
-    SDL_DestroyTexture(r->playerTexture);
+    
+    for (int i = 0; i < 2; i++) 
+    {
+        if (r->playerTexture[i])
+        {
+            SDL_DestroyTexture(r->playerTexture[i]);
+        }
+    }
 
     for (int i = 0; i < 6; i++) 
     {
@@ -138,8 +153,8 @@ void Render_Map(Renderer* r, Map map) {
 
 
 //******************  Player stuff  *******************//
-void Render_Player(Renderer* r, Player player) {
-    SDL_Texture *img = r->playerTexture;
+void Render_Player(Renderer* r, Player player, int playerIndex) {
+    SDL_Texture *img = r->playerTexture[playerIndex];
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
