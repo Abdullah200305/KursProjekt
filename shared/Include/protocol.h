@@ -2,7 +2,7 @@
 #define PROTOCOL_H
 
 #include <stdint.h>
-#include "Game_state.h"
+
 #include "Input.h"
 typedef enum
 {
@@ -45,6 +45,20 @@ typedef struct
 }DataMap;
 
 
+typedef struct
+{
+    float x;
+    float y;
+    float vx;   
+    float vy;   
+    float width;
+    float height;
+    int lives;  
+    int alive;  
+    int id;
+}DataPlayer;
+
+
 
 
 
@@ -56,9 +70,9 @@ typedef struct {
     union {
         JoinAccept joinAccept;
         JoinRequest joinRequest;
-        Player player;
+        DataPlayer player[4];
         DataMap map;
-        Bomb bomb;
+        //Bomb bomb;
         InputState input;
     } data;
 } Packet;
