@@ -33,11 +33,11 @@ void handle_Connect(Server server);
 
 
 void Server_sendInitState(Server server);
-void Map_CopyTo(MapPacket *dst,Map src);
 
 
 
-void handle_input(Server server);
+
+//void handle_input(Server server);
 
 
 void Destroy_Server(Server server);
