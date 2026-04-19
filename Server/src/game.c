@@ -8,6 +8,7 @@ void run(Server server)
      
         while (Server_Receive(server))
         {
+            
             Server_handlePackets(server);
         }
 
@@ -16,13 +17,6 @@ void run(Server server)
         {
             printf("Initializing game...\n");
             
-
-
-
-
-
-
-
            
             setGameStart(server,1);
 

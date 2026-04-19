@@ -11,7 +11,7 @@ struct  Player_type{
     int alive;  //alive = 1 => alive or alive = 0 => dead
 };
 
-Player initPlayer(float x, float y)
+Player initPlayer(float x, float y,int id)
 {
     Player p = malloc(sizeof(struct Player_type));
     p->x = x;

@@ -28,6 +28,15 @@ void Server_Send(Server server,IPaddress clientIp, void *data, int size);
 void Server_handlePackets(Server server);
 Client Client_net_init(IPaddress ip, int id,int active);
 void handle_Connect(Server server);
+
+
+
+
+void Server_sendInitState(Server server);
+void Map_CopyTo(MapPacket *dst,Map src);
+
+
+
 void handle_input(Server server);
 
 

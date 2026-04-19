@@ -304,21 +304,107 @@ void game_cleanup(Game *game, Renderer *renderer,InputState input)
     Renderer_Destroy(renderer);
 }
 
-
-void game_init(Game *game, Renderer *renderer)
+void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-    game->map = Map_create(WIDTH, HEIGHT);
-    game->state = GAME_STATE_PLAYING;
-    game->numPlayers = 2;
-    
-    
+    Packet packet;
 
-    game->players[0] = initPlayer(230, 300);
-    game->players[1] = initPlayer(270, 300);
+    int initDone = 0;
+    int mapDone = 0;
 
+    // while (!initDone || !mapDone)
+    // {
+    //     int result = ClientNet_TryReceive(clientNet, &packet);
+    //     switch (packet.type)
+    //     {
+    //         case PACKET_JOIN_ACCEPT:
+    //             printf("INIT received\n");
+    //             game->state = GAME_STATE_PLAYING;
+    //             initDone = 1;
+    //             break;
 
-    game->bomb = createBomb(game->players);
-      
-      
-    Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+    //         case PACKET_MAP_INIT:
+    //             printf("MAP received\n");
+    //             //Map_FromPacket(&game->map, &packet.data.map);
+    //             game->state = GAME_STATE_PLAYING;
+    //             mapDone = 1;
+    //             break;
+
+    //         default:
+    //             printf("Unknown packet: %d\n", packet.type);
+    //             break;
+    //     }
+    //     SDL_Delay(16);
+    // }
+
+    printf("INIT COMPLETE (READY TO START GAME)\n");
 }
+
+
+// void Map_FromPacket(Map dst, const MapPacket *src)
+// {
+//     dst
+//     dst->width = src->width;
+//     dst->height = src->height;
+//     dst->tileSize = src->tileSize;
+
+//     int size = src->width * src->height;
+
+//     int index = 0;
+
+// for (int y = 0; y < dst->height; y++)
+// {
+//     for (int x = 0; x < dst->width; x++)
+//     {
+//         dst->tiles[y][x] = src->mapBuffer[index++];
+//     }
+// }
+// }
+
+
+        // int receiveResult = ClientNet_TryReceive(clientNet);
+
+        // if (receiveResult == 0) {
+        //     printf("[CLIENT] No server response yet\n");
+        // } else if (receiveResult < 0) {
+        //     printf("[CLIENT] Receive check failed\n");
+        // }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // game->map = Map_create(WIDTH, HEIGHT);
+    // game->state = GAME_STATE_PLAYING;
+    // game->numPlayers = 2;
+    
+    
+
+    // game->players[0] = initPlayer(230, 300);
+    // game->players[1] = initPlayer(270, 300);
+
+
+    // game->bomb = createBomb(game->players);
+      
+      
+    // Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+//}
