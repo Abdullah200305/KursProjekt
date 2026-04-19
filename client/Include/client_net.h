@@ -10,9 +10,9 @@
 typedef struct ClientNet_type *ClientNet;
 
 
-ClientNet ClientNet_Init(const char *serverIP, int port);
+ClientNet ClientNet_Init(const char *serverIP, Uint16 port);
 int ClientNet_SendJoinRequest(ClientNet client);
-int ClientNet_TryReceive(ClientNet client,Packet *packet);
+int ClientNet_TryReceive(ClientNet client);
 void ClientNet_Destroy(ClientNet client);
 
 

@@ -10,32 +10,36 @@ int main(int argc, char *argv[])
     Renderer renderer;
     InputState input = Input_Init();
 
-    ClientNet clientNet = ClientNet_Init("127.0.0.1", 2000);
-    int clientNetReady = (clientNet != NULL);
+    ClientNet clientNet= ClientNet_Init("127.0.0.1", 2000);
+    int clientNetReady = 0;
 
-    if (!clientNetReady) {
+    printf("Starting game...\n");
+    game_init(&game, &renderer);
+
+    if (clientNet == 0) {
+        printf("[CLIENT] UDP init OK\n");
+        clientNetReady = 1;
+    } else {
         printf("[CLIENT] UDP init FAILED\n");
-        return -1;
     }
 
-    printf("[CLIENT] UDP init OK\n");
-
-    if (ClientNet_SendJoinRequest(clientNet) == 0) {
-        printf("[CLIENT] JOIN_REQUEST sent\n");
+    if (clientNetReady) {
+        if (ClientNet_SendJoinRequest(clientNet) == 0) {
+            printf("[CLIENT] JOIN_REQUEST sent\n");
+        } else {
+            printf("[CLIENT] JOIN_REQUEST failed\n");
+        }
     }
 
-    // 🔥 IMPORTANT: wait for INIT here
-    game_init(&game, &renderer, clientNet);
+    if (clientNetReady) {
+        int receiveResult = ClientNet_TryReceive(clientNet);
 
-
-
-
-
-
-
-
-
-    
+        if (receiveResult == 0) {
+            printf("[CLIENT] No server response yet\n");
+        } else if (receiveResult < 0) {
+            printf("[CLIENT] Receive check failed\n");
+        }
+    }
 
     AbilitySystem *system = AbilitySystem_create();
     AbilitySystem_init(system);

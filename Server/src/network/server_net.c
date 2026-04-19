@@ -4,7 +4,6 @@
 struct Client_type
 {
     IPaddress address;
-    Player player;
     int id;
     int active;
 };
@@ -102,7 +101,17 @@ void setGameStart(Server server,int gameStart){
 
 
 
-// server will get only join request and input from player and also PACKET_DISCONNECT
+
+int Server_Receive(Server server) {
+    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+        if (server->recvPacket->len >= sizeof(Packet)) {
+            memcpy(&server->packet, server->recvPacket->data, sizeof(Packet));
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void Server_handlePackets(Server server){
      switch (getPacket(server).type)
     {
@@ -110,7 +119,7 @@ void Server_handlePackets(Server server){
         //     handle_input(server);
         //     break;
 
-        case PACKET_JOIN_REQUEST:  
+        case PACKET_CONNECT:
             handle_Connect(server);
             break;
 
@@ -122,7 +131,7 @@ void Server_handlePackets(Server server){
 
 
 
-// init id and ip and send back as ack
+
 void handle_Connect(Server server)
 {
     if (server->clientCount >= MAX_CLIENTS)return;
@@ -139,107 +148,28 @@ void handle_Connect(Server server)
     server->clients[id] = Client_net_init(addr, id, 1);
     server->clientCount++;
     printf("clinet joinded %d\n",id);
-    
-  
 
-    // this will send ack back to client accept his joining in the server
-    Packet response = {
-            .type = PACKET_JOIN_ACCEPT
-            ,.playerId=id
-            ,.data.joinAccept.assignedId= id
-        };
 
+
+
+    Packet response = {PACKET_JOIN_ACCEPT,id}; 
     printf("Join accept send to you\n");
     Server_Send(server, addr,(void*) &response, sizeof(Packet));
 }
 
-
-
-
-void Server_sendInitState(Server server)
-{
-    Packet packet;
-    memset(&packet, 0, sizeof(Packet));
-
-    packet.type = PACKET_MAP_INIT;
-    packet.playerId = -1;
-
-    Map *map = Map_create(WIDTH, HEIGHT);
-    if (!map) return;
-
-    // direct copy struct into packet
-    memcpy(&packet.data.map, map, sizeof(struct Map_type));
-
-    printf("Server MAP WIDTH = %d\n", getWidth(map));
-    printf("PACKET SIZE = %zu\n", sizeof(Packet));
-
-    for (int i = 0; i < server->clientCount; i++)
-    {
-        Server_Send(server,
-                    server->clients[i]->address,
-                    &packet,
-                    sizeof(Packet));
-    }
-
-    Map_destroy(map);
-
-    printf("Init map sent!\n");
+void Server_Send(Server server,IPaddress clientIp, void *data, int size){
+    memcpy(server->sendPacket->data, data, size);
+    server->sendPacket->len = size;
+    server->sendPacket->address = clientIp;
+    SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
 }
 
 
 
-// void Server_sendInitState(Server server)
-// {
-//     Packet packet;
-//     memset(&packet, 0, sizeof(Packet));
-
-//     packet.type = PACKET_MAP_INIT;
-//     packet.playerId = -1;
-
-//     Map map = Map_create(WIDTH, HEIGHT);
-
-//     packet.data.mapNet = ;
-
-//     printf("Server MAP WIDTH = %d\n", getWidth(map));
-//     printf("PACKET SIZE = %zu\n", sizeof(Packet));
-
-//     for (int i = 0; i < server->clientCount; i++)
-//     {
-//         Server_Send(server,
-//                     server->clients[i]->address,
-//                     &packet,
-//                     sizeof(Packet));
-//     }
-
-//    // player 
-//     // for (int p = 0; p < server->clientCount; p++)
-//     // {
-//     //     memset(&packet, 0, sizeof(Packet));
-
-//     //     packet.type = PACKET_PLAYER_INIT; // or PACKET_PLAYER_INIT
-//     //     packet.playerId = p;
-
-//     //     packet.data.player = initPlayer(230, 300, p);
-
-//     //     for (int i = 0; i < server->clientCount; i++) {
-//     //         Server_Send(server,server->clients[i]->address,(void*) &packet,sizeof(Packet));
-//     //     }
-//     // }
-//     // memset(&packet, 0, sizeof(Packet));
 
 
-// // bomb   some issue in bomb
-// //    memset(&packet, 0, sizeof(Packet));
 
-// //    packet.playerId = -1;
-// //    packet.type = PACKET_BOMB_INIT;
-   
-// //    packet.data.bomb = createBomb();
-   
-// //    for (int i = 0; i < server->clientCount; i++) {
-// //         Server_Send(server,server->clients[i]->address,(void*) &packet,sizeof(Packet));
-// //    }
-//     printf("Init map and players sent!\n");
+// void  handle_input(Server server){
 // }
 
 
@@ -252,23 +182,7 @@ void Server_sendInitState(Server server)
 
 
 
-int Server_Receive(Server server) {
-    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
-        if (server->recvPacket->len >= sizeof(Packet)) {
-            memcpy(&server->packet, server->recvPacket->data, sizeof(Packet));
-            return 1;
-        }
-    }
-    return 0;
-}
 
-
-void Server_Send(Server server,IPaddress clientIp, void *data, int size){
-    memcpy(server->sendPacket->data, data, size);
-    server->sendPacket->len = size;
-    server->sendPacket->address = clientIp;
-    SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
-}
 
 
 
@@ -288,17 +202,6 @@ void Destroy_Server(Server server){
 }
 
 
-
-
-
-
-
-
-
-
-
-// void  handle_input(Server server){
-// }
 
 
 // // Implement a basic Server_Send function
