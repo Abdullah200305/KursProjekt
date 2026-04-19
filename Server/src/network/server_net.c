@@ -17,15 +17,15 @@ struct Server_type
   int running; 
   int gameStarted; 
   UDPsocket socket;
-  
-
   UDPpacket *sendPacket;
   UDPpacket *recvPacket;
-  
-  Packet packet; // will tell use which kinde of packet
-  
-  Client clients[MAX_CLIENTS]; // 
+  Packet packet; 
+  Client clients[MAX_CLIENTS]; 
 
+
+
+
+  
   PlayerManager playerManager;
   
   int clientCount;
@@ -92,9 +92,6 @@ int getGameStart(Server server){
 int getClientCount(Server server){
     return server->clientCount;
 }
-
-
-
 void setGameStart(Server server,int gameStart){
     server->gameStarted = gameStart;
 }
@@ -121,7 +118,7 @@ void Server_handlePackets(Server server){
 }
 
 
-
+//👍
 // init id and ip and send back as ack
 void handle_Connect(Server server)
 {
@@ -158,21 +155,11 @@ void handle_Connect(Server server)
 
 void Server_sendInitState(Server server)
 {
-    Packet packet;
-    memset(&packet, 0, sizeof(Packet));
-
-    packet.type = PACKET_MAP_INIT;
-    packet.playerId = -1;
-
-    Map *map = Map_create(WIDTH, HEIGHT);
-    if (!map) return;
-
-    // direct copy struct into packet
-    memcpy(&packet.data.map, map, sizeof(struct Map_type));
-
-    printf("Server MAP WIDTH = %d\n", getWidth(map));
-    printf("PACKET SIZE = %zu\n", sizeof(Packet));
-
+    Packet packet = {
+            .type = PACKET_MAP_INIT
+            ,.playerId=-1
+            ,.data.map={.width=1280,.height=720}
+        };
     for (int i = 0; i < server->clientCount; i++)
     {
         Server_Send(server,
@@ -181,8 +168,8 @@ void Server_sendInitState(Server server)
                     sizeof(Packet));
     }
 
-    Map_destroy(map);
 
+    memset(&packet, 0, sizeof(Packet));
     printf("Init map sent!\n");
 }
 
@@ -294,31 +281,3 @@ void Destroy_Server(Server server){
 
 
 
-
-
-
-// void  handle_input(Server server){
-// }
-
-
-// // Implement a basic Server_Send function
-// void Server_Send(Server server, IPaddress addr, void *data, int size) {
-//     if (size > server->sendPacket->maxlen) return; // Safety check
-//     memcpy(server->sendPacket->data, data, size);
-//     server->sendPacket->len = size;
-//     server->sendPacket->address = addr;
-//     SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
-// }
-
-
-
-
-
-// // In handle_Disconnect (assuming it's implemented), mark inactive and optionally free
-// void handle_Disconnect(Server server, Packet packet) {
-//     int id = packet.id; // Assuming Packet has an id field
-//     if (id >= 0 && id < server->clientCount && server->clients[id]) {
-//         server->clients[id]->active = 0;
-//         // Optionally: free(server->clients[id]); server->clients[id] = NULL;
-//     }
-// }

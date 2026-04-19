@@ -1,69 +1,69 @@
-// #include "Map.h"
+#include "Map.h"
 
 
-// struct Map_type{
-//     int running;
-//     int width;
-//     int height;
-//     int tileSize;
-//     int mapBuffer[TILE_COUNT_Y][TIlE_COUNT_X];
-// };
+struct Map_type{
+    int running;
+    int width;
+    int height;
+    int tileSize;
+    int mapBuffer[TILE_COUNT_Y][TILE_COUNT_X];
+};
 
 
 
-// int getTileSize(Map map){
-//     return map->tileSize;
-// }
-// int getHeight(Map map){
-// return map->height;
-// }
-// int getWidth(Map map){
-//     return map->width;
-// }
-// int getMapBufferItems(Map map,int x,int y){
-//     return map->mapBuffer[y][x];
-// }
+int getTileSize(Map map){
+    return map->tileSize;
+}
+int getHeight(Map map){
+return map->height;
+}
+int getWidth(Map map){
+    return map->width;
+}
+int getMapBufferItems(Map map,int x,int y){
+    return map->mapBuffer[y][x];
+}
 
-// Map Map_create(int width, int height)
-// {
-//     Map map = malloc(sizeof(struct Map_type));
-//     FILE *ReadMap;
-//     map->running = 1;
-//     map->width = width;
-//     map->height = height;
+Map Map_create(int width, int height)
+{
+    Map map = malloc(sizeof(struct Map_type));
+    FILE *ReadMap;
+    map->running = 1;
+    map->width = width;
+    map->height = height;
      
-//     map->tileSize = 16;
-//     ReadMap = fopen("link/Test.txt", "r");
-//     if (ReadMap)
-//     {
-//         int item;
-//         for (int y = 0; y < TILE_COUNT_Y; y++)
-//         {
-//             for (int x = 0; x < TIlE_COUNT_X; x++)
-//             {
-//                 if (fscanf(ReadMap, "%d%*c", &item) == 1)
-//                 {
-//                     map->mapBuffer[y][x] = item;
-//                 }
-//             }
-//         }
-//         fclose(ReadMap);
-//     }
-//     else
-//     {
-//         fprintf(stderr, "Failed to open map file.\n");
-//         free(map);
-//         return NULL;
-//     }
+    map->tileSize = 16;
+    ReadMap = fopen("link/Test.txt", "r");
+    if (ReadMap)
+    {
+        int item;
+        for (int y = 0; y < TILE_COUNT_Y; y++)
+        {
+            for (int x = 0; x < TILE_COUNT_X; x++)
+            {
+                if (fscanf(ReadMap, "%d%*c", &item) == 1)
+                {
+                    map->mapBuffer[y][x] = item;
+                }
+            }
+        }
+        fclose(ReadMap);
+    }
+    else
+    {
+        fprintf(stderr, "Failed to open map file.\n");
+        free(map);
+        return NULL;
+    }
 
-//     return map;
-// }
+    return map;
+}
 
 
-// void Map_destroy(Map map)
-// {
-//     free(map);
-// }
+void Map_destroy(Map map)
+{
+    free(map);
+}
 
 // int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2) {
 //     // Simple AABB 

@@ -38,6 +38,11 @@ typedef struct {
     } JoinAccept;
 
 
+typedef struct 
+{
+    int height;
+    int width;
+}DataMap;
 
 
 
@@ -52,7 +57,7 @@ typedef struct {
         JoinAccept joinAccept;
         JoinRequest joinRequest;
         Player player;
-        Map *map;
+        DataMap map;
         Bomb bomb;
         InputState input;
     } data;

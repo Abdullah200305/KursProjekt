@@ -26,9 +26,9 @@ int getMapBufferItems(Map map, int x, int y) {
     return map->mapBuffer[y][x];
 }
 
-Map *Map_create(int width, int height)
+Map Map_create(int width, int height)
 {
-    Map *map = malloc(sizeof(struct Map_type));
+    Map map = malloc(sizeof(struct Map_type));
     if (!map) return NULL;
 
     map->running = 1;
@@ -51,12 +51,11 @@ Map *Map_create(int width, int height)
             }
         }
     }
-
     fclose(ReadMap);
     return map;
 }
 
-void Map_destroy(Map *map)
+void Map_destroy(Map map)
 {
     free(map);
 }

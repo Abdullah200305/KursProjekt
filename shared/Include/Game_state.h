@@ -13,9 +13,8 @@ typedef enum {
 
 typedef struct {
     GameState state;
-    Map *map;
+    Map map;
     Player players[Max_Players];
-    
     int numPlayers;
     Bomb bomb;
 } Game;

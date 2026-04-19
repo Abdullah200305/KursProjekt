@@ -52,18 +52,18 @@
 #define TILE_COUNT_X (WIDTH / TILE_SIZE)
 #define TILE_COUNT_Y (HEIGHT / TILE_SIZE)
 
-typedef struct Map_type Map;
+typedef struct Map_type *Map;
 
 
 
 // getters
-int getTileSize(Map *map);
-int getHeight(Map *map);
-int getWidth(Map *map);
-int getMapBufferItems(Map *map, int x, int y);
+int getTileSize(Map map);
+int getHeight(Map map);
+int getWidth(Map map);
+int getMapBufferItems(Map map, int x, int y);
 
 // lifecycle
-Map *Map_create(int width, int height);
-void Map_destroy(Map *map);
+Map Map_create(int width, int height);
+void Map_destroy(Map map);
 
 #endif

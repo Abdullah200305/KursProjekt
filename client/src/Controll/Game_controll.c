@@ -1,7 +1,7 @@
 #include "Game_controll.h"
 #include "bombRelated.h"
 
-/// This function will handle the main game loop, including event handling, updating game state, and rendering
+// /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer,InputState input)
 {
     SDL_Event event;
@@ -27,19 +27,19 @@ void game_loop(Game *game, Renderer *renderer,InputState input)
 
 
     
-//}
-//     if (clientNetReady) {
-//         int receiveResult = ClientNet_TryReceive(clientNet);
-//         if (receiveResult == 1) {
-//     printf("[CLIENT] Got server response!\n");
+// //}
+// //     if (clientNetReady) {
+// //         int receiveResult = ClientNet_TryReceive(clientNet);
+// //         if (receiveResult == 1) {
+// //     printf("[CLIENT] Got server response!\n");
    
-// }
-        // if (receiveResult == 0) {
-        //     printf("[CLIENT] No server response yet\n");
-        // } else if (receiveResult < 0) {
-        //     printf("[CLIENT] Receive check failed\n");
-        // }
-   // }
+// // }
+//         // if (receiveResult == 0) {
+//         //     printf("[CLIENT] No server response yet\n");
+//         // } else if (receiveResult < 0) {
+//         //     printf("[CLIENT] Receive check failed\n");
+//         // }
+//    // }
 
 
 
@@ -71,31 +71,31 @@ void game_loop(Game *game, Renderer *renderer,InputState input)
 }
         }
 
-    //     const Uint8 *state = SDL_GetKeyboardState(NULL);
+//     //     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    //     // you can move both payers at the same time, but you can only move one player at a time.
-    //     //this for the test.
-    //    // PLAYER 1
-    //     stopPlayer(game->players[0]);
-    //     if (state[SDL_SCANCODE_W])
-    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
-    //     if (state[SDL_SCANCODE_S])
-    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
-    //     if (state[SDL_SCANCODE_A])
-    //         setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
-    //     if (state[SDL_SCANCODE_D])
-    //         setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
+//     //     // you can move both payers at the same time, but you can only move one player at a time.
+//     //     //this for the test.
+//     //    // PLAYER 1
+//     //     stopPlayer(game->players[0]);
+//     //     if (state[SDL_SCANCODE_W])
+//     //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
+//     //     if (state[SDL_SCANCODE_S])
+//     //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
+//     //     if (state[SDL_SCANCODE_A])
+//     //         setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
+//     //     if (state[SDL_SCANCODE_D])
+//     //         setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
 
-    //     // PLAYER 2
-    //     stopPlayer(game->players[1]);
-    //     if (state[SDL_SCANCODE_UP])
-    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
-    //     if (state[SDL_SCANCODE_DOWN])
-    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
-    //     if (state[SDL_SCANCODE_LEFT])
-    //         setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
-    //     if (state[SDL_SCANCODE_RIGHT])
-    //         setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
+//     //     // PLAYER 2
+//     //     stopPlayer(game->players[1]);
+//     //     if (state[SDL_SCANCODE_UP])
+//     //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
+//     //     if (state[SDL_SCANCODE_DOWN])
+//     //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
+//     //     if (state[SDL_SCANCODE_LEFT])
+//     //         setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
+//     //     if (state[SDL_SCANCODE_RIGHT])
+//     //         setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
 
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
@@ -175,7 +175,7 @@ void game_update(Game *game, Renderer *renderer)
 
     // Render the game state
     Background_Image_Render(renderer);
-    Render_Map(renderer, game->map);
+    //Render_Map(renderer, game->map);
    
     // for (int i = 0; i < game->numPlayers; i++)
     // {
@@ -344,19 +344,9 @@ void game_update(Game *game, Renderer *renderer)
 void game_cleanup(Game *game, Renderer *renderer,InputState input)
 {
     Destroy_Input(input);
-    Map_destroy(&game->map);
+    Map_destroy(game->map);
     Renderer_Destroy(renderer);
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -366,7 +356,6 @@ void game_cleanup(Game *game, Renderer *renderer,InputState input)
 void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 {
     Packet packet;
-
     int readyMap = 0;
     int timeout = 0;
 
@@ -383,14 +372,20 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
                 case PACKET_MAP_INIT:
                 {
                     printf("[CLIENT] MAP received\n");
-
-                    game->map = packet.data.map;
-                   
-
-    
+                    game->map = Map_create(packet.data.map.width, packet.data.map.height);
+                    game->state = GAME_STATE_PLAYING;
+                    game->numPlayers = 2;
                     readyMap = 1;
                     break;
                 }
+
+
+
+
+                case PACKET_PLAYER_INIT:
+                
+
+                break;
             }
         }
 
@@ -403,8 +398,17 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
         printf("[CLIENT] Failed to receive map (timeout)\n");
         return;
     }
+    
 
-    printf("CLIENT MAP WIDTH = %d\n", getWidth(&game->map));
+    
+
+    
+    
+    
+
+  
+    Renderer_Init(renderer, "Hello, World!",WIDTH, HEIGHT); 
+    printf("CLIENT MAP WIDTH = %d\n", packet.data.map.width);
     printf("PACKET SIZE = %zu\n", sizeof(Packet));
     printf("[CLIENT] INIT COMPLETE\n");
 }
@@ -422,19 +426,3 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 
 
 
-
-//     // game->map = Map_create(WIDTH, HEIGHT);
-//     game->state = GAME_STATE_PLAYING;
-//     game->numPlayers = 2;
-    
-    
-
-//     game->players[0] = initPlayer(230, 300,0);
-//     game->players[1] = initPlayer(270, 300,1);
-
-
-//     game->bomb = createBomb(game->players);
-      
-      
-//     Renderer_Init(renderer, "Hello, World!",WIDTH, HEIGHT); // will be update to be as ADT
-// }

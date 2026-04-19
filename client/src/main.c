@@ -9,7 +9,6 @@ int main(int argc, char *argv[])
     Game game;
     Renderer renderer;
     InputState input = Input_Init();
-
     ClientNet clientNet = ClientNet_Init("127.0.0.1", 2000);
     int clientNetReady = (clientNet != NULL);
 
@@ -24,7 +23,7 @@ int main(int argc, char *argv[])
         printf("[CLIENT] JOIN_REQUEST sent\n");
     }
 
-    // 🔥 IMPORTANT: wait for INIT here
+   
     game_init(&game, &renderer, clientNet);
 
 
@@ -37,18 +36,18 @@ int main(int argc, char *argv[])
 
     
 
-    AbilitySystem *system = AbilitySystem_create();
-    AbilitySystem_init(system);
-    AbilitySystem_spawn(system, 800, 600);
+    // AbilitySystem *system = AbilitySystem_create();
+    // AbilitySystem_init(system);
+    // AbilitySystem_spawn(system, 800, 600);
 
     printf("Entering game loop...\n");
     game_loop(&game, &renderer,input);
 
-    AbilitySystem_destroy(system);
+    // AbilitySystem_destroy(system);
 
-    if (clientNetReady) {
-        ClientNet_Destroy(clientNet);
-    }
+    // if (clientNetReady) {
+    //     ClientNet_Destroy(clientNet);
+    // }
 
     game_cleanup(&game, &renderer,input);
     return 0;
