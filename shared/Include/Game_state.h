@@ -15,7 +15,6 @@ typedef struct {
     GameState state;
     Map map;
     Player players[Max_Players];
-    
     int numPlayers;
     Bomb bomb;
 } Game;
