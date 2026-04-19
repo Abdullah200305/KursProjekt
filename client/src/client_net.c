@@ -162,18 +162,17 @@ int ClientNet_SendJoinRequest(ClientNet client)
 // }
 
 
-
-
-int ClientNet_TryReceive(ClientNet client,Packet *packet)
+int ClientNet_TryReceive(ClientNet client, Packet *packet)
 {
-    
     if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
         return -1;
     }
+
     int result = SDLNet_UDP_Recv(client->socket, client->recvPacket);
     if (result <= 0) {
         return 0;
     }
+
     if (client->recvPacket->len < sizeof(Packet)) {
         printf("[CLIENT] Packet too small\n");
         return 0;
@@ -181,15 +180,8 @@ int ClientNet_TryReceive(ClientNet client,Packet *packet)
 
     memcpy(packet, client->recvPacket->data, sizeof(Packet));
 
-    if (packet->type == PACKET_JOIN_ACCEPT) {
-        client->clientId = packet->playerId;
-        printf("[CLIENT] JOIN_ACCEPT received, clientId = %d /// willcome %d\n", client->clientId,packet->data.joinAccept);
-        return 1;
-    }
-
-    return 0;
+    return 1;
 }
-
 
 
 
