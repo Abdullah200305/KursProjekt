@@ -13,11 +13,11 @@ void run(Server server)
         }
 
       
-        if (!getGameStart(server) && getClientCount(server) == 4)
+        if (!getGameStart(server) && getClientCount(server) == 1)
         {
             printf("Initializing game...\n");
             
-           
+             Server_sendInitState(server);
             setGameStart(server,1);
 
             printf("Game started!\n");
