@@ -10,8 +10,10 @@
 
 void game_init(Game* game,Renderer* renderer,ClientNet clientNet);
 void game_update(Game* game, Renderer* renderer);
-void game_loop(Game* game, Renderer* renderer,InputState event);
-void game_cleanup(Game *game, Renderer *renderer,InputState event);
+
+void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet);
+void game_cleanup(Game* game, Renderer* renderer);
+void game_apply_network_init(Game *game, ClientNet *clientNet);
 
 
 // input handling for player movement and actions
