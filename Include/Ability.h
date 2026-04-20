@@ -25,9 +25,10 @@ AbilitySystem* AbilitySystem_create();
 void AbilitySystem_destroy(AbilitySystem *system);
 
 void AbilitySystem_init(AbilitySystem *system);
-void AbilitySystem_spawn(AbilitySystem *system, Map map);
+void AbilitySystem_spawn(AbilitySystem *system, Map map, AbilityType type);
 void AbilitySystem_render(const AbilitySystem *system, Renderer *r);
 void AbilitySystem_checkPickup(AbilitySystem *system, Player player);
+void AbilitySystem_checkFreezePickup(AbilitySystem *system, Player picker, Player players[], int count);
 
 #endif
 
