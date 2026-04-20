@@ -25,12 +25,36 @@ typedef struct {
     int clientId;
 } DisconnectPacket;
 
+
 typedef struct {
+    int type;
+} HeaderPacket;
+
+
+// abid old version
+// typedef struct {
+//     float x;
+//     float y;
+//     int lives;
+//     int alive;
+// } PlayerInitData;
+
+
+// add by abody
+typedef struct
+{
     float x;
     float y;
-    int lives;
-    int alive;
-} PlayerInitData;
+    float vx;   
+    float vy;   
+    float width;
+    float height;
+    int lives;  
+    int alive;  
+    int id;
+}PlayerInitData;
+
+
 
 typedef struct {
     float x;
@@ -41,12 +65,20 @@ typedef struct {
     int timer;
 } BombInitData;
 
-typedef struct {
+// add by abody
+typedef struct 
+{
     int mapId;
+    int height;
+    int width;
+}MapInitData;
+
+typedef struct {
     int numPlayers;
     int yourClientId;
     PlayerInitData players[MAX_PLAYERS];
     BombInitData bomb;
+    MapInitData map;
 } GameInitData;
 
 typedef struct {

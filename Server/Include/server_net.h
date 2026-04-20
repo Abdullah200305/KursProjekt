@@ -2,7 +2,8 @@
 #define SERVER_NET
 #include <SDL2/SDL_net.h>
 #include "Game_state.h"
-#include "protocol.h"
+#include "network_protocol.h"
+
 #include "Player_manager.h"
 
 
@@ -20,7 +21,10 @@ Server server_net_init();
 int ServerConnection(Server server, int port);
 
 int getServerRunning(Server server);
-Packet getPacket(Server server);
+
+
+
+//Packet getPacket(Server server);
 int getGameStart(Server server);
 int getClientCount(Server server);
 
@@ -34,7 +38,8 @@ void setGameStart(Server server,int gameStart);
 
 Client getClient(Server server,int index);
 
-int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip);
+
+int ServerNet_Receive(Server server,void** packet,IPaddress *Ip);
 void Server_Send(Server server,IPaddress clientIp, void *data, int size);
 
 // old version

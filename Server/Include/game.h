@@ -10,5 +10,5 @@ void Game_Init(Server server,Game *game);
 void Game_InitSendToClients(Server server,Game *game);
 
 
-void Server_Broadcast(Server server,Packet *packet);
+void Server_Broadcast(Server server,void *packet,size_t packetSize);
 #endif //GAME_H

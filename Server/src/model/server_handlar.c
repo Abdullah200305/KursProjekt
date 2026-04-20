@@ -6,14 +6,15 @@
  
 
 void Server_handlePackets(Server server){
-    Packet packet;
+    void* packet;
     IPaddress ip; 
     while (ServerNet_Receive(server, &packet, &ip))
     {
-        switch (packet.type)
+        int type = ((HeaderPacket *)packet)->type;  // packet will have this to know which typ is it 
+        switch (type)
         {
             case PACKET_JOIN_REQUEST:
-                Handle_join(server, packet, ip);
+                Handle_join(server,(JoinRequestPacket *) packet, ip);
                 break;
 
             // case PACKET_INPUT:
@@ -23,6 +24,9 @@ void Server_handlePackets(Server server){
             // case PACKET_DISCONNECT:
             //     HandleDisconnect(server, ip);
             //     break;
+            default:
+                printf("Unknown packet type: %d\n", type);
+                break;
         }
     }
 
@@ -34,7 +38,7 @@ void Server_handlePackets(Server server){
 
 //👍
 // init id and ip and send back as ack
-void Handle_join(Server server,Packet packet,IPaddress ip)
+void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
 {
     for (int  i = 0; i < getClientCount(server); i++)
     {
@@ -52,8 +56,8 @@ void Handle_join(Server server,Packet packet,IPaddress ip)
 
     
     
-    Packet newPacket;
+    JoinAcceptPacket newPacket;
     Packet_BuildGameAccept(id,&newPacket);
-    Server_Send(server, ip,(void*) &newPacket, sizeof(Packet));
-    memset(&newPacket,0,sizeof(Packet));
+    Server_Send(server, ip,(void*) &newPacket, sizeof(JoinAcceptPacket));
+    memset(&newPacket,0,sizeof(JoinAcceptPacket));
 }

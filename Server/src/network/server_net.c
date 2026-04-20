@@ -7,7 +7,7 @@ struct Server_type
   UDPsocket socket;
   UDPpacket *sendPacket;
   UDPpacket *recvPacket;
-  Packet packet; 
+
   Client clients[MAX_CLIENTS]; 
  // will see if I will change it 
  // PlayerManager playerManager;
@@ -52,9 +52,14 @@ int ServerConnection(Server server, int port) {
 int getServerRunning(Server server){
     return server->running;
 }
-Packet getPacket(Server server){
- return server->packet;
-}
+
+
+
+// size_t getPacket(Server server){
+//  return server->packet;
+// }
+
+
 int getGameStart(Server server){
     return server->gameStarted;
 }
@@ -89,14 +94,37 @@ Client getClient(Server server,int index){
 
 
 
-int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip){
-    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
-        if (server->recvPacket->len >= sizeof(Packet)) {
-            memcpy(packet, server->recvPacket->data, sizeof(Packet));
-            *Ip = server->recvPacket->address;
-            return 1;
+int ServerNet_Receive(Server server,void** packet,IPaddress *Ip){
+
+   if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+        printf("done");
+        if (server->recvPacket->len < sizeof(HeaderPacket)) return 0;
+        int type = ((HeaderPacket *)server->recvPacket->data)->type;
+        size_t expectedSize;
+        switch (type) {
+            case PACKET_JOIN_REQUEST: expectedSize = sizeof(JoinRequestPacket); break;
+            //case PACKET_INPUT:        expectedSize = sizeof(InputPacket);        break;
+            case PACKET_DISCONNECT:   expectedSize = sizeof(DisconnectPacket);   break;
+            default: return 0;  
         }
+
+        if (server->recvPacket->len < expectedSize) return 0; 
+        
+         
+        *packet = server->recvPacket->data;
+        *Ip = server->recvPacket->address;
+        return 1;
     }
+
+
+    // uppdate after for securty 
+    // if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+    //     if (server->recvPacket->len >= sizeof(PackHe)) {
+    //         memcpy(packet, server->recvPacket->data, sizeof(Packet));
+    //         *Ip = server->recvPacket->address;
+    //         return 1;
+    //     }
+    // }
     return 0;
 }
 

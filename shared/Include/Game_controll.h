@@ -8,7 +8,7 @@
 
 
 
-void game_init(Game* game,Renderer* renderer,ClientNet clientNet);
+void game_init(Game* game,Renderer* renderer);
 void game_update(Game* game, Renderer* renderer);
 
 void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet);
