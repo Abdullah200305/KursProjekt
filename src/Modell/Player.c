@@ -14,8 +14,12 @@ struct  Player_type
 
     float speedY;
     float speedX;
-
     float speedTimer; 
+
+    //animation
+    int animationFrame;
+    int animationTimer;
+
 };
 
 
@@ -35,6 +39,10 @@ Player initPlayer(float x, float y)
     p->speedY = 5;
     p->speedX = 5;
     p->speedTimer = 0;
+
+    p->animationFrame = 0;
+    p->animationTimer = 0;
+    
     return p;
 }
 
@@ -178,6 +186,30 @@ void setPlayerSpeedTimer(Player player, float timer)
     player->speedTimer = timer;
 }
 
+int getPlayerAnimationFrame(Player player) {
+    return player->animationFrame;
+}
+
+void setPlayerAnimation(Player player) {
+    int isMoving = (player->vx != 0 || player->vy != 0);
+
+    if (!isMoving) {
+        player->animationFrame = 0;
+        player->animationTimer = 0;
+        return;
+    }
+
+    player->animationTimer++;
+    if (player->animationTimer >= 10) {
+        player->animationTimer = 0;
+        if (player->animationFrame == 1)
+            player->animationFrame = 2;
+        else
+            player->animationFrame = 1;
+    }
+}
+
+
 void playerMovement(
     Player player,
     SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right
@@ -206,4 +238,5 @@ void playerMovement(
         vx = player->speedX;
 
     setPlayerVelocity(player, vx, vy);
+    setPlayerAnimation(player);
 }
