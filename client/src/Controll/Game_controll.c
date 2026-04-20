@@ -358,10 +358,20 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
     int gotPlayers = 0;
     int timeout = 0;
 
+    int RespondAccept = -1;
+ if (ClientNet_SendJoinRequest(clientNet) == 0) {
+        printf("[CLIENT] JOIN_REQUEST sent\n");
+    }
     while ((!gotMap || !gotPlayers) && timeout < 600)
     {
         int result = ClientNet_TryReceive(clientNet, &packet);
 
+        RespondAccept = ClientNet_SendJoinRequest(clientNet); 
+
+        if(RespondAccept==0)
+        {
+
+        
         if (result == 1)
         {
             printf("packet received: %d\n", packet.type);
@@ -393,6 +403,7 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
                     break;
                 }
             }
+        }
         }
 
         SDL_Delay(16);
