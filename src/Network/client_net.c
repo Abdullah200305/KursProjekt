@@ -10,6 +10,7 @@ int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
 
     client->connected = 0;
     client->clientId = -1;
+    client->hasGameInit = 0;
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
@@ -101,6 +102,8 @@ int ClientNet_TryReceive(ClientNet *client)
 
     memcpy(&packetType, client->recvPacket->data, sizeof(int));
 
+
+
     if (packetType == PACKET_JOIN_ACCEPT) {
         JoinAcceptPacket packet;
 
@@ -125,6 +128,9 @@ int ClientNet_TryReceive(ClientNet *client)
         }
 
         memcpy(&packet, client->recvPacket->data, sizeof(GameInitPacket));
+
+        client->gameInitPacket = packet;
+        client->hasGameInit = 1;
 
         printf("[CLIENT] GAME_INIT received\n");
         printf("[CLIENT] mapId = %d\n", packet.data.mapId);

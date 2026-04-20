@@ -9,6 +9,8 @@
 typedef struct ClientNet {
     int connected;
     int clientId;
+    int hasGameInit;
+    GameInitPacket gameInitPacket;
     UDPsocket socket;
     IPaddress serverAddress;
     UDPpacket *sendPacket;

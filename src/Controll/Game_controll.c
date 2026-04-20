@@ -35,6 +35,10 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
             {
                 printf("[CLIENT] Receive check failed\n");
             }
+            if (clientNet->hasGameInit)
+            {
+                game_apply_network_init(game, clientNet);
+            }
         }
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
@@ -97,10 +101,43 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     );
 }
 
+void game_apply_network_init(Game *game, ClientNet *clientNet)
+{
+    GameInitPacket *packet;
 
+    if (game == NULL || clientNet == NULL) {
+        return;
+    }
 
+    if (!clientNet->hasGameInit) {
+        return;
+    }
 
+    packet = &clientNet->gameInitPacket;
 
+    if (packet->data.mapId != MAP_ID_ISLAND) {
+        printf("[CLIENT] Unknown mapId: %d\n", packet->data.mapId);
+        clientNet->hasGameInit = 0;
+        return;
+    }
+
+    game->numPlayers = packet->data.numPlayers;
+    if (game->numPlayers > MAX_PLAYERS) {
+        game->numPlayers = MAX_PLAYERS;
+    }
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        game->players[i] = initPlayer(
+            (int)packet->data.players[i].x,
+            (int)packet->data.players[i].y
+        );
+    }
+
+    clientNet->clientId = packet->data.yourClientId;
+    clientNet->hasGameInit = 0;
+
+    printf("[CLIENT] Applied GAME_INIT locally\n");
+}
 
 
 void game_update(Game *game, Renderer *renderer)
