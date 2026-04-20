@@ -177,13 +177,13 @@ void game_update(Game *game, Renderer *renderer)
     Background_Image_Render(renderer);
     //Render_Map(renderer, game->map);
    
-    // for (int i = 0; i < game->numPlayers; i++)
-    // {
-    //     if (isPlayerAlive(game->players[i]))
-    //     {
-    //         Render_Player(renderer, game->players[i]);
-    //     }
-    // }
+    for (int i = 0; i < game->numPlayers; i++)
+    {
+        if (isPlayerAlive(game->players[i]))
+        {
+            Render_Player(renderer, game->players[i]);
+        }
+    }
     // Render_Bomb(renderer, game->bomb);
 
 
@@ -351,40 +351,55 @@ void game_cleanup(Game *game, Renderer *renderer,InputState input)
 
 
 
-
-
 void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 {
     Packet packet;
-    int readyMap = 0;
+    int gotMap = 0;
+    int gotPlayers = 0;
     int timeout = 0;
 
-    while (!readyMap && timeout < 600)
+    while ((!gotMap || !gotPlayers) && timeout < 600)
     {
         int result = ClientNet_TryReceive(clientNet, &packet);
 
         if (result == 1)
         {
             printf("packet received: %d\n", packet.type);
+
             switch (packet.type)
             {
                 case PACKET_MAP_INIT:
                 {
                     printf("[CLIENT] MAP received\n");
-                    game->map = Map_create(packet.data.map.width, packet.data.map.height);
-                    game->state = GAME_STATE_PLAYING;
-                    game->numPlayers = 2;
-                    readyMap = 1;
+
+                    game->map = Map_create(
+                        packet.data.map.width,
+                        packet.data.map.height
+                    );
+
+                    gotMap = 1;
                     break;
                 }
 
-
-
-
                 case PACKET_PLAYER_INIT:
-                
+                {
+                  
 
-                break;
+                    game->numPlayers = 2; // tillfälligt
+
+                    for (int i = 0; i < game->numPlayers; i++)
+                    {
+                        printf("[CLIENT] PLAYERS received  x : %f and y : %f \n",packet.data.player[i].x,packet.data.player[i].y);
+                        game->players[i] = initPlayer(
+                            packet.data.player[i].x,
+                            packet.data.player[i].y,
+                            packet.data.player[i].id
+                        );
+                    }
+
+                    gotPlayers = 1;
+                    break;
+                }
             }
         }
 
@@ -392,15 +407,16 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
         timeout++;
     }
 
-    if (!readyMap)
+    if (!gotMap || !gotPlayers)
     {
-        printf("[CLIENT] Failed to receive map (timeout)\n");
+        printf("[CLIENT] Failed to receive init data (timeout)\n");
         return;
     }
 
-    Renderer_Init(renderer, "Hello, World!",WIDTH, HEIGHT); 
-    printf("CLIENT MAP WIDTH = %d\n", packet.data.map.width);
-    printf("PACKET SIZE = %zu\n", sizeof(Packet));
+    game->state = GAME_STATE_PLAYING;
+
+    Renderer_Init(renderer, "Hello, World!", WIDTH, HEIGHT);
+
     printf("[CLIENT] INIT COMPLETE\n");
 }
 

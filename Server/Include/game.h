@@ -2,6 +2,7 @@
 #define GAME_H
 #include "server_net.h"
 #include "Player_manager.h"
+#include "server_handlar.h"
 void run(Server server);
 
 #endif //GAME_H
