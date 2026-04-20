@@ -24,7 +24,7 @@ void run(Server server,Game game)
         //uppdate game logic
         if (getGameStart(server))
         {
-          printf("Entering game loop...");
+          //printf("Entering game loop...");
         }
         SDL_Delay(16);
     }
