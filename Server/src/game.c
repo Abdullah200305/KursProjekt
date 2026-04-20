@@ -2,7 +2,7 @@
 
 
 void run(Server server,Game game)
-
+{
     while (getServerRunning(server))
     {
         // this will contains loop inside of it 
@@ -30,7 +30,7 @@ void run(Server server,Game game)
     }
    
     Destroy_Server(server);
-}
+};
 
 
 
