@@ -2,8 +2,7 @@
 #define PLAYER_H
 #include <stdio.h>
 #include <stdlib.h>
-#include "network_protocol.h"
-// #include  "protocol.h"
+#include  "protocol.h"
 typedef struct Player_type *Player;
 
 
@@ -40,7 +39,6 @@ void setPlayerSize(Player player, float width, float height);
 void setPlayerId(Player player,int id);
 
 void PlayerDestroy(Player player);
-
 
 
 
