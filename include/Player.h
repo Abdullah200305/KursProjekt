@@ -24,7 +24,8 @@ float getPlayerVelocityY(Player player);
 float getPlayerWidth(Player player);
 float getPlayerHeight(Player player);
 int getPlayerLives(Player player);
-float getPlayerSpeedTimer(Player player) ;
+float getPlayerSpeedTimer(Player player);
+float getPlayerFreezeTimer(Player player);
 
 //Setters metoder
 void setPlayerVelocity(Player player, float vx, float vy);
@@ -32,6 +33,7 @@ void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
 void setPlayerSpeedYX(Player player, float speedY, float speedX);
 void setPlayerSpeedTimer(Player player, float timer);
+void setPlayerFreezeTimer(Player player, float timer); //freeze
 
 //Player Movement
 

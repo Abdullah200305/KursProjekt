@@ -15,7 +15,9 @@ struct  Player_type
     float speedY;
     float speedX;
 
-    float speedTimer; 
+    float speedTimer;
+    float freezeTimer;
+
 };
 
 
@@ -35,6 +37,7 @@ Player initPlayer(float x, float y)
     p->speedY = 5;
     p->speedX = 5;
     p->speedTimer = 0;
+    p->freezeTimer = 0;  //freeze
     return p;
 }
 
@@ -58,6 +61,12 @@ void updatePlayer(Player player)
 {
     player->x += player->vx;
     player->y += player->vy;
+    if (player->freezeTimer > 0) //freeze
+    {
+        player->freezeTimer--;
+        player->speedX = 0;
+        player->speedY = 0;
+    }
 }
 
 int isPlayerAlive(Player player)
@@ -176,6 +185,16 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
 void setPlayerSpeedTimer(Player player, float timer) 
 {
     player->speedTimer = timer;
+}
+
+void setPlayerFreezeTimer(Player player, float timer)
+{
+    player->freezeTimer = timer;
+}
+
+float getPlayerFreezeTimer(Player player)
+{
+    return player->freezeTimer;
 }
 
 void playerMovement(

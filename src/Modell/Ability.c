@@ -36,7 +36,7 @@ void AbilitySystem_init (AbilitySystem *system)
     }
 }
 
-void AbilitySystem_spawn(AbilitySystem *system, Map map)
+void AbilitySystem_spawn(AbilitySystem *system, Map map, AbilityType type)
 {
     for (int i = 0; i < MAX_ABILITIES; i++)
     {
@@ -56,7 +56,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tileSize = getTileSize(map);
 
             system->items[i].active = true;
-            system->items[i].type = 1; // initalized to always spawn the speed boost for now, when more abilties created do rand() % 6 
+            system->items[i].type = type;
 
             system->items[i].width = 32;
             system->items[i].height = 32;
@@ -96,7 +96,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
     {
         AbilityItem *a = &system->items[i];
 
-        if (!a->active)
+        if (!a->active || a->type == ABILITY_FREEZE)
             continue;
 
         if (Player_collisionWithOtherPlayer(
@@ -114,6 +114,36 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
                 setPlayerSpeedYX(player, 10, 10);
                 setPlayerSpeedTimer(player, 300);
             }
+        }
+    }
+}
+
+void AbilitySystem_checkFreezePickup(AbilitySystem *system, Player picker, Player players[], int count)
+{
+    for (int i = 0; i < MAX_ABILITIES; i++)
+    {
+        AbilityItem *a = &system->items[i];
+
+        if (!a->active || a->type != ABILITY_FREEZE)
+            continue;
+
+        if (Player_collisionWithOtherPlayer(
+                getPlayerX(picker),
+                getPlayerY(picker),
+                a->x,
+                a->y))
+        {
+            a->active = false;
+
+            for (int j = 0; j < count; j++)
+            {
+                if (players[j] != picker)
+                {
+                    setPlayerFreezeTimer(players[j], 120);
+                    setPlayerSpeedYX(players[j], 0, 0);
+                }
+            }
+            return;
         }
     }
 }

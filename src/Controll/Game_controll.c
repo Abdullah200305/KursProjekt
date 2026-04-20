@@ -161,6 +161,7 @@ void game_update(Game *game, Renderer *renderer)
     for (int i = 0; i < currentPlayers; i++)
     {
         AbilitySystem_checkPickup(game->abilitySystem, game->players[i]);
+        AbilitySystem_checkFreezePickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
     }
 
     for (int i = 0; i < currentPlayers; i++)
@@ -175,7 +176,18 @@ void game_update(Game *game, Renderer *renderer)
                 setPlayerSpeedYX(game->players[i], 5, 5);
             }
         }
-    }    
+        
+        if (getPlayerFreezeTimer(game->players[i]) > 0)
+        {
+            int freezeTimer = getPlayerFreezeTimer(game->players[i]);
+            setPlayerFreezeTimer(game->players[i], --freezeTimer);
+
+            if (getPlayerFreezeTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+    }
 
 
 
@@ -360,7 +372,8 @@ void game_init(Game *game, Renderer *renderer)
     
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem);
-    AbilitySystem_spawn(game->abilitySystem, game->map);
+    AbilitySystem_spawn(game->abilitySystem, game->map, ABILITY_SPEED);
+    AbilitySystem_spawn(game->abilitySystem, game->map, ABILITY_FREEZE);
     
 
     game->players[0] = initPlayer(230, 300);
