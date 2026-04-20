@@ -19,9 +19,7 @@ int main(int argc, char *argv[])
 
     printf("[CLIENT] UDP init OK\n");
 
-    if (ClientNet_SendJoinRequest(clientNet) == 0) {
-        printf("[CLIENT] JOIN_REQUEST sent\n");
-    }
+   
 
    
     game_init(&game, &renderer, clientNet);
