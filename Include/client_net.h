@@ -20,6 +20,7 @@ typedef struct ClientNet {
 
 int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port);
 int ClientNet_SendJoinRequest(ClientNet *client);
+int ClientNet_SendDisconnect(ClientNet *client);
 int ClientNet_TryReceive(ClientNet *client);
 void ClientNet_Destroy(ClientNet *client);
 

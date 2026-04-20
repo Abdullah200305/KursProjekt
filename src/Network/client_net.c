@@ -83,6 +83,31 @@ int ClientNet_SendJoinRequest(ClientNet *client)
     return 0;
 }
 
+int ClientNet_SendDisconnect(ClientNet *client)
+{
+    DisconnectPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL) {
+        return -1;
+    }
+
+    packet.type = PACKET_DISCONNECT;
+    packet.clientId = client->clientId;
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0) {
+        printf("ClientNet_SendDisconnect failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    printf("[CLIENT] DISCONNECT sent\n");
+    return 0;
+}
+
+
 int ClientNet_TryReceive(ClientNet *client)
 {
     int packetType;

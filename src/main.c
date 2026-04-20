@@ -42,10 +42,14 @@ int main(int argc, char *argv[])
 
     AbilitySystem_destroy(system);
 
-    if (clientNetReady) {
-        ClientNet_Destroy(&clientNet);
-    }
+if (clientNetReady) {
+    ClientNet_SendDisconnect(&clientNet);
+}
 
-    game_cleanup(&game, &renderer);
-    return 0;
+if (clientNetReady) {
+    ClientNet_Destroy(&clientNet);
+}
+
+game_cleanup(&game, &renderer);
+return 0;
 }

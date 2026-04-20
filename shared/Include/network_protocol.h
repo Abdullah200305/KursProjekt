@@ -7,7 +7,8 @@
 typedef enum {
     PACKET_JOIN_REQUEST = 1,
     PACKET_JOIN_ACCEPT = 2,
-    PACKET_GAME_INIT = 3
+    PACKET_GAME_INIT = 3,
+    PACKET_DISCONNECT = 4
 } PacketType;
 
 typedef struct {
@@ -18,6 +19,11 @@ typedef struct {
     int type;
     int clientId;
 } JoinAcceptPacket;
+
+typedef struct {
+    int type;
+    int clientId;
+} DisconnectPacket;
 
 typedef struct {
     float x;
