@@ -31,33 +31,28 @@ Client Server_GetClient(Server server, int index);
 void setNewClient(Server server,int index,Client client);
 void setGameStart(Server server,int gameStart);
 
-// old version
-//int  Server_Receive(Server server);
 
 int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip);
-
-
 void Server_Send(Server server,IPaddress clientIp, void *data, int size);
 
- 
+// old version
+//int  Server_Receive(Server server); 
 //void Server_handlePackets(Server server);
-
 //Client Client_net_init(IPaddress ip, int id,int active);
-
-
-
-
 // this will go to server handlar after 
 //void handle_Connect(Server server);
+//void handle_input(Server server);
 
 
-// will go to packet buidler 
+
+
+
+
+// will go to packet buidler fix later 
 void Server_sendInitState(Server server);
 
 
 
-
-//void handle_input(Server server);
 
 
 void Destroy_Server(Server server);

@@ -5,15 +5,21 @@ void run(Server server)
 {
     while (getServerRunning(server))
     {
-     
+        // this will contains loop inside of it 
         Server_handlePackets(server);
+
+
+
+
         // old version 
         // while (Server_Receive(server))
         // {
             
         //     Server_handlePackets(server);
         // }
+        
 
+        
         // old version 
         // if (!getGameStart(server) && getClientCount(server) == 2)
         // {
@@ -26,9 +32,11 @@ void run(Server server)
         // }
 
         // uppdate stuff like coll other 
-        if (getGameStart(server))
-        {
+        // if (getGameStart(server))
+        // {
            
-        }
+        // }
+        SDL_Delay(16);
     }
+    Destroy_Server(server);
 }
