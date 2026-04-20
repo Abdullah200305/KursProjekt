@@ -34,16 +34,17 @@ void game_loop(Game *game, Renderer *renderer)
         playerMovement(game->players[0], SDL_SCANCODE_W, SDL_SCANCODE_S, SDL_SCANCODE_A, SDL_SCANCODE_D);
         playerMovement(game->players[1], SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
 
-
+        /*  simpel if press m something happens for testing stuff
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
         if(state[SDL_SCANCODE_M])
         {
             setPlayerSpeedYX(game->players[0], 50, 34);
         }
+        */
 
-        //old implementation of movement
-       /*
+        /*old implementation of movement
+    
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
 
@@ -153,7 +154,7 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-
+    AbilitySystem_spawn(game->abilitySystem, game->map);
     AbilitySystem_render(game->abilitySystem, renderer);
 
     int currentPlayers = 2;
@@ -360,7 +361,6 @@ void game_init(Game *game, Renderer *renderer)
     
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem);
-    AbilitySystem_spawn(game->abilitySystem, game->map);
     
 
     game->players[0] = initPlayer(230, 300);

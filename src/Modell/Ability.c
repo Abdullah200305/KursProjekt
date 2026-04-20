@@ -114,6 +114,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
                 setPlayerSpeedYX(player, 10, 10);
                 setPlayerSpeedTimer(player, 300);
             }
+            
         }
     }
 }
