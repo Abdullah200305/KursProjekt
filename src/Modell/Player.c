@@ -15,7 +15,7 @@ struct  Player_type
     float speedY;
     float speedX;
 
-    float speedTimer; 
+    float Timer; 
 };
 
 
@@ -34,7 +34,7 @@ Player initPlayer(float x, float y)
 
     p->speedY = 5;
     p->speedX = 5;
-    p->speedTimer = 0;
+    p->Timer = 0;
     return p;
 }
 
@@ -142,9 +142,9 @@ int getPlayerLives(Player player)
     return player->lives;
 }
 
-float getPlayerSpeedTimer(Player player) 
+float getPlayerTimer(Player player) 
 {
-    return player->speedTimer;
+    return player->Timer;
 }
 
 //Implementation av setters metoder
@@ -173,9 +173,9 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedX = speedX;
 }
 
-void setPlayerSpeedTimer(Player player, float timer) 
+void setPlayerTimer(Player player, float timer) 
 {
-    player->speedTimer = timer;
+    player->Timer = timer;
 }
 
 void playerMovement(

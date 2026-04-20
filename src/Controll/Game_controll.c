@@ -151,27 +151,26 @@ void game_update(Game *game, Renderer *renderer)
     Render_Map(renderer, game->map);
    
 
+    int miliseconds = 4000; // 2 seconds
 
-
-
-    AbilitySystem_spawn(game->abilitySystem, game->map);
+    abilitySpawnRate(game->abilitySystem, game->map, miliseconds);
     AbilitySystem_render(game->abilitySystem, renderer);
 
     int currentPlayers = 2;
 
     for (int i = 0; i < currentPlayers; i++)
     {
-        AbilitySystem_checkPickup(game->abilitySystem, game->players[i]);
+        AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
     }
 
     for (int i = 0; i < currentPlayers; i++)
     {
-        if (getPlayerSpeedTimer(game->players[i]) > 0)
+        if (getPlayerTimer(game->players[i]) > 0)
         {
-            int speedTimer = getPlayerSpeedTimer(game->players[i]);
-            setPlayerSpeedTimer(game->players[i], --speedTimer);
+            int speedTimer = getPlayerTimer(game->players[i]);
+            setPlayerTimer(game->players[i], --speedTimer);
 
-            if (getPlayerSpeedTimer(game->players[i]) == 0)
+            if (getPlayerTimer(game->players[i]) == 0)
             {
                 setPlayerSpeedYX(game->players[i], 5, 5);
             }

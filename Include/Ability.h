@@ -6,7 +6,7 @@
 #include "Renderer.h"
 #include "map.h"
 
-#define MAX_ABILITIES 10
+#define MAX_ABILITIES 4
 
 typedef enum
 {
@@ -25,10 +25,10 @@ AbilitySystem* AbilitySystem_create();
 void AbilitySystem_destroy(AbilitySystem *system);
 
 void AbilitySystem_init(AbilitySystem *system);
+void abilitySpawnRate(AbilitySystem *system, Map map, int miliseconds);
 void AbilitySystem_spawn(AbilitySystem *system, Map map);
 void AbilitySystem_render(const AbilitySystem *system, Renderer *r);
-void AbilitySystem_checkPickup(AbilitySystem *system, Player player);
-
+void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player players[], int totalPlayers);
 #endif
 
 
