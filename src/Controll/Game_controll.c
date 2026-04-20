@@ -178,7 +178,6 @@ void game_update(Game *game, Renderer *renderer)
     }    
 
 
-
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
@@ -187,18 +186,6 @@ void game_update(Game *game, Renderer *renderer)
         }
     }
     Render_Bomb(renderer, game->bomb);
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     if (isPlayerAlive(game->players[0]))
