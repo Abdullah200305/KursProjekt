@@ -97,7 +97,6 @@ Client getClient(Server server,int index){
 int ServerNet_Receive(Server server,void** packet,IPaddress *Ip){
 
    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
-        printf("done");
         if (server->recvPacket->len < sizeof(HeaderPacket)) return 0;
         int type = ((HeaderPacket *)server->recvPacket->data)->type;
         size_t expectedSize;

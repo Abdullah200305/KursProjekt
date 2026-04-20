@@ -33,3 +33,8 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);
 void Render_Bomb(Renderer* r, Bomb bomb);
 
 #endif // RENDERER_H
+
+
+
+
+

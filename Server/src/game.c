@@ -11,7 +11,7 @@ void run(Server server,Game game)
 
         /// this will uppdate after make some secure that all player get the game_init otherwise resend to them.
         // this will create onec both in client and server side before game start
-        if (!getGameStart(server) && getClientCount(server) == 2)
+        if (!getGameStart(server) && getClientCount(server) == 1)
         {
         printf("Initializing game...\n");    
         Game_Init(server,&game);
