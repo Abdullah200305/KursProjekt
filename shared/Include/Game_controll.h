@@ -17,7 +17,7 @@ void game_apply_network_init(Game *game, ClientNet *clientNet);
 
 
 // input handling for player movement and actions
-void  Player_handleInput(Game *game,InputState *input);
+//void  Player_handleInput(Game *game,InputState *input);
 
 // logic for the game will be here, such as collision, player movement, etc.
 //void movePlayerWithOther(Player p, Player players[], int count, Bomb *bomb);
