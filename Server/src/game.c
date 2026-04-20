@@ -2,7 +2,7 @@
 
 
 void run(Server server,Game game)
-
+{
     while (getServerRunning(server))
     {
         // this will contains loop inside of it 
@@ -24,13 +24,13 @@ void run(Server server,Game game)
         //uppdate game logic
         if (getGameStart(server))
         {
-           
+          printf("Entering game loop...");
         }
         SDL_Delay(16);
     }
    
     Destroy_Server(server);
-}
+};
 
 
 
