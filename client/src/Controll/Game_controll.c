@@ -368,35 +368,27 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
 
             switch (packet.type)
             {
-                case PACKET_MAP_INIT:
+                case PACKET_GAME_INIT:
                 {
                     printf("[CLIENT] MAP received\n");
 
                     game->map = Map_create(
-                        packet.data.map.width,
-                        packet.data.map.height
+                        packet.data.Game.dataMap.width,
+                        packet.data.Game.dataMap.height
                     );
-
-                    gotMap = 1;
-                    break;
-                }
-
-                case PACKET_PLAYER_INIT:
-                {
-                  
 
                     game->numPlayers = 2; // tillfälligt
 
                     for (int i = 0; i < game->numPlayers; i++)
                     {
-                        printf("[CLIENT] PLAYERS received  x : %f and y : %f \n",packet.data.player[i].x,packet.data.player[i].y);
+                        printf("[CLIENT] PLAYERS received  x : %f and y : %f \n", packet.data.Game.dataPlayer[i].x,packet.data.Game.dataPlayer[i].y);
                         game->players[i] = initPlayer(
-                            packet.data.player[i].x,
-                            packet.data.player[i].y,
-                            packet.data.player[i].id
+                            packet.data.Game.dataPlayer[i].x,
+                            packet.data.Game.dataPlayer[i].y,
+                            packet.data.Game.dataPlayer[i].id
                         );
                     }
-
+                    gotMap = 1;
                     gotPlayers = 1;
                     break;
                 }
@@ -412,11 +404,8 @@ void game_init(Game *game, Renderer *renderer, ClientNet clientNet)
         printf("[CLIENT] Failed to receive init data (timeout)\n");
         return;
     }
-
     game->state = GAME_STATE_PLAYING;
-
     Renderer_Init(renderer, "Hello, World!", WIDTH, HEIGHT);
-
     printf("[CLIENT] INIT COMPLETE\n");
 }
 

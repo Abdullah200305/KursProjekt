@@ -7,9 +7,9 @@
 typedef enum
 {
     // server->client
-    PACKET_MAP_INIT,
-    PACKET_PLAYER_INIT,
-    PACKET_BOMB_INIT,
+    PACKET_GAME_INIT,
+    packet_gameuppdate,
+  
 
 
    // client->server
@@ -40,6 +40,7 @@ typedef struct {
 
 typedef struct 
 {
+    int MapID;
     int height;
     int width;
 }DataMap;
@@ -58,21 +59,27 @@ typedef struct
     int id;
 }DataPlayer;
 
+typedef struct 
+{
+    
+}DataBomb;
 
-
+typedef struct{
+DataMap dataMap;
+DataPlayer dataPlayer[4];
+}DataGame;
 
 
 
 
 typedef struct {
     PacketType type;
+    // add antal player
     int playerId;
     union {
         JoinAccept joinAccept;
         JoinRequest joinRequest;
-        DataPlayer player[4];
-        DataMap map;
-        //Bomb bomb;
+        DataGame Game;
         InputState input;
     } data;
 } Packet;

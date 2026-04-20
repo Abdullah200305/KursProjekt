@@ -32,6 +32,8 @@ void setNewClient(Server server,int index,Client client);
 void setGameStart(Server server,int gameStart);
 
 
+Client getClient(Server server,int index);
+
 int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip);
 void Server_Send(Server server,IPaddress clientIp, void *data, int size);
 

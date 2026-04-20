@@ -26,3 +26,7 @@ IPaddress Client_GetAddress(Client client)
 {
     return client->address;
 }
+
+int getClientId(Client client){
+    return client->id;
+}

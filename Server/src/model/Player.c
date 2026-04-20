@@ -103,6 +103,11 @@ int getPlayerLives(Player player) {
     return player->lives;
 }
 
+int getPlayerId(Player player){
+    return player->id;
+}
+
+
 //Implementation av setters metoder
 
 void setPlayerVelocity(Player player, float vx, float vy) {

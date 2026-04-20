@@ -27,8 +27,9 @@ float getPlayerVelocityY(Player player);
 float getPlayerWidth(Player player);
 float getPlayerHeight(Player player);
 int getPlayerLives(Player player);
+int getPlayerId(Player player);
 
-int getPlayerAlive(Player player);
+
 
 //Setters metoder
 

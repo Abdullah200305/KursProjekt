@@ -15,4 +15,5 @@ typedef struct Client_type *Client;
 Client Client_net_init(IPaddress ip, int id,int active);
 IPaddress Client_GetAddress(Client client);
 
+int getClientId(Client client);
 #endif //CLIENT_SESSION_H

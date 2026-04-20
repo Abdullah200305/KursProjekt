@@ -1,19 +1,5 @@
 #include "Server_net.h"
 
-
-////// changde to client_session
-
-// struct Client_type
-// {
-//     IPaddress address;
-//     Player player;
-//     int id;
-//     int active;
-// };
-
-
-
-
 struct Server_type
 {
   int running; 
@@ -23,7 +9,7 @@ struct Server_type
   UDPpacket *recvPacket;
   Packet packet; 
   Client clients[MAX_CLIENTS]; 
-
+ // will see if I will change it 
  // PlayerManager playerManager;
   int clientCount;
 };
@@ -36,25 +22,11 @@ Server server = malloc(sizeof(struct Server_type));
     server->recvPacket = NULL;
     server->clientCount = 0;
     server->gameStarted = 0;
+
+    // will see if I will change it 
   //  server->playerManager=PlayerManager_init();
     return server;
 }
-
-
-
-
-////// changde to client_session
-// Client Client_net_init(IPaddress ip, int id,int active){
-// Client client = malloc(sizeof(struct Client_type));
-//     client->address = ip;
-//     client->id = id;
-//     client->active= active;
-//     return client;
-// }
-
-
-
-
 
 
 int ServerConnection(Server server, int port) {
@@ -75,8 +47,6 @@ int ServerConnection(Server server, int port) {
     }
     return 0;
 }
-
-
 
 ///// getter 
 int getServerRunning(Server server){
@@ -111,6 +81,89 @@ void setNewClient(Server server,int index,Client client){
     server->clientCount++;
 }
 
+
+Client getClient(Server server,int index){
+    return server->clients[index];
+};
+
+
+
+
+int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip){
+    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+        if (server->recvPacket->len >= sizeof(Packet)) {
+            memcpy(packet, server->recvPacket->data, sizeof(Packet));
+            *Ip = server->recvPacket->address;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+void Server_Send(Server server,IPaddress clientIp, void *data, int size){
+    memcpy(server->sendPacket->data, data, size);
+    server->sendPacket->len = size;
+    server->sendPacket->address = clientIp;
+    SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
+}
+
+
+
+
+void Destroy_Server(Server server){
+    for (int i = 0; i < server->clientCount; i++) {
+        if (server->clients[i]) {
+            free(server->clients[i]);
+        }
+    }
+    SDLNet_FreePacket(server->sendPacket);
+    SDLNet_FreePacket(server->recvPacket);
+    SDLNet_UDP_Close(server->socket);
+    free(server);
+}
+
+
+
+
+
+
+
+
+
+
+////// changde to client_session
+
+// struct Client_type
+// {
+//     IPaddress address;
+//     Player player;
+//     int id;
+//     int active;
+// };
+
+
+////// changde to client_session
+// Client Client_net_init(IPaddress ip, int id,int active){
+// Client client = malloc(sizeof(struct Client_type));
+//     client->address = ip;
+//     client->id = id;
+//     client->active= active;
+//     return client;
+// }
+
+
+
+// old version 
+// int Server_Receive(Server server) {
+//     if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
+//         if (server->recvPacket->len >= sizeof(Packet)) {
+//             memcpy(&server->packet, server->recvPacket->data, sizeof(Packet));
+//             return 1;
+//         }
+//     }
+//     return 0;
+// }
 
 // server will get only join request and input from player and also PACKET_DISCONNECT
 // void Server_handlePackets(Server server){
@@ -208,72 +261,6 @@ void setNewClient(Server server,int index,Client client){
 
 
 // }
-
-
-int ServerNet_Receive(Server server,Packet *packet,IPaddress *Ip){
-    if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
-        if (server->recvPacket->len >= sizeof(Packet)) {
-            memcpy(packet, server->recvPacket->data, sizeof(Packet));
-            *Ip = server->recvPacket->address;
-            return 1;
-        }
-    }
-    return 0;
-}
-
-// old version 
-// int Server_Receive(Server server) {
-//     if (SDLNet_UDP_Recv(server->socket, server->recvPacket)) {
-//         if (server->recvPacket->len >= sizeof(Packet)) {
-//             memcpy(&server->packet, server->recvPacket->data, sizeof(Packet));
-//             return 1;
-//         }
-//     }
-//     return 0;
-// }
-
-void Server_Send(Server server,IPaddress clientIp, void *data, int size){
-    memcpy(server->sendPacket->data, data, size);
-    server->sendPacket->len = size;
-    server->sendPacket->address = clientIp;
-    SDLNet_UDP_Send(server->socket, -1, server->sendPacket);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void Destroy_Server(Server server){
-    for (int i = 0; i < server->clientCount; i++) {
-        if (server->clients[i]) {
-            free(server->clients[i]);
-        }
-    }
-    SDLNet_FreePacket(server->sendPacket);
-    SDLNet_FreePacket(server->recvPacket);
-    SDLNet_UDP_Close(server->socket);
-    free(server);
-}
-
-
-
-
-
-
-
-
 
 
 
