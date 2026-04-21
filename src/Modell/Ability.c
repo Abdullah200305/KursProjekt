@@ -134,7 +134,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
             if (a->type == ABILITY_SPEED)
             {
                 setPlayerSpeedYX(player, 10, 10);
-                setPlayerTimer(player, 300);
+                setPlayerSpeedTimer(player, 300);
             }
 
             // apply FREEZE effect
@@ -144,7 +144,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                 {
                     if (players[i] != player)
                     {
-                        setPlayerTimer(players[i], 80);
+                        setPlayerFreezeTimer(players[i], 80);
                         setPlayerSpeedYX(players[i], 0, 0);
                     }
                 }
@@ -174,7 +174,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
             // apply SIZEUP effect
             if (a->type == ABILITY_SIZEUP)
             {
-                setPlayerTimer(player, 200);
+                setPlayerSizeUpTimer(player, 200);
                 setPlayerSize(player, 64, 64);
             }
 

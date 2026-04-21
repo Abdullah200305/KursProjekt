@@ -140,16 +140,15 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-
-
-
-
-
-
     // Render the game state
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
-   
+    
+
+
+    
+    //-------------------------------------------------------------------//
+    //---------------------Ability Update Loop---------------------------//
 
     int miliseconds = 4000; // 2 seconds
 
@@ -160,22 +159,42 @@ void game_update(Game *game, Renderer *renderer)
 
     for (int i = 0; i < currentPlayers; i++)
     {
+
         AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
-    }
 
-    for (int i = 0; i < currentPlayers; i++)
-    {
-        if (getPlayerTimer(game->players[i]) > 0)
+        if (getPlayerSpeedTimer(game->players[i]) > 0)
         {
-            int speedTimer = getPlayerTimer(game->players[i]);
-            setPlayerTimer(game->players[i], --speedTimer);
+            int speedTimer = getPlayerSpeedTimer(game->players[i]);
+            setPlayerSpeedTimer(game->players[i], --speedTimer);
 
-            if (getPlayerTimer(game->players[i]) == 0)
+            if (getPlayerSpeedTimer(game->players[i]) == 0)
             {
                 setPlayerSpeedYX(game->players[i], 5, 5);
-                setPlayerSize(game->players[i], 32, 32);
             }
         }
+
+        if (getPlayerFreezeTimer(game->players[i]) > 0)
+        {
+            int freezeTimer = getPlayerFreezeTimer(game->players[i]);
+            setPlayerFreezeTimer(game->players[i], --freezeTimer);
+
+            if (getPlayerFreezeTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+
+        if (getPlayerSizeUpTimer(game->players[i]) > 0)
+        {
+            int sizeUpTimer = getPlayerSizeUpTimer(game->players[i]);
+            setPlayerSizeUpTimer(game->players[i], --sizeUpTimer);
+
+            if (getPlayerSizeUpTimer(game->players[i]) == 0)
+            {
+                setPlayerSize(game->players[i], 32, 32);
+            }
+        }                
+        //-----------------------------------------------------------------//
     }    
 
 
