@@ -192,6 +192,7 @@ void game_update(Game *game, Renderer *renderer)
             if (getPlayerSizeUpTimer(game->players[i]) == 0)
             {
                 setPlayerSize(game->players[i], 32, 32);
+                resolveCollision(game->map, game->players[i]);
             }
         }                
         //-----------------------------------------------------------------//

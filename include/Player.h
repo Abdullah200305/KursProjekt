@@ -38,11 +38,13 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX);
 void setPlayerSpeedTimer(Player player, float timer);
 void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
-//Player Movement
+//MISC FUNCTIONS
 
 void playerMovement(
     Player player,
     SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right
 );
+
+void uncollidePlayer(Player player);
 
 #endif

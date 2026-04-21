@@ -1,5 +1,5 @@
 #include "Map.h"
-
+#include "Player.h"
 
 struct Map_type{
     int running;
@@ -126,4 +126,49 @@ int checkCollision(Map map, int x, int y) {
     //     return 1; 
     // }
     // return 0;
+}
+
+void resolveCollision(Map map, Player player)
+{
+    float x = getPlayerX(player);
+    float y = getPlayerY(player);
+    float w = getPlayerWidth(player);
+    float h = getPlayerHeight(player);
+
+    float tileSize = getTileSize(map);
+
+    float left   = x;
+    float right  = x + w - 1;
+    float top    = y;
+    float bottom = y + h - 1;
+
+    int tileLeft   = (int)(left / tileSize);
+    int tileRight  = (int)(right / tileSize);
+    int tileTop    = (int)(top / tileSize);
+    int tileBottom = (int)(bottom / tileSize);
+
+    int A1 = checkCollision(map, tileLeft, tileTop);
+    int A2 = checkCollision(map, tileRight, tileTop);
+    int B3 = checkCollision(map, tileLeft, tileBottom);
+    int B4 = checkCollision(map, tileRight, tileBottom);
+
+    int leftBlocked   = (A1 || B3);
+    int rightBlocked  = (A2 || B4);
+    int topBlocked    = (A1 || A2);
+    int bottomBlocked = (B3 || B4);
+
+    // push out
+    if (leftBlocked)
+        x = (tileLeft + 1) * tileSize;
+
+    if (rightBlocked)
+        x = tileRight * tileSize - w;
+
+    if (topBlocked)
+        y = (tileTop + 1) * tileSize;
+
+    if (bottomBlocked)
+        y = tileBottom * tileSize - h;
+
+    setPlayerPosition(player, x, y);
 }
