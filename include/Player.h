@@ -27,6 +27,8 @@ int getPlayerLives(Player player);
 float getPlayerTimer(Player player) ;
 
 //Setters metoder
+void setPlayerX(Player player, float x);
+void setPlayerY(Player player, float y);
 void setPlayerVelocity(Player player, float vx, float vy);
 void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);

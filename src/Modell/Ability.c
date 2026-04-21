@@ -60,7 +60,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tileSize = getTileSize(map);
 
             system->items[i].active = true;
-            system->items[i].type = rand() % 2 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
+            system->items[i].type = rand() % 3 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
 
             system->items[i].width = 32;
             system->items[i].height = 32;
@@ -145,6 +145,26 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                     }
                 }
             }   
+
+            if (a->type == ABILITY_SWAP)
+            {
+                int playerCoordinateX = getPlayerX(player), playerCorrdinateY = getPlayerY(player);
+
+                int randomPlayer = 0;
+
+                do{
+                    randomPlayer = rand() % totalPlayers;
+                } while(players[randomPlayer] == player);
+
+                //Changes player coordinates to random player
+
+                setPlayerX(player, getPlayerX(players[randomPlayer]));
+                setPlayerY(player, getPlayerY(players[randomPlayer]));
+
+                // changes random players coordinates to player (that picked it up)
+                setPlayerX(players[randomPlayer], playerCoordinateX);
+                setPlayerY(players[randomPlayer], playerCorrdinateY);
+            }
             
 
         }

@@ -37,7 +37,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    r->abilityTextures[3] = NULL;
+    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
     r->abilityTextures[4] = NULL;
     r->abilityTextures[5] = NULL;
     

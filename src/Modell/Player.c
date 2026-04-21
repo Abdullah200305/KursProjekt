@@ -149,6 +149,16 @@ float getPlayerTimer(Player player)
 
 //Implementation av setters metoder
 
+void setPlayerX(Player player, float x)
+{
+    player->x = x;
+}
+
+void setPlayerY(Player player, float y)
+{
+    player->y = y;
+}
+
 void setPlayerVelocity(Player player, float vx, float vy) 
 {
     player->vx = vx;
