@@ -173,6 +173,7 @@ void game_update(Game *game, Renderer *renderer)
             if (getPlayerTimer(game->players[i]) == 0)
             {
                 setPlayerSpeedYX(game->players[i], 5, 5);
+                setPlayerSize(game->players[i], 32, 32);
             }
         }
     }    
@@ -240,10 +241,15 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
         if (player != other)
         {
             if (Player_collisionWithOtherPlayer(
-                    getPlayerX(player),
-                    getPlayerY(player),
-                    getPlayerX(other),
-                    getPlayerY(other)))
+                getPlayerX(player),
+                getPlayerY(player),
+                getPlayerWidth(player),
+                getPlayerHeight(player),
+
+                getPlayerX(other),
+                getPlayerY(other),
+                getPlayerWidth(other),
+                getPlayerHeight(other)))
             {
                 int other_index = i;
 
@@ -305,7 +311,7 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX, getPlayerY(player));
+    int colx = Collision_Map(map, newX, getPlayerY(player), getPlayerWidth(player), getPlayerHeight(player));
 
     if (colx == 1 || colx == 2)
     {
@@ -325,7 +331,7 @@ void movePlayer(Map map, Player player)
     }
 
     float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map, getPlayerX(player), newY);
+    int coly = Collision_Map(map, getPlayerX(player), newY, getPlayerWidth(player), getPlayerHeight(player));
     if (coly == 1 || coly == 2)
     {
         /// collision with tile type 1 or 2, stop player movement

@@ -6,7 +6,7 @@
 #include "Renderer.h"
 #include "map.h"
 
-#define MAX_ABILITIES 4
+#define MAX_ABILITIES 10
 
 typedef enum
 {

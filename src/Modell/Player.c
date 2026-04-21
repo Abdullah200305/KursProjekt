@@ -29,6 +29,8 @@ Player initPlayer(float x, float y)
     p->y = y;
     p->vx = 0;
     p->vy = 0;
+    p->width = 32;
+    p->height = 32;
     p->lives = 3;
     p->alive = 1;
 

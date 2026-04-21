@@ -67,22 +67,22 @@ void Map_destroy(Map map)
     free(map);
 }
 
-int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2) {
+int Player_collisionWithOtherPlayer(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
     // Simple AABB 
   return (
-        x1 < x2 + 32 &&
-        x1 + 32 > x2 &&
-        y1 < y2 + 32 &&
-        y1 + 32 > y2
+        x1 < x2 + w2 &&
+        x1 + w1 > x2 &&
+        y1 < y2 + h2 &&
+        y1 + h1 > y2
     );
 }
 
-int Collision_Map(Map map, float x, float y)
+int Collision_Map(Map map, float x, float y, float width, float height)
 {
     float left   = x;
-    float right  = x + 32 - 1; // update
+    float right  = x + width - 1; // update
     float top    = y;
-    float bottom = y + 32 - 1; // updatw
+    float bottom = y + height - 1; // updatw
 
     int tileLeft   = (int)(left / map->tileSize);
     int tileRight  = (int)(right / map->tileSize);
