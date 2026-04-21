@@ -128,6 +128,7 @@ int checkCollision(Map map, int x, int y) {
     // return 0;
 }
 
+/* a potential fix for sizeUp collission bug need more work
 void resolveCollision(Map map, Player player)
 {
     float x = getPlayerX(player);
@@ -171,4 +172,4 @@ void resolveCollision(Map map, Player player)
         y = tileBottom * tileSize - h;
 
     setPlayerPosition(player, x, y);
-}
+}*/
