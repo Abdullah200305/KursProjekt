@@ -133,7 +133,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                 setPlayerTimer(player, 300);
             }
 
-            // apply FREEZE affect
+            // apply FREEZE effect
             if (a->type == ABILITY_FREEZE)
             {
                 for (int i = 0; i < totalPlayers; i++)
@@ -145,7 +145,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                     }
                 }
             }   
-
+            // apply SWAP effect
             if (a->type == ABILITY_SWAP)
             {
                 int playerCoordinateX = getPlayerX(player), playerCorrdinateY = getPlayerY(player);
