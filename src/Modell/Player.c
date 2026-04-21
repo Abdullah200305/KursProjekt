@@ -251,8 +251,3 @@ void playerMovement(
 
     setPlayerVelocity(player, vx, vy);
 }
-
-void uncollidePlayer(Player player)
-{
-    
-}
