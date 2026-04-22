@@ -11,7 +11,7 @@ void run(Server server,Game game)
 
         /// this will uppdate after make some secure that all player get the game_init otherwise resend to them.
         // this will create onec both in client and server side before game start
-        if (!getGameStart(server) && getClientCount(server) == 2)
+        if (!getGameStart(server) && getClientCount(server) == 1)
         {
         printf("Initializing game...\n");    
         Game_Init(server,&game);
@@ -24,7 +24,7 @@ void run(Server server,Game game)
         //uppdate game logic
         if (getGameStart(server))
         {
-           
+          //printf("Entering game loop...");
         }
         SDL_Delay(16);
     }
@@ -57,21 +57,24 @@ for (int  i = 0; i < game->numPlayers; i++)
 game->bomb = createBomb(game->players);    
 }
 void Game_InitSendToClients(Server server,Game *game){
-Packet packet;
+GameInitPacket packet;
 Packet_BuildGameStart(game,7777,&packet);
-Server_Broadcast(server, &packet);  
+Server_Broadcast(server, &packet,sizeof(GameInitPacket));  
 };
 
 
 
+
+
+
 // this will uppdate for all players
-void Server_Broadcast(Server server,Packet *packet){
+void Server_Broadcast(Server server,void *packet,size_t packetSize){
 for (int i = 0; i < getClientCount(server); i++)
 {
     Server_Send(server,
                 Client_GetAddress(getClient(server,i)),
                 packet,
-                sizeof(Packet));
+                packetSize);
 }
-    memset(packet, 0, sizeof(Packet));
+    memset(packet, 0, packetSize);
 }

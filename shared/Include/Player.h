@@ -44,7 +44,4 @@ void PlayerDestroy(Player player);
 
 
 
-void Player_ToData(Player src, DataPlayer *dst);
-
-
 #endif

@@ -132,17 +132,3 @@ void PlayerDestroy(Player player){
 
 
 
-
-
-void Player_ToData(Player src, DataPlayer *dst){
-    
-    dst->x = src->x;
-    dst->y = src->y;
-    dst->vx = src->vx;
-    dst->vy = src->vy;
-    dst->width = src->width;
-    dst->height = src->height;
-    dst->lives = src->lives;
-    dst->alive = src->alive;
-    dst->id = src->id;
-}
