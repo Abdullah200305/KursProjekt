@@ -124,6 +124,24 @@ int ClientNet_SendDisconnect(ClientNet client)
     return 0;
 }
 
+int ClientNet_SendInput(ClientNet client, const InputPacket *packet)
+{
+    if (client == NULL || packet == NULL || client->socket == NULL || client->sendPacket == NULL) {
+        return -1;
+    }
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, packet, sizeof(InputPacket));
+    client->sendPacket->len = sizeof(InputPacket);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0) {
+        printf("ClientNet_SendInput failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
 int ClientNet_TryReceive(ClientNet client)
 {
     int packetType;

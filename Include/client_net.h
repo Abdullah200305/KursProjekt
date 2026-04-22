@@ -11,6 +11,7 @@ void ClientNet_Destroy(ClientNet client);
 
 int ClientNet_SendJoinRequest(ClientNet client);
 int ClientNet_SendDisconnect(ClientNet client);
+int ClientNet_SendInput(ClientNet client, const InputPacket *packet);
 int ClientNet_TryReceive(ClientNet client);
 
 int ClientNet_HasGameInit(ClientNet client);
