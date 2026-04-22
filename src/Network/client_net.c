@@ -1,38 +1,57 @@
 #include "client_net.h"
+#include <SDL2/SDL_net.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
+#define CLIENT_PACKET_SIZE ((int)sizeof(GameInitPacket))
+
+struct ClientNet_type {
+    int connected;
+    int clientId;
+    int hasGameInit;
+    GameInitPacket gameInitPacket;
+    UDPsocket socket;
+    IPaddress serverAddress;
+    UDPpacket *sendPacket;
+    UDPpacket *recvPacket;
+};
+
+ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
 {
+    ClientNet client = malloc(sizeof(struct ClientNet_type));
     if (client == NULL) {
-        return -1;
+        return NULL;
     }
 
     client->connected = 0;
     client->clientId = -1;
     client->hasGameInit = 0;
+    memset(&client->gameInitPacket, 0, sizeof(GameInitPacket));
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
 
     if (SDLNet_Init() < 0) {
         printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
-        return -1;
+        free(client);
+        return NULL;
     }
 
     client->socket = SDLNet_UDP_Open(0);
     if (client->socket == NULL) {
         printf("SDLNet_UDP_Open failed: %s\n", SDLNet_GetError());
         SDLNet_Quit();
-        return -1;
+        free(client);
+        return NULL;
     }
 
     if (SDLNet_ResolveHost(&client->serverAddress, serverIP, port) < 0) {
         printf("SDLNet_ResolveHost failed: %s\n", SDLNet_GetError());
         SDLNet_UDP_Close(client->socket);
-        client->socket = NULL;
         SDLNet_Quit();
-        return -1;
+        free(client);
+        return NULL;
     }
 
     client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
@@ -43,25 +62,23 @@ int ClientNet_Init(ClientNet *client, const char *serverIP, Uint16 port)
 
         if (client->sendPacket != NULL) {
             SDLNet_FreePacket(client->sendPacket);
-            client->sendPacket = NULL;
         }
 
         if (client->recvPacket != NULL) {
             SDLNet_FreePacket(client->recvPacket);
-            client->recvPacket = NULL;
         }
 
         SDLNet_UDP_Close(client->socket);
-        client->socket = NULL;
         SDLNet_Quit();
-        return -1;
+        free(client);
+        return NULL;
     }
 
     client->connected = 1;
-    return 0;
+    return client;
 }
 
-int ClientNet_SendJoinRequest(ClientNet *client)
+int ClientNet_SendJoinRequest(ClientNet client)
 {
     JoinRequestPacket packet;
 
@@ -83,7 +100,7 @@ int ClientNet_SendJoinRequest(ClientNet *client)
     return 0;
 }
 
-int ClientNet_SendDisconnect(ClientNet *client)
+int ClientNet_SendDisconnect(ClientNet client)
 {
     DisconnectPacket packet;
 
@@ -107,8 +124,7 @@ int ClientNet_SendDisconnect(ClientNet *client)
     return 0;
 }
 
-
-int ClientNet_TryReceive(ClientNet *client)
+int ClientNet_TryReceive(ClientNet client)
 {
     int packetType;
 
@@ -126,8 +142,6 @@ int ClientNet_TryReceive(ClientNet *client)
     }
 
     memcpy(&packetType, client->recvPacket->data, sizeof(int));
-
-
 
     if (packetType == PACKET_JOIN_ACCEPT) {
         JoinAcceptPacket packet;
@@ -178,7 +192,8 @@ int ClientNet_TryReceive(ClientNet *client)
     printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
 }
-void ClientNet_Destroy(ClientNet *client)
+
+void ClientNet_Destroy(ClientNet client)
 {
     if (client == NULL) {
         return;
@@ -202,4 +217,53 @@ void ClientNet_Destroy(ClientNet *client)
     client->connected = 0;
     client->clientId = -1;
     SDLNet_Quit();
+    free(client);
+}
+
+int ClientNet_HasGameInit(ClientNet client)
+{
+    if (client == NULL) {
+        return 0;
+    }
+
+    return client->hasGameInit;
+}
+
+GameInitPacket ClientNet_GetGameInitPacket(ClientNet client)
+{
+    GameInitPacket packet;
+    memset(&packet, 0, sizeof(GameInitPacket));
+
+    if (client == NULL) {
+        return packet;
+    }
+
+    return client->gameInitPacket;
+}
+
+void ClientNet_ClearGameInit(ClientNet client)
+{
+    if (client == NULL) {
+        return;
+    }
+
+    client->hasGameInit = 0;
+}
+
+int ClientNet_GetClientId(ClientNet client)
+{
+    if (client == NULL) {
+        return -1;
+    }
+
+    return client->clientId;
+}
+
+void ClientNet_SetClientId(ClientNet client, int clientId)
+{
+    if (client == NULL) {
+        return;
+    }
+
+    client->clientId = clientId;
 }
