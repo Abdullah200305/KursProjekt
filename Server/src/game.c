@@ -28,7 +28,7 @@ void run(Server server,Game game)
         }
         SDL_Delay(16);
     }
-   
+    
     Destroy_Server(server);
 };
 

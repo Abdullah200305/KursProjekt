@@ -30,3 +30,15 @@ IPaddress Client_GetAddress(Client client)
 int getClientId(Client client){
     return client->id;
 }
+
+int getActive(Client client){
+    return client->active;
+}
+
+
+void ClientDestroy(Client client){
+PlayerDestroy(client->player);
+client->active = 0;
+client->id = -1; 
+client->address = (IPaddress){0};
+}

@@ -16,4 +16,7 @@ Client Client_net_init(IPaddress ip, int id,int active);
 IPaddress Client_GetAddress(Client client);
 
 int getClientId(Client client);
+int getActive(Client client);
+
+void ClientDestroy(Client client);
 #endif //CLIENT_SESSION_H

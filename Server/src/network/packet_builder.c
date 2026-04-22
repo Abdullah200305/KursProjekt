@@ -100,4 +100,7 @@ void Packet_BuildGameAccept(int id,JoinAcceptPacket *packet){
     memcpy(packet,&response,sizeof(JoinAcceptPacket));
     printf("Join accept send to you %d\n",id);
 }
+
+
+
  

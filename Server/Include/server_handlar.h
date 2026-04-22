@@ -6,4 +6,7 @@
 // will handlar which type of packet is this
 void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip);
 void Server_handlePackets(Server server);
+
+
+void Handle_disconnect(Server server,DisconnectPacket * packet,IPaddress ip);
 #endif //SERVER_HANDLAR_H

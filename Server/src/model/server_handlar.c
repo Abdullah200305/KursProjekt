@@ -22,7 +22,7 @@ void Server_handlePackets(Server server){
             //     break;
 
             // case PACKET_DISCONNECT:
-            //     HandleDisconnect(server, ip);
+            //     Handle_disconnect(server,(DisconnectPacket *) packet, ip);
             //     break;
             default:
                 printf("Unknown packet type: %d\n", type);
@@ -40,7 +40,12 @@ void Server_handlePackets(Server server){
 // init id and ip and send back as ack
 void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
 {
-    for (int  i = 0; i < getClientCount(server); i++)
+    int id=-1;
+    if(MAX_CLIENTS==getClientCount(server)){
+        printf("The Team is full right now!!\n");
+        return;
+    }
+    for (int  i = 0; i < MAX_CLIENTS; i++)
     {
         Client c = Server_GetClient(server, i);
          if (Client_GetAddress(c).host == ip.host &&
@@ -48,16 +53,22 @@ void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
         {
             return;
         }
+        int Assign = getClientId(getClient(server,i));
+        if(Assign==-1){
+            id = Assign;
+        }
     }
-
-    int id = getClientCount(server);
     Client newClient = Client_net_init(ip,id,1);
     setNewClient(server,id,newClient);
 
-    
-    
     JoinAcceptPacket newPacket;
     Packet_BuildGameAccept(id,&newPacket);
     Server_Send(server, ip,(void*) &newPacket, sizeof(JoinAcceptPacket));
     memset(&newPacket,0,sizeof(JoinAcceptPacket));
+}
+
+
+
+void Handle_disconnect(Server server,DisconnectPacket * packet,IPaddress ip){
+    ClientDestroy(getClient(server,packet->clientId));
 }
