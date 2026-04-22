@@ -21,9 +21,9 @@ void Server_handlePackets(Server server){
             //     HandleInput(server, &packet);
             //     break;
 
-            // case PACKET_DISCONNECT:
-            //     Handle_disconnect(server,(DisconnectPacket *) packet, ip);
-            //     break;
+            case PACKET_DISCONNECT:
+                Handle_disconnect(server,(DisconnectPacket *) packet, ip);
+                break;
             default:
                 printf("Unknown packet type: %d\n", type);
                 break;
@@ -36,8 +36,6 @@ void Server_handlePackets(Server server){
 
 
 
-//👍
-// init id and ip and send back as ack
 void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
 {
     int id=-1;
@@ -45,7 +43,9 @@ void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
         printf("The Team is full right now!!\n");
         return;
     }
-    for (int  i = 0; i < MAX_CLIENTS; i++)
+    if(getClientCount(server)>0){
+   
+    for (int  i = 0; i < getClientCount(server); i++)
     {
         Client c = Server_GetClient(server, i);
          if (Client_GetAddress(c).host == ip.host &&
@@ -55,8 +55,16 @@ void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
         }
         int Assign = getClientId(getClient(server,i));
         if(Assign==-1){
-            id = Assign;
+            id = i;
         }
+        else{
+            id = getClientCount(server);
+        }
+    }
+    }
+    else{
+        printf("first player\n");
+        id=0;
     }
     Client newClient = Client_net_init(ip,id,1);
     setNewClient(server,id,newClient);
@@ -68,7 +76,20 @@ void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
 }
 
 
-
+// this will remove from server
 void Handle_disconnect(Server server,DisconnectPacket * packet,IPaddress ip){
-    ClientDestroy(getClient(server,packet->clientId));
+   for (int i = 0; i < getClientCount(server); i++) {
+        Client c = getClient(server, i);
+        if (getActive(c) && getClientId(c) != packet->clientId) {
+            printf("Sending disconnect packet to client %d\n", getClientId(c));
+            Server_Send(server,
+                Client_GetAddress(c),
+                packet,
+                sizeof(DisconnectPacket));
+        }
+    }
+
+    ClientDestroy(getClient(server, packet->clientId)); 
+    setClientCount(server);
+    memset(packet, 0, sizeof(DisconnectPacket));
 }

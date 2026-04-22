@@ -15,6 +15,6 @@
 
 void Packet_BuildGameStart(Game *game,int id,GameInitPacket *packet);
 void Packet_BuildGameAccept(int id,JoinAcceptPacket *packet);
-
+void Packet_BuildDisconnect(int Server_id,DisconnectPacket *packet);
 
 #endif //PACKET_BUILDER_H

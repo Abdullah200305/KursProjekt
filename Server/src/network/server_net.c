@@ -69,7 +69,11 @@ int getClientCount(Server server){
 void setGameStart(Server server,int gameStart){
     server->gameStarted = gameStart;
 }
-
+void setServerRunning(Server server, int value)
+{
+    if (server == NULL) return;
+    server->running = value;
+}
 
 
 Client Server_GetClient(Server server, int index)
@@ -84,6 +88,9 @@ void setNewClient(Server server,int index,Client client){
     server->clients[index]=client;
     printf("clinet joinded %d\n",server->clientCount);
     server->clientCount++;
+}
+void setClientCount(Server server){
+    server->clientCount--;
 }
 
 

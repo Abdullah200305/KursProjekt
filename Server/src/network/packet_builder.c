@@ -102,5 +102,17 @@ void Packet_BuildGameAccept(int id,JoinAcceptPacket *packet){
 }
 
 
+// this will make when server went down
+void Packet_BuildDisconnect(int id,DisconnectPacket *packet){   
+
+ DisconnectPacket response = {
+        .type = PACKET_DISCONNECT
+        ,.clientId=id
+    };
+    memcpy(packet,&response,sizeof(DisconnectPacket));
+    printf("DisconnectPacket send to you %d\n",id);
+}
+
+
 
  

@@ -34,8 +34,8 @@ Client Server_GetClient(Server server, int index);
 
 void setNewClient(Server server,int index,Client client);
 void setGameStart(Server server,int gameStart);
-
-
+void setClientCount(Server server);
+void setServerRunning(Server server, int value);
 Client getClient(Server server,int index);
 
 

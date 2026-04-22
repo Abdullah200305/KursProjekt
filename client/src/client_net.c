@@ -139,7 +139,6 @@ int ClientNet_TryReceive(ClientNet *client)
 
         memcpy(&packet, client->recvPacket->data, sizeof(JoinAcceptPacket));
         client->clientId = packet.clientId;
-
         printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
         return 1;
     }

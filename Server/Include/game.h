@@ -9,6 +9,6 @@ void run(Server server,Game game);
 void Game_Init(Server server,Game *game);
 void Game_InitSendToClients(Server server,Game *game);
 
-
+void server_disconnet(Server server);
 void Server_Broadcast(Server server,void *packet,size_t packetSize);
 #endif //GAME_H

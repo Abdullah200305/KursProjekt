@@ -4,12 +4,12 @@
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 {
+
+
+    // this will uppdate
     SDL_Event event;
     while (game->state != GAME_STATE_GAME_OVER)
-    {
-        // THis will need to be change after
-        /// start
-
+    { 
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -26,6 +26,9 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
             break;
 }
         }
+
+
+
         
         if (clientNet != NULL)
         {
@@ -40,31 +43,40 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
                 game_apply_network_init(game, clientNet);
             }
         }
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-        // you can move both payers at the same time, but you can only move one player at a time.
-        //this for the test.
-       // PLAYER 1
-        stopPlayer(game->players[0]);
-        if (state[SDL_SCANCODE_W])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
-        if (state[SDL_SCANCODE_S])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
-        if (state[SDL_SCANCODE_A])
-            setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
-        if (state[SDL_SCANCODE_D])
-            setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
 
-        // PLAYER 2
-        stopPlayer(game->players[1]);
-        if (state[SDL_SCANCODE_UP])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
-        if (state[SDL_SCANCODE_DOWN])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
-        if (state[SDL_SCANCODE_LEFT])
-            setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
-        if (state[SDL_SCANCODE_RIGHT])
-            setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
+
+        // this will reomved
+        // const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+    //     // you can move both payers at the same time, but you can only move one player at a time.
+    //     //this for the test.
+    //    // PLAYER 1
+    //     stopPlayer(game->players[0]);
+    //     if (state[SDL_SCANCODE_W])
+    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
+    //     if (state[SDL_SCANCODE_S])
+    //         setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
+    //     if (state[SDL_SCANCODE_A])
+    //         setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
+    //     if (state[SDL_SCANCODE_D])
+    //         setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
+
+    //     // PLAYER 2
+    //     stopPlayer(game->players[1]);
+    //     if (state[SDL_SCANCODE_UP])
+    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
+    //     if (state[SDL_SCANCODE_DOWN])
+    //         setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
+    //     if (state[SDL_SCANCODE_LEFT])
+    //         setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
+    //     if (state[SDL_SCANCODE_RIGHT])
+    //         setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
+
+
+
+
+
 
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
@@ -74,31 +86,32 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
 
 
-    const char *message = "Game over! Click OK to close.";
+    // const char *message = "Game over! Click OK to close.";
+    // if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    // {
+    //     message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+    // }
+    // else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+    // {
+    //     message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+    // }
+    // else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    // {
+    //     message = "Game over!\nBoth players died.\nClick OK to close.";
+    // }
+
+    // SDL_ShowSimpleMessageBox(
+    //     SDL_MESSAGEBOX_INFORMATION,
+    //     "Game Over",
+    //     message,
+    //     renderer->window
+    // );
 
 
 
 
 
-    if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    {
-        message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
-    }
-    else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
-    {
-        message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
-    }
-    else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    {
-        message = "Game over!\nBoth players died.\nClick OK to close.";
-    }
 
-    SDL_ShowSimpleMessageBox(
-        SDL_MESSAGEBOX_INFORMATION,
-        "Game Over",
-        message,
-        renderer->window
-    );
 }
 
 void game_apply_network_init(Game *game, ClientNet *clientNet)
@@ -133,8 +146,8 @@ void game_apply_network_init(Game *game, ClientNet *clientNet)
             i
         );
     }
-
-    clientNet->clientId = packet->data.yourClientId;
+    // this make issssueeee !!!
+  //  clientNet->clientId = packet->data.yourClientId;
     clientNet->hasGameInit = 0;
 
     printf("[CLIENT] Applied GAME_INIT locally\n");
@@ -144,26 +157,26 @@ void game_apply_network_init(Game *game, ClientNet *clientNet)
 void game_update(Game *game, Renderer *renderer)
 {
     // // Update player position based on velocity and check for collisions
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        Player p = game->players[i];
+    // for (int i = 0; i < game->numPlayers; i++)
+    // {
+    //     Player p = game->players[i];
         
-        movePlayer(game->map, p);
+    //     movePlayer(game->map, p);
 
-        if (i == getBombCarrier(game->bomb))
-        {
-             movePlayerWithOther(
-                p,                      // current player
-                i,                      // index of current player
-                game->players,          // all players
-                game->numPlayers,       // count
-                game->bomb             // bomb pointer
-            );
-            //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
-        }
-    }
+    //     if (i == getBombCarrier(game->bomb))
+    //     {
+    //          movePlayerWithOther(
+    //             p,                      // current player
+    //             i,                      // index of current player
+    //             game->players,          // all players
+    //             game->numPlayers,       // count
+    //             game->bomb             // bomb pointer
+    //         );
+    //         //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+    //     }
+    // }
 
-    updateBomb(game->bomb, game->players);
+    // updateBomb(game->bomb, game->players);
 
 
 
@@ -178,8 +191,15 @@ void game_update(Game *game, Renderer *renderer)
 
     // Render the game state
     Background_Image_Render(renderer);
-    Render_Map(renderer, game->map);
+    
+
+    // will reomve
+    //Render_Map(renderer, game->map);
    
+
+
+
+
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
@@ -201,30 +221,36 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
+    // this will uppdate
+    // if (isPlayerAlive(game->players[0]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[0], 20, 20);
+    // }
 
-    if (isPlayerAlive(game->players[0]))
-    {
-        Render_PlayerLives(renderer, game->players[0], 20, 20);
-    }
+    // if (isPlayerAlive(game->players[1]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[1], 20, 50);
+    // }
+    // int aliveCount = 0;
 
-    if (isPlayerAlive(game->players[1]))
-    {
-        Render_PlayerLives(renderer, game->players[1], 20, 50);
-    }
-    int aliveCount = 0;
+    // for (int i = 0; i < game->numPlayers; i++)
+    // {
+    //     if (isPlayerAlive(game->players[i]))
+    //     {
+    //         aliveCount++;
+    //     }
+    // }
 
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        if (isPlayerAlive(game->players[i]))
-        {
-            aliveCount++;
-        }
-    }
+    // if (aliveCount <= 1)
+    // {
+    //     game->state = GAME_STATE_GAME_OVER;
+    // }
 
-    if (aliveCount <= 1)
-    {
-        game->state = GAME_STATE_GAME_OVER;
-    }
+
+
+
+
+
 
     Renderer_Present(renderer);
 }
