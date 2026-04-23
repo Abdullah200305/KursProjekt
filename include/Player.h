@@ -28,8 +28,12 @@ float getPlayerSpeedTimer(Player player);
 int getPlayerAnimationFrame(Player player);
 
 
+float getPlayerFreezeTimer(Player player);
+float getPlayerSizeUpTimer(Player player);
 
 //Setters metoder
+void setPlayerX(Player player, float x);
+void setPlayerY(Player player, float y);
 void setPlayerVelocity(Player player, float vx, float vy);
 void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
@@ -39,10 +43,15 @@ void setPlayerAnimation(Player player);
 
 
 //Player Movement
+void setPlayerFreezeTimer(Player player, float timer);
+void setPlayerSizeUpTimer(Player player, float timer);
+//MISC FUNCTIONS
 
 void playerMovement(
     Player player,
     SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right
 );
+
+void uncollidePlayer(Player player);
 
 #endif

@@ -34,16 +34,17 @@ void game_loop(Game *game, Renderer *renderer)
         playerMovement(game->players[0], SDL_SCANCODE_W, SDL_SCANCODE_S, SDL_SCANCODE_A, SDL_SCANCODE_D);
         playerMovement(game->players[1], SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
 
-
+        /*  simpel if press m something happens for testing stuff
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
         if(state[SDL_SCANCODE_M])
         {
             setPlayerSpeedYX(game->players[0], 50, 34);
         }
+        */
 
-        //old implementation of movement
-       /*
+        /*old implementation of movement
+    
         const Uint8 *state = SDL_GetKeyboardState(NULL);
 
 
@@ -139,32 +140,28 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-
-
-
-
-
-
     // Render the game state
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
-   
+    
 
 
+    
+    //-------------------------------------------------------------------//
+    //---------------------Ability Update Loop---------------------------//
 
+    int miliseconds = 4000; // 2 seconds
 
-
+    abilitySpawnRate(game->abilitySystem, game->map, miliseconds);
     AbilitySystem_render(game->abilitySystem, renderer);
 
     int currentPlayers = 2;
 
     for (int i = 0; i < currentPlayers; i++)
     {
-        AbilitySystem_checkPickup(game->abilitySystem, game->players[i]);
-    }
 
-    for (int i = 0; i < currentPlayers; i++)
-    {
+        AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
+
         if (getPlayerSpeedTimer(game->players[i]) > 0)
         {
             int speedTimer = getPlayerSpeedTimer(game->players[i]);
@@ -175,6 +172,30 @@ void game_update(Game *game, Renderer *renderer)
                 setPlayerSpeedYX(game->players[i], 5, 5);
             }
         }
+
+        if (getPlayerFreezeTimer(game->players[i]) > 0)
+        {
+            int freezeTimer = getPlayerFreezeTimer(game->players[i]);
+            setPlayerFreezeTimer(game->players[i], --freezeTimer);
+
+            if (getPlayerFreezeTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+
+        if (getPlayerSizeUpTimer(game->players[i]) > 0)
+        {
+            int sizeUpTimer = getPlayerSizeUpTimer(game->players[i]);
+            setPlayerSizeUpTimer(game->players[i], --sizeUpTimer);
+
+            if (getPlayerSizeUpTimer(game->players[i]) == 0)
+            {
+                setPlayerSize(game->players[i], 32, 32);
+                
+            }
+        }            
+        //-----------------------------------------------------------------//
     }    
 
 
@@ -227,10 +248,15 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
         if (player != other)
         {
             if (Player_collisionWithOtherPlayer(
-                    getPlayerX(player),
-                    getPlayerY(player),
-                    getPlayerX(other),
-                    getPlayerY(other)))
+                getPlayerX(player),
+                getPlayerY(player),
+                getPlayerWidth(player),
+                getPlayerHeight(player),
+
+                getPlayerX(other),
+                getPlayerY(other),
+                getPlayerWidth(other),
+                getPlayerHeight(other)))
             {
                 int other_index = i;
 
@@ -292,7 +318,7 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX, getPlayerY(player));
+    int colx = Collision_Map(map, newX, getPlayerY(player), getPlayerWidth(player), getPlayerHeight(player));
 
     if (colx == 1 || colx == 2)
     {
@@ -312,7 +338,7 @@ void movePlayer(Map map, Player player)
     }
 
     float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map, getPlayerX(player), newY);
+    int coly = Collision_Map(map, getPlayerX(player), newY, getPlayerWidth(player), getPlayerHeight(player));
     if (coly == 1 || coly == 2)
     {
         /// collision with tile type 1 or 2, stop player movement
@@ -347,7 +373,6 @@ void game_init(Game *game, Renderer *renderer)
     
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem);
-    AbilitySystem_spawn(game->abilitySystem, game->map);
     
 
     game->players[0] = initPlayer(230, 300);

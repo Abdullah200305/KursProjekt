@@ -2,7 +2,7 @@
 #define GAME_H
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "Player.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -25,9 +25,11 @@ int getMapBufferItems(Map map,int x,int y);
 Map Map_create(int width, int height);
 void Map_destroy(Map map);
 
-int Player_collisionWithOtherPlayer(int x1, int y1, int x2, int y2);
+int Player_collisionWithOtherPlayer( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2);
 
-int Collision_Map(Map map, float x, float y);
+int Collision_Map(Map map, float x, float y, float width, float height);
 int checkCollision(Map map, int x, int y);
+void resolveCollision(Map map, Player player);
+
 
 #endif // GAME_H

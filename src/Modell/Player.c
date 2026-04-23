@@ -20,6 +20,10 @@ struct  Player_type
     int animationFrame;
     int animationTimer;
 
+    //float speedTimer;
+    float freezeTimer;
+    float sizeUpTimer;
+     
 };
 
 
@@ -33,16 +37,21 @@ Player initPlayer(float x, float y)
     p->y = y;
     p->vx = 0;
     p->vy = 0;
+    p->width = 32;
+    p->height = 32;
     p->lives = 3;
     p->alive = 1;
 
     p->speedY = 5;
     p->speedX = 5;
+
     p->speedTimer = 0;
 
     p->animationFrame = 0;
     p->animationTimer = 0;
     
+    p->freezeTimer = 0;
+    p->sizeUpTimer = 0;
     return p;
 }
 
@@ -150,12 +159,34 @@ int getPlayerLives(Player player)
     return player->lives;
 }
 
+// Timers
+
 float getPlayerSpeedTimer(Player player) 
 {
     return player->speedTimer;
 }
 
+float getPlayerFreezeTimer(Player player) 
+{
+    return player->freezeTimer;
+}
+
+float getPlayerSizeUpTimer(Player player) 
+{
+    return player->sizeUpTimer;
+}
+
 //Implementation av setters metoder
+
+void setPlayerX(Player player, float x)
+{
+    player->x = x;
+}
+
+void setPlayerY(Player player, float y)
+{
+    player->y = y;
+}
 
 void setPlayerVelocity(Player player, float vx, float vy) 
 {
@@ -180,6 +211,8 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedY = speedY;
     player->speedX = speedX;
 }
+
+//Timers
 
 void setPlayerSpeedTimer(Player player, float timer) 
 {
@@ -209,6 +242,17 @@ void setPlayerAnimation(Player player) {
     }
 }
 
+void setPlayerFreezeTimer(Player player, float timer) 
+{
+    player->freezeTimer = timer;
+}
+
+void setPlayerSizeUpTimer(Player player, float timer) 
+{
+    player->sizeUpTimer = timer;
+}
+
+//
 
 void playerMovement(
     Player player,
@@ -240,3 +284,4 @@ void playerMovement(
     setPlayerVelocity(player, vx, vy);
     setPlayerAnimation(player);
 }
+

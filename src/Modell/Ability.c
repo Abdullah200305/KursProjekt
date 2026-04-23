@@ -11,6 +11,7 @@ typedef struct {
 struct AbilitySystem
 {
     AbilityItem items[MAX_ABILITIES];
+    Uint32 nextSpawnTime;
 };
 
 
@@ -34,7 +35,10 @@ void AbilitySystem_init (AbilitySystem *system)
         system->items[i].active = false;
         system->items[i].type = ABILITY_NONE;
     }
+
+    system->nextSpawnTime = 0;
 }
+
 
 void AbilitySystem_spawn(AbilitySystem *system, Map map)
 {
@@ -56,7 +60,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tileSize = getTileSize(map);
 
             system->items[i].active = true;
-            system->items[i].type = 1; // initalized to always spawn the speed boost for now, when more abilties created do rand() % 6 
+            system->items[i].type = rand() % 4 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
 
             system->items[i].width = 32;
             system->items[i].height = 32;
@@ -67,6 +71,20 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             break;
         }
     }
+}
+
+void abilitySpawnRate(AbilitySystem *system, Map map, int miliseconds)
+{
+    Uint32 now = SDL_GetTicks();
+
+    if (now <= system->nextSpawnTime)
+        return;
+
+    // try to spawn
+    AbilitySystem_spawn(system, map);
+
+    // set cooldown (2 seconds)
+    system->nextSpawnTime = now + miliseconds;
 }
 
 void AbilitySystem_render(const AbilitySystem *system, Renderer *r)
@@ -90,7 +108,7 @@ void AbilitySystem_render(const AbilitySystem *system, Renderer *r)
     }
 }
 
-void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
+void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player players[], int totalPlayers)
 {
     for (int i = 0; i < MAX_ABILITIES; i++)
     {
@@ -100,20 +118,66 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player)
             continue;
 
         if (Player_collisionWithOtherPlayer(
-                getPlayerX(player),
-                getPlayerY(player),
-                a->x,
-                a->y))
+            getPlayerX(player),
+            getPlayerY(player),
+            getPlayerWidth(player),
+            getPlayerHeight(player),
+            a->x,
+            a->y,
+            a->width,
+            a->height))
         {
             // remove ability
             a->active = false;
 
-            // apply effect
+            // apply SPEED effect
             if (a->type == ABILITY_SPEED)
             {
                 setPlayerSpeedYX(player, 10, 10);
                 setPlayerSpeedTimer(player, 300);
             }
+
+            // apply FREEZE effect
+            if (a->type == ABILITY_FREEZE)
+            {
+                for (int i = 0; i < totalPlayers; i++)
+                {
+                    if (players[i] != player)
+                    {
+                        setPlayerFreezeTimer(players[i], 80);
+                        setPlayerSpeedYX(players[i], 0, 0);
+                    }
+                }
+            }   
+
+            // apply SWAP effect
+            if (a->type == ABILITY_SWAP)
+            {
+                int playerCoordinateX = getPlayerX(player), playerCorrdinateY = getPlayerY(player);
+
+                int randomPlayer = 0;
+
+                do{
+                    randomPlayer = rand() % totalPlayers;
+                } while(players[randomPlayer] == player);
+
+                //Changes player coordinates to random player
+
+                setPlayerX(player, getPlayerX(players[randomPlayer]));
+                setPlayerY(player, getPlayerY(players[randomPlayer]));
+
+                // changes random players coordinates to player (that picked it up)
+                setPlayerX(players[randomPlayer], playerCoordinateX);
+                setPlayerY(players[randomPlayer], playerCorrdinateY);
+            }
+
+            // apply SIZEUP effect
+            if (a->type == ABILITY_SIZEUP)
+            {
+                setPlayerSizeUpTimer(player, 200);
+                setPlayerSize(player, 64, 64);
+            }
+
         }
     }
 }
