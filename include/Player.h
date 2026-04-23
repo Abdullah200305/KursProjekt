@@ -29,6 +29,6 @@ int getPlayerLives(Player player);
 void setPlayerVelocity(Player player, float vx, float vy);
 void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
-
+void setPlayerState(Player player, int lives, int alive);
 
 #endif

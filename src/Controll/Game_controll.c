@@ -399,11 +399,17 @@ static void game_apply_network_state(Game *game, ClientNet clientNet)
         playersToUpdate = MAX_PLAYERS;
     }
 
-    for (int i = 0; i < playersToUpdate; i++) {
+        for (int i = 0; i < playersToUpdate; i++) {
         setPlayerPosition(
             game->players[i],
             packet.data.players[i].x,
             packet.data.players[i].y
+        );
+
+        setPlayerState(
+            game->players[i],
+            packet.data.players[i].lives,
+            packet.data.players[i].alive
         );
     }
 
