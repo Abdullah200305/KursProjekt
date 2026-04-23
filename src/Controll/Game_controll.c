@@ -5,25 +5,8 @@
 #include <string.h>
 
 //Static hjälper funktion
-static void game_setup_players(Game *game, int numPlayers, const PlayerInitData players[])
-{
-    if (game == NULL || players == NULL) {
-        return;
-    }
-
-    game->numPlayers = numPlayers;
-    if (game->numPlayers > MAX_PLAYERS) {
-        game->numPlayers = MAX_PLAYERS;
-    }
-
-    for (int i = 0; i < game->numPlayers; i++) {
-        game->players[i] = initPlayer(
-            (int)players[i].x,
-            (int)players[i].y
-        );
-    }
-}
-
+static void game_setup_players(Game *game, int numPlayers, const PlayerInitData players[]);
+static void game_apply_network_state(Game *game, ClientNet clientNet);
 
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
@@ -63,6 +46,10 @@ void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
             if (ClientNet_HasGameInit(clientNet))
             {
                 game_apply_network_init(game, clientNet);
+            }
+            if (ClientNet_HasGameState(clientNet))
+            {
+                game_apply_network_state(game, clientNet);
             }
         }
 
@@ -367,4 +354,60 @@ void game_init(Game *game, Renderer *renderer)
     game->bomb = createBomb(game->players);
 
     Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map));
+}
+
+static void game_setup_players(Game *game, int numPlayers, const PlayerInitData players[])
+{
+    if (game == NULL || players == NULL) {
+        return;
+    }
+
+    game->numPlayers = numPlayers;
+    if (game->numPlayers > MAX_PLAYERS) {
+        game->numPlayers = MAX_PLAYERS;
+    }
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        game->players[i] = initPlayer(
+            (int)players[i].x,
+            (int)players[i].y
+        );
+    }
+}
+static void game_apply_network_state(Game *game, ClientNet clientNet)
+{
+    GameStatePacket packet;
+    int playersToUpdate;
+
+    if (game == NULL || clientNet == NULL) {
+        return;
+    }
+
+    if (!ClientNet_HasGameState(clientNet)) {
+        return;
+    }
+
+    packet = ClientNet_GetGameStatePacket(clientNet);
+
+    playersToUpdate = packet.data.numPlayers;
+
+    if (playersToUpdate > game->numPlayers) {
+        playersToUpdate = game->numPlayers;
+    }
+
+    if (playersToUpdate > MAX_PLAYERS) {
+        playersToUpdate = MAX_PLAYERS;
+    }
+
+    for (int i = 0; i < playersToUpdate; i++) {
+        setPlayerPosition(
+            game->players[i],
+            packet.data.players[i].x,
+            packet.data.players[i].y
+        );
+    }
+
+    printf("[CLIENT] Applied GAME_STATE positions locally\n");
+
+    ClientNet_ClearGameState(clientNet);
 }

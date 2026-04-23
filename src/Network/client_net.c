@@ -11,6 +11,8 @@ struct ClientNet_type {
     int clientId;
     int hasGameInit;
     GameInitPacket gameInitPacket;
+    int hasGameState;
+    GameStatePacket gameStatePacket;
     UDPsocket socket;
     IPaddress serverAddress;
     UDPpacket *sendPacket;
@@ -28,6 +30,8 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
     client->clientId = -1;
     client->hasGameInit = 0;
     memset(&client->gameInitPacket, 0, sizeof(GameInitPacket));
+    client->hasGameState = 0;
+    memset(&client->gameStatePacket, 0, sizeof(GameStatePacket));
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
@@ -206,6 +210,24 @@ int ClientNet_TryReceive(ClientNet client)
 
         return 1;
     }
+    if (packetType == PACKET_GAME_STATE) {
+        GameStatePacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(GameStatePacket)) {
+            printf("[CLIENT] GAME_STATE packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(GameStatePacket));
+
+        client->gameStatePacket = packet;
+        client->hasGameState = 1;
+
+        printf("[CLIENT] GAME_STATE received\n");
+        printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+
+        return 1;
+    }
 
     printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
@@ -284,4 +306,35 @@ void ClientNet_SetClientId(ClientNet client, int clientId)
     }
 
     client->clientId = clientId;
+}
+
+
+int ClientNet_HasGameState(ClientNet client)
+{
+    if (client == NULL) {
+        return 0;
+    }
+
+    return client->hasGameState;
+}
+
+GameStatePacket ClientNet_GetGameStatePacket(ClientNet client)
+{
+    GameStatePacket packet;
+    memset(&packet, 0, sizeof(GameStatePacket));
+
+    if (client == NULL) {
+        return packet;
+    }
+
+    return client->gameStatePacket;
+}
+
+void ClientNet_ClearGameState(ClientNet client)
+{
+    if (client == NULL) {
+        return;
+    }
+
+    client->hasGameState = 0;
 }
