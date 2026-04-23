@@ -412,6 +412,15 @@ static void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].alive
         );
     }
+    setBombState(
+        game->bomb,
+        packet.data.bomb.x,
+        packet.data.bomb.y,
+        packet.data.bomb.timer,
+        packet.data.bomb.bombCarrier,
+        packet.data.bomb.active,
+        packet.data.bomb.exploding
+    );
 
     printf("[CLIENT] Applied GAME_STATE positions locally\n");
 
