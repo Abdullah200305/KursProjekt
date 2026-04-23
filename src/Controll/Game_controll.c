@@ -4,6 +4,27 @@
 #include <stdio.h>
 #include <string.h>
 
+//Static hjälper funktion
+static void game_setup_players(Game *game, int numPlayers, const PlayerInitData players[])
+{
+    if (game == NULL || players == NULL) {
+        return;
+    }
+
+    game->numPlayers = numPlayers;
+    if (game->numPlayers > MAX_PLAYERS) {
+        game->numPlayers = MAX_PLAYERS;
+    }
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        game->players[i] = initPlayer(
+            (int)players[i].x,
+            (int)players[i].y
+        );
+    }
+}
+
+
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
@@ -136,17 +157,7 @@ void game_apply_network_init(Game *game, ClientNet clientNet)
         return;
     }
 
-    game->numPlayers = packet.data.numPlayers;
-    if (game->numPlayers > MAX_PLAYERS) {
-        game->numPlayers = MAX_PLAYERS;
-    }
-
-    for (int i = 0; i < game->numPlayers; i++) {
-        game->players[i] = initPlayer(
-            (int)packet.data.players[i].x,
-            (int)packet.data.players[i].y
-        );
-    }
+    game_setup_players(game, packet.data.numPlayers, packet.data.players);
 
     ClientNet_SetClientId(clientNet, packet.data.yourClientId);
     ClientNet_ClearGameInit(clientNet);
@@ -334,23 +345,26 @@ void game_cleanup(Game *game, Renderer *renderer)
 
 void game_init(Game *game, Renderer *renderer)
 {
+    PlayerInitData initialPlayers[2];
+
+    memset(initialPlayers, 0, sizeof(initialPlayers));
+
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
-    game->numPlayers = 2;
 
-    game->players[0] = initPlayer(230, 300);
-    game->players[1] = initPlayer(270, 300);
+    initialPlayers[0].x = 230;
+    initialPlayers[0].y = 300;
+    initialPlayers[0].lives = 3;
+    initialPlayers[0].alive = 1;
+
+    initialPlayers[1].x = 270;
+    initialPlayers[1].y = 300;
+    initialPlayers[1].lives = 3;
+    initialPlayers[1].alive = 1;
+
+    game_setup_players(game, 2, initialPlayers);
 
     game->bomb = createBomb(game->players);
 
-    // printf("%d hello ",getPlayerX(game->players[0]));
-    // game->bomb.active = 1;
-    // game->bomb.timer = 200;
-    // game->bomb.bombCarrier = 0;
-    // game->bomb.exploding = 0;
-    // game->bomb.explosionTimer = 0;
-    // game->bomb.x = getPlayerX(game->players[0]);
-    // game->bomb.y = getPlayerY(game->players[0]);
-
-    Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+    Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map));
 }
