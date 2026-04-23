@@ -298,6 +298,6 @@ void Server_Broadcast(Server server, void *packet, size_t packetSize) {
             sent++;
         }
     }
-    printf("Broadcast sent to %d clients\n", sent);
+    //printf("Broadcast sent to %d clients\n", sent);
     memset(packet, 0, packetSize);
 }

@@ -190,7 +190,7 @@ int ClientNet_TryReceive(ClientNet client)
         client->hasGameInit = 1;
 
         printf("[CLIENT] GAME_INIT received\n");
-        printf("[CLIENT] mapId = %d\n", packet.data.mapId);
+        printf("[CLIENT] mapId = %d\n", packet.data.map.mapId);
         printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
         printf("[CLIENT] yourClientId = %d\n", packet.data.yourClientId);
         printf("[CLIENT] bombCarrier = %d\n", packet.data.bomb.bombCarrier);
