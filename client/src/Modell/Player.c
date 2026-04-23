@@ -115,3 +115,19 @@ void setPlayerSize(Player player, float width, float height) {
     player->width = width;
     player->height = height;
 }
+void setPlayerState(Player player, int lives, int alive) {
+    if (player == NULL) {
+        return;
+    }
+
+    if (lives < 0) {
+        lives = 0;
+    }
+
+    player->lives = lives;
+    player->alive = alive ? 1 : 0;
+
+    if (player->lives == 0) {
+        player->alive = 0;
+    }
+}

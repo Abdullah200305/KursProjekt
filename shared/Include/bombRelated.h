@@ -27,4 +27,5 @@ int getBombActive(Bomb pBomb);
 
 ///-------Setters------//
 void setBombCarrier(Bomb pBomb, int index);
+void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding);
 #endif 

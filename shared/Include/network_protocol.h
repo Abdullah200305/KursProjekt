@@ -91,6 +91,17 @@ typedef struct {
 
 
 typedef struct {
+    int numPlayers;
+    PlayerInitData players[MAX_PLAYERS];
+    BombInitData bomb;
+} GameStateData;
+
+typedef struct {
+    int type;
+    GameStateData data;
+} GameStatePacket;
+
+typedef struct {
     int type;
     int clientId;
     int up;

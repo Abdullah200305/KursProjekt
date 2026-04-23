@@ -18,6 +18,10 @@ int ClientNet_HasGameInit(ClientNet client);
 GameInitPacket ClientNet_GetGameInitPacket(ClientNet client);
 void ClientNet_ClearGameInit(ClientNet client);
 
+int ClientNet_HasGameState(ClientNet client);
+GameStatePacket ClientNet_GetGameStatePacket(ClientNet client);
+void ClientNet_ClearGameState(ClientNet client);
+
 int ClientNet_GetClientId(ClientNet client);
 void ClientNet_SetClientId(ClientNet client, int clientId);
 
