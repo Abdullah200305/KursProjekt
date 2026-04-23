@@ -11,7 +11,7 @@ struct  Player_type{
     int alive;  //alive = 1 => alive or alive = 0 => dead
 };
 
-Player initPlayer(float x, float y,int id)
+Player initPlayer(float x, float y)
 {
     Player p = malloc(sizeof(struct Player_type));
     p->x = x;
@@ -114,4 +114,20 @@ void setPlayerPosition(Player player, float x, float y) {
 void setPlayerSize(Player player, float width, float height) {
     player->width = width;
     player->height = height;
+}
+void setPlayerState(Player player, int lives, int alive) {
+    if (player == NULL) {
+        return;
+    }
+
+    if (lives < 0) {
+        lives = 0;
+    }
+
+    player->lives = lives;
+    player->alive = alive ? 1 : 0;
+
+    if (player->lives == 0) {
+        player->alive = 0;
+    }
 }

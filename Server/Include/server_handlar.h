@@ -9,4 +9,5 @@ void Server_handlePackets(Server server);
 
 
 void Handle_disconnect(Server server,DisconnectPacket * packet,IPaddress ip);
+void Handle_Input(Server server,InputPacket * packet);
 #endif //SERVER_HANDLAR_H

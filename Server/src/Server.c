@@ -11,20 +11,8 @@ void handle_sigint(int sig)
     setServerRunning(g_server, 0);
 }
 
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char *argv[])
 {
-
 Server server= server_net_init();
 Game game;
 printf("server init");

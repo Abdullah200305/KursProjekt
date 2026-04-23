@@ -18,5 +18,5 @@ IPaddress Client_GetAddress(Client client);
 int getClientId(Client client);
 int getActive(Client client);
 
-void ClientDestroy(Client client);
+void ClientClean(Client client);
 #endif //CLIENT_SESSION_H

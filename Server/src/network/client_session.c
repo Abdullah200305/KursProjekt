@@ -35,15 +35,7 @@ int getActive(Client client){
     return client->active;
 }
 
-// Client getClientById(Server server, int clientId) {
-//     for (int i = 0; i < getClientCount(server); i++) {
-//         Client c = getClient(server, i);
-//         if (getClientId(c) == clientId) return c;
-//     }
-//     return NULL;
-// }
-
-void ClientDestroy(Client client){    
+void ClientClean(Client client){    
 printf("clinet is delete now %d\n",client->id);    
 PlayerDestroy(client->player);
 client->player = NULL;

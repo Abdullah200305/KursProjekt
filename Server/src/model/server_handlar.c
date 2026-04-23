@@ -17,14 +17,15 @@ void Server_handlePackets(Server server){
                 Handle_join(server,(JoinRequestPacket *) packet, ip);
                 break;
 
-            // case PACKET_INPUT:
-            //     HandleInput(server, &packet);
-            //     break;
+            case PACKET_INPUT:
+                Handle_Input(server,(InputPacket *) packet);
+                break;
 
             case PACKET_DISCONNECT:
                 Handle_disconnect(server,(DisconnectPacket *) packet, ip);
                 break;
             default:
+
                 printf("Unknown packet type: %d\n", type);
                 break;
         }
@@ -33,7 +34,12 @@ void Server_handlePackets(Server server){
    
 }
 
-
+void Handle_Input(Server server,InputPacket * packet){
+    int id = packet->clientId;
+    if (id < 0 || id >= MAX_PLAYERS)
+    return;
+    setInputPlayer(server,packet,id);
+}
 
 
 void Handle_join(Server server,JoinRequestPacket *packet,IPaddress ip)
@@ -89,7 +95,7 @@ void Handle_disconnect(Server server,DisconnectPacket * packet,IPaddress ip){
         }
     }
 
-    ClientDestroy(getClient(server, packet->clientId)); 
+    ClientClean(getClient(server, packet->clientId)); 
     setClientCount(server);
     memset(packet, 0, sizeof(DisconnectPacket));
 }

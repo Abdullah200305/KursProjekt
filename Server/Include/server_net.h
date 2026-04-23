@@ -37,7 +37,11 @@ void setGameStart(Server server,int gameStart);
 void setClientCount(Server server);
 void setServerRunning(Server server, int value);
 Client getClient(Server server,int index);
+InputPacket getInputPlayer(Server server,int id);
 
+
+
+void setInputPlayer(Server server,InputPacket *input,int id);
 
 int ServerNet_Receive(Server server,void** packet,IPaddress *Ip);
 void Server_Send(Server server,IPaddress clientIp, void *data, int size);

@@ -12,7 +12,7 @@ struct  Player_type{
     int id;
 };
 
-Player initPlayer(float x, float y,int id)
+Player initPlayer(float x, float y)
 {
     Player p = malloc(sizeof(struct Player_type));
     p->x = x;
@@ -21,7 +21,7 @@ Player initPlayer(float x, float y,int id)
     p->vy = 0;
     p->lives = 3;
     p->alive = 1;
-    p->id = id;
+    // p->id = id;
     return p;
 }
 

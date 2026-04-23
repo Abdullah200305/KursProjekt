@@ -2,12 +2,12 @@
 #define PLAYER_H
 #include <stdio.h>
 #include <stdlib.h>
-#include  "protocol.h"
+
 typedef struct Player_type *Player;
 
 
 // server will call all these 
-Player initPlayer(float x, float y,int id);
+Player initPlayer(float x, float y);
 void damagePlayer(Player player);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
@@ -36,12 +36,16 @@ int getPlayerId(Player player);
 void setPlayerVelocity(Player player, float vx, float vy);
 void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
+
 void setPlayerId(Player player,int id);
 
 void PlayerDestroy(Player player);
 
 
 
+
+
+void setPlayerState(Player player, int lives, int alive);
 
 
 #endif
