@@ -111,17 +111,4 @@ typedef struct {
 } InputPacket;
 
 
-typedef struct {
-    PlayerInitData players[MAX_PLAYERS];
-    BombInitData bomb;
-}GameStateData;
-
-typedef struct {
-    int type;
-    int numPlayers;
-    GameStateData data;
-} GameStatePacket;
-
-
-
 #endif

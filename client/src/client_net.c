@@ -223,8 +223,11 @@ int ClientNet_TryReceive(ClientNet client)
         client->gameStatePacket = packet;
         client->hasGameState = 1;
 
-        printf("[CLIENT] GAME_STATE received\n");
-        printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+
+
+        // abody stop 
+       // printf("[CLIENT] GAME_STATE received\n");
+       // printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
 
         return 1;
     }
@@ -338,3 +341,8 @@ void ClientNet_ClearGameState(ClientNet client)
 
     client->hasGameState = 0;
 }
+
+
+
+
+

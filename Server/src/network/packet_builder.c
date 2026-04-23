@@ -58,7 +58,7 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
 {
     GameStatePacket Newpacket = {0};
     Newpacket.type = PACKET_GAME_STATE;
-    Newpacket.numPlayers = game->numPlayers;
+    Newpacket.data.numPlayers = game->numPlayers;
     Newpacket.data.bomb.active = getBombActive(game->bomb);
     Newpacket.data.bomb.bombCarrier = getBombCarrier(game->bomb);
     Newpacket.data.bomb.exploding = getBombExploding(game->bomb);
