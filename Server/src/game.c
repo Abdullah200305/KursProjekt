@@ -105,10 +105,14 @@ void Game_Update(Server server, Game *game) {
             getPlayerX(game->players[i]) + getPlayerVelocityX(game->players[i]),
             getPlayerY(game->players[i]) + getPlayerVelocityY(game->players[i])
         );
-            //     printf("Player %d position: x=%.2f y=%.2f\n\n",
-            //    i,
-            //    getPlayerX(game->players[i]),
-            //    getPlayerY(game->players[i]));
+
+
+
+
+        printf("Player %d position: x=%.2f y=%.2f\n\n",
+        i,
+        getPlayerX(game->players[i]),
+        getPlayerY(game->players[i]));
 
 
 
@@ -201,8 +205,9 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 //         }
 //     }
 // }
-// uppdate player position based on collision with the map and uppdate player position.
 
+
+// uppdate player position based on collision with the map and uppdate player position.
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
@@ -289,13 +294,12 @@ void server_disconnet(Server server){
 
 
 void Server_Broadcast(Server server, void *packet, size_t packetSize) {
-    int sent = 0;
     for (int i = 0; i < getClientCount(server); i++) {
         Client c = getClient(server, i);
         if (getActive(c)) {
-            printf("Broadcasting to client %d\n", getClientId(c));
+            //printf("Broadcasting to client %d\n", getClientId(c));
             Server_Send(server, Client_GetAddress(c), packet, packetSize);
-            sent++;
+           
         }
     }
     //printf("Broadcast sent to %d clients\n", sent);

@@ -12,8 +12,7 @@ int main(int argc, char *argv[])
 
     ClientNet clientNet = NULL;
 
-    printf("Starting game...\n");
-    game_init(&game, &renderer);
+   
 
     clientNet = ClientNet_Init("127.0.0.1", 2000);
     if (clientNet != NULL) {
@@ -29,6 +28,17 @@ int main(int argc, char *argv[])
             printf("[CLIENT] JOIN_REQUEST failed\n");
         }
     }
+
+    printf("Starting game...\n");
+    game_init(&game, &renderer,clientNet);
+
+
+
+
+
+
+
+
 
     // AbilitySystem *system = AbilitySystem_create();
     // AbilitySystem_init(system);
