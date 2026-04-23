@@ -7,12 +7,13 @@
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
+    // event will be uppdate
     SDL_Event event;
     while (game->state != GAME_STATE_GAME_OVER)
     {
-        // THis will need to be change after
-        /// start
+        
 
+        // this will be uppdate
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -30,6 +31,7 @@ void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
             }
         }
 
+        // ttry to connect
         if (clientNet != NULL)
         {
             int receiveResult = ClientNet_TryReceive(clientNet);
@@ -45,117 +47,94 @@ void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
             }
         }
 
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-        if (clientNet != NULL && ClientNet_GetClientId(clientNet) >= 0)
-        {
-            InputPacket inputPacket;
 
-            memset(&inputPacket, 0, sizeof(InputPacket));
 
-            inputPacket.type = PACKET_INPUT;
-            inputPacket.clientId = ClientNet_GetClientId(clientNet);
-            inputPacket.up = state[SDL_SCANCODE_W] ? 1 : 0;
-            inputPacket.down = state[SDL_SCANCODE_S] ? 1 : 0;
-            inputPacket.left = state[SDL_SCANCODE_A] ? 1 : 0;
-            inputPacket.right = state[SDL_SCANCODE_D] ? 1 : 0;
-            if (ClientNet_SendInput(clientNet, &inputPacket) < 0)
-            {
-                printf("[CLIENT] Failed to send input packet\n");
-            }
+
+
+
+const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+if (clientNet != NULL && ClientNet_GetClientId(clientNet) >= 0)
+{
+    InputPacket inputPacket;
+    memset(&inputPacket, 0, sizeof(InputPacket));
+
+    inputPacket.type = PACKET_INPUT;
+    inputPacket.clientId = ClientNet_GetClientId(clientNet);
+    inputPacket.up    = state[SDL_SCANCODE_W] ? 1 : 0;
+    inputPacket.down  = state[SDL_SCANCODE_S] ? 1 : 0;
+    inputPacket.left  = state[SDL_SCANCODE_A] ? 1 : 0;
+    inputPacket.right = state[SDL_SCANCODE_D] ? 1 : 0;
+    if (ClientNet_SendInput(clientNet, &inputPacket) < 0)
+         {
+             printf("[CLIENT] Failed to send input packet\n");
+         }
+
+    
+
         }
 
-        // you can move both payers at the same time, but you can only move one player at a time.
-        //this for the test.
-        // PLAYER 1
-        stopPlayer(game->players[0]);
-        if (state[SDL_SCANCODE_W])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), -5.0);
-        if (state[SDL_SCANCODE_S])
-            setPlayerVelocity(game->players[0], getPlayerVelocityX(game->players[0]), 5.0);
-        if (state[SDL_SCANCODE_A])
-            setPlayerVelocity(game->players[0], -5.0, getPlayerVelocityY(game->players[0]));
-        if (state[SDL_SCANCODE_D])
-            setPlayerVelocity(game->players[0], 5.0, getPlayerVelocityY(game->players[0]));
 
-        // PLAYER 2
-        stopPlayer(game->players[1]);
-        if (state[SDL_SCANCODE_UP])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), -5.0);
-        if (state[SDL_SCANCODE_DOWN])
-            setPlayerVelocity(game->players[1], getPlayerVelocityX(game->players[1]), 5.0);
-        if (state[SDL_SCANCODE_LEFT])
-            setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
-        if (state[SDL_SCANCODE_RIGHT])
-            setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
-
+    
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
     }
 
-    const char *message = "Game over! Click OK to close.";
+    // const char *message = "Game over! Click OK to close.";
 
-    if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    {
-        message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
-    }
-    else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
-    {
-        message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
-    }
-    else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    {
-        message = "Game over!\nBoth players died.\nClick OK to close.";
-    }
+    // if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    // {
+    //     message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+    // }
+    // else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+    // {
+    //     message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+    // }
+    // else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    // {
+    //     message = "Game over!\nBoth players died.\nClick OK to close.";
+    // }
 
-    SDL_ShowSimpleMessageBox(
-        SDL_MESSAGEBOX_INFORMATION,
-        "Game Over",
-        message,
-        renderer->window
-    );
+    // SDL_ShowSimpleMessageBox(
+    //     SDL_MESSAGEBOX_INFORMATION,
+    //     "Game Over",
+    //     message,
+    //     renderer->window
+    // );
 }
 
-void game_apply_network_init(Game *game, ClientNet clientNet)
-{
-    GameInitPacket packet;
 
-    if (game == NULL || clientNet == NULL) {
-        return;
-    }
 
-    if (!ClientNet_HasGameInit(clientNet)) {
-        return;
-    }
 
-    packet = ClientNet_GetGameInitPacket(clientNet);
 
-    if (packet.data.mapId != MAP_ID_ISLAND) {
-        printf("[CLIENT] Unknown mapId: %d\n", packet.data.mapId);
-        ClientNet_ClearGameInit(clientNet);
-        return;
-    }
 
-    game->numPlayers = packet.data.numPlayers;
-    if (game->numPlayers > MAX_PLAYERS) {
-        game->numPlayers = MAX_PLAYERS;
-    }
 
-    for (int i = 0; i < game->numPlayers; i++) {
-        game->players[i] = initPlayer(
-            (int)packet.data.players[i].x,
-            (int)packet.data.players[i].y
-        );
-    }
 
-    ClientNet_SetClientId(clientNet, packet.data.yourClientId);
-    ClientNet_ClearGameInit(clientNet);
 
-    printf("[CLIENT] Applied GAME_INIT locally\n");
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void game_update(Game *game, Renderer *renderer)
 {
+
+
+
+
+    
     // // Update player position based on velocity and check for collisions
     for (int i = 0; i < game->numPlayers; i++)
     {
@@ -163,25 +142,37 @@ void game_update(Game *game, Renderer *renderer)
 
         movePlayer(game->map, p);
 
-        if (i == getBombCarrier(game->bomb))
-        {
-            movePlayerWithOther(
-                p,                      // current player
-                i,                      // index of current player
-                game->players,          // all players
-                game->numPlayers,       // count
-                game->bomb              // bomb pointer
-            );
-            //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
-        }
+        // if (i == getBombCarrier(game->bomb))
+        // {
+        //     movePlayerWithOther(
+        //         p,                      // current player
+        //         i,                      // index of current player
+        //         game->players,          // all players
+        //         game->numPlayers,       // count
+        //         game->bomb              // bomb pointer
+        //     );
+        //     //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
+        // }
     }
 
-    updateBomb(game->bomb, game->players);
+    //updateBomb(game->bomb, game->players);
 
     // Render the game state
     Background_Image_Render(renderer);
+    
+    
+    // will remove 
     Render_Map(renderer, game->map);
 
+
+
+
+
+
+
+
+
+    // renderer
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
@@ -200,9 +191,7 @@ void game_update(Game *game, Renderer *renderer)
     {
         Render_PlayerLives(renderer, game->players[1], 20, 50);
     }
-
     int aliveCount = 0;
-
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
@@ -210,7 +199,6 @@ void game_update(Game *game, Renderer *renderer)
             aliveCount++;
         }
     }
-
     if (aliveCount <= 1)
     {
         game->state = GAME_STATE_GAME_OVER;
@@ -281,49 +269,60 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 // }
 // uppdate player position based on collision with the map and uppdate player position.
 
+// void movePlayer(Map map, Player player)
+// {
+//     float newX = getPlayerX(player) + getPlayerVelocityX(player);
+//     int colx = Collision_Map(map, newX, getPlayerY(player));
+//     if (colx == 1 || colx == 2)
+//     {
+//         /// collision with tile type 1 or 2, stop player movement
+//     }
+//     else
+//     {
+//         if (colx == 3) // I will update so here will move slow
+//         {
+//             printf("Collision with tile type 3 at (%d, %d)\n",
+//                    (int)(newX / getTileSize(map)),
+//                    (int)(getPlayerY(player) / getTileSize(map)));
+//             setPlayerPosition(player, newX, getPlayerY(player));
+//         }
+//         else
+//         {
+//             setPlayerPosition(player, newX, getPlayerY(player));
+//         }
+//     }
+
+//     float newY = getPlayerY(player) + getPlayerVelocityY(player);
+//     int coly = Collision_Map(map, getPlayerX(player), newY);
+//     if (coly == 1 || coly == 2)
+//     {
+//         /// collision with tile type 1 or 2, stop player movement
+//     }
+//     else
+//     {
+//         if (coly == 3) // I will update so here will move slow
+//         {
+//             printf("Collision with tile type 3 at (%d, %d)\n",
+//                    (int)(newX / getTileSize(map)),
+//                    (int)(getPlayerY(player) / getTileSize(map)));
+//             setPlayerPosition(player, getPlayerX(player), newY);
+//         }
+//         else
+//         {
+//             setPlayerPosition(player, getPlayerX(player), newY);
+//         }
+//     }
+// }
+
+
+
+
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX, getPlayerY(player));
-    if (colx == 1 || colx == 2)
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
-        if (colx == 3) // I will update so here will move slow
-        {
-            printf("Collision with tile type 3 at (%d, %d)\n",
-                   (int)(newX / getTileSize(map)),
-                   (int)(getPlayerY(player) / getTileSize(map)));
-            setPlayerPosition(player, newX, getPlayerY(player));
-        }
-        else
-        {
-            setPlayerPosition(player, newX, getPlayerY(player));
-        }
-    }
-
     float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map, getPlayerX(player), newY);
-    if (coly == 1 || coly == 2)
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
-        if (coly == 3) // I will update so here will move slow
-        {
-            printf("Collision with tile type 3 at (%d, %d)\n",
-                   (int)(newX / getTileSize(map)),
-                   (int)(getPlayerY(player) / getTileSize(map)));
-            setPlayerPosition(player, getPlayerX(player), newY);
-        }
-        else
-        {
-            setPlayerPosition(player, getPlayerX(player), newY);
-        }
-    }
+
+    setPlayerPosition(player, newX, newY);
 }
 
 void game_cleanup(Game *game, Renderer *renderer)
@@ -332,8 +331,68 @@ void game_cleanup(Game *game, Renderer *renderer)
     Renderer_Destroy(renderer);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+void game_apply_network_init(Game *game, ClientNet clientNet)
+{
+    GameInitPacket packet;
+
+    if (game == NULL || clientNet == NULL) {
+        return;
+    }
+
+    if (!ClientNet_HasGameInit(clientNet)) {
+        return;
+    }
+
+    packet = ClientNet_GetGameInitPacket(clientNet);
+
+    if (packet.data.map.mapId != MAP_ID_ISLAND) {
+        printf("[CLIENT] Unknown mapId: %d\n", packet.data.map.mapId);
+        ClientNet_ClearGameInit(clientNet);
+        return;
+    }
+
+    game->numPlayers = packet.data.numPlayers;
+    if (game->numPlayers > MAX_PLAYERS) {
+        game->numPlayers = MAX_PLAYERS;
+    }
+
+    for (int i = 0; i < game->numPlayers; i++) {
+        game->players[i] = initPlayer(
+            (int)packet.data.players[i].x,
+            (int)packet.data.players[i].y
+        );
+    }
+
+    //ClientNet_SetClientId(clientNet, packet.data.yourClientId);
+    ClientNet_ClearGameInit(clientNet);
+
+    printf("[CLIENT] Applied GAME_INIT locally\n");
+}
+
+
+
+
+
+
+
+
+
+// 
 void game_init(Game *game, Renderer *renderer)
 {
+   
+    
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
     game->numPlayers = 2;

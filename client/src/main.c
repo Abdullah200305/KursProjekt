@@ -30,14 +30,14 @@ int main(int argc, char *argv[])
         }
     }
 
-    AbilitySystem *system = AbilitySystem_create();
-    AbilitySystem_init(system);
-    AbilitySystem_spawn(system, 800, 600);
+    // AbilitySystem *system = AbilitySystem_create();
+    // AbilitySystem_init(system);
+    // AbilitySystem_spawn(system, 800, 600);
 
     printf("Entering game loop...\n");
     game_loop(&game, &renderer, clientNet);
 
-    AbilitySystem_destroy(system);
+    // AbilitySystem_destroy(system);
 
     if (clientNet != NULL) {
         ClientNet_SendDisconnect(clientNet);

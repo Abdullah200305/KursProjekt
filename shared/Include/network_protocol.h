@@ -9,7 +9,8 @@ typedef enum {
     PACKET_JOIN_ACCEPT = 2,
     PACKET_GAME_INIT = 3,
     PACKET_DISCONNECT = 4,
-    PACKET_INPUT = 5
+    PACKET_INPUT = 5,
+    PACKET_GAME_STATE = 6
 } PacketType;
 
 typedef struct {
@@ -87,6 +88,8 @@ typedef struct {
     GameInitData data;
 } GameInitPacket;
 
+
+
 typedef struct {
     int type;
     int clientId;
@@ -95,5 +98,19 @@ typedef struct {
     int left;
     int right;
 } InputPacket;
+
+
+typedef struct {
+    PlayerInitData players[MAX_PLAYERS];
+    BombInitData bomb;
+}GameStateData;
+
+typedef struct {
+    int type;
+    int numPlayers;
+    GameStateData data;
+} GameStatePacket;
+
+
 
 #endif

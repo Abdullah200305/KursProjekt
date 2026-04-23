@@ -9,8 +9,7 @@ struct Server_type
   UDPpacket *recvPacket;
 
   Client clients[MAX_CLIENTS]; 
- // will see if I will change it 
- // PlayerManager playerManager;
+  InputPacket inputs[MAX_PLAYERS];
   int clientCount;
 };
 
@@ -66,6 +65,21 @@ int getGameStart(Server server){
 int getClientCount(Server server){
     return server->clientCount;
 }
+Client getClient(Server server,int index){
+    return server->clients[index];
+};
+
+InputPacket getInputPlayer(Server server,int id){
+    return server->inputs[id];
+}
+
+
+
+
+void setInputPlayer(Server server,InputPacket *input,int id){
+    server->inputs[id] = *input;
+}
+
 void setGameStart(Server server,int gameStart){
     server->gameStarted = gameStart;
 }
@@ -94,10 +108,6 @@ void setClientCount(Server server){
 }
 
 
-Client getClient(Server server,int index){
-    return server->clients[index];
-};
-
 
 
 
@@ -109,7 +119,7 @@ int ServerNet_Receive(Server server,void** packet,IPaddress *Ip){
         size_t expectedSize;
         switch (type) {
             case PACKET_JOIN_REQUEST: expectedSize = sizeof(JoinRequestPacket); break;
-            //case PACKET_INPUT:        expectedSize = sizeof(InputPacket);        break;
+            case PACKET_INPUT:        expectedSize = sizeof(InputPacket);        break;
             case PACKET_DISCONNECT:   expectedSize = sizeof(DisconnectPacket);   break;
             default: return 0;  
         }
