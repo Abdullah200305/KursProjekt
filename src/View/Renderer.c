@@ -52,10 +52,10 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 
     //ABILITIES
     r->abilityTextures[0] = NULL;
-    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
-    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
-    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
+    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SPEED.png");
+    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_FREEZE.png");
+    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SWAP.png");
+    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = NULL;
     
     return 0;
@@ -268,6 +268,7 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
 
 }
 
+//******************  Bomb  *******************//
 void Render_Bomb(Renderer* r, Bomb bomb) {
     /* ===== Explosion visas först ===== */
     if (getBombExploding(bomb)) {
@@ -290,7 +291,7 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
         return;
     }
 
-    int maxTimer = 200;
+    int maxTimer = BOMB_TIMER;
     int bodyX = (int)getBombX(bomb) + 2;
     int bodyY = (int)getBombY(bomb) - 28;
 
@@ -350,9 +351,9 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
     SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
 
-    if (safeTimer > 120) {
+    if (safeTimer > (BOMB_TIMER*0.66)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-    } else if (safeTimer > 60) {
+    } else if (safeTimer > (BOMB_TIMER*0.33)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
     } else {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
