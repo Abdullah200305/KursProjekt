@@ -38,6 +38,10 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX);
 void setPlayerSpeedTimer(Player player, float timer);
 void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
+int getPlayerShield(Player player);
+void setPlayerShield(Player player, int value);
+float getPlayerShieldTimer(Player player);
+void setPlayerShieldTimer(Player player, float timer);
 //MISC FUNCTIONS
 
 void playerMovement(
