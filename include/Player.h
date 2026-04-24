@@ -26,7 +26,7 @@ float getPlayerHeight(Player player);
 int getPlayerLives(Player player);
 float getPlayerSpeedTimer(Player player);
 float getPlayerFreezeTimer(Player player);
-float getPlayerSizeUpTimer(Player player);
+float getPlayerSizeUpTimer(Player player); //fg
 
 //Setters metoder
 void setPlayerX(Player player, float x);
