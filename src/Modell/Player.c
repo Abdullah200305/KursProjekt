@@ -23,7 +23,9 @@ struct  Player_type
     //float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
-     
+    float shieldTimer;
+
+    int hasShield;
 };
 
 
@@ -52,6 +54,9 @@ Player initPlayer(float x, float y)
     
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
+    p->shieldTimer = 0;
+
+    p->hasShield = 0;
     return p;
 }
 
@@ -75,6 +80,17 @@ void updatePlayer(Player player)
 {
     player->x += player->vx;
     player->y += player->vy;
+
+    if (player->shieldTimer > 0)
+    {
+        player->shieldTimer--;
+
+        if (player->shieldTimer <= 0)
+        {
+            player->shieldTimer = 0;
+            player->hasShield = 0;
+        }
+    }
 }
 
 int isPlayerAlive(Player player)
@@ -174,6 +190,26 @@ float getPlayerFreezeTimer(Player player)
 float getPlayerSizeUpTimer(Player player) 
 {
     return player->sizeUpTimer;
+}
+
+int getPlayerShield(Player player)
+{
+    return player->hasShield;
+}
+
+void setPlayerShield(Player player, int value)
+{
+    player->hasShield = value;
+}
+
+float getPlayerShieldTimer(Player player)
+{
+    return player->shieldTimer;
+}
+
+void setPlayerShieldTimer(Player player, float timer)
+{
+    player->shieldTimer = timer;
 }
 
 //Implementation av setters metoder
