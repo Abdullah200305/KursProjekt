@@ -14,16 +14,13 @@ struct  Player_type
 
     float speedY;
     float speedX;
-    float speedTimer; 
 
-    //animation
-    int animationFrame;
-    int animationTimer;
-
-    //float speedTimer;
+    float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
-     
+    float shieldTimer;
+
+    int hasShield;
 };
 
 
@@ -46,12 +43,11 @@ Player initPlayer(float x, float y)
     p->speedX = 5;
 
     p->speedTimer = 0;
-
-    p->animationFrame = 0;
-    p->animationTimer = 0;
-    
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
+    p->shieldTimer = 0;
+
+    p->hasShield = 0;
     return p;
 }
 
@@ -75,6 +71,17 @@ void updatePlayer(Player player)
 {
     player->x += player->vx;
     player->y += player->vy;
+
+    if (player->shieldTimer > 0)
+    {
+        player->shieldTimer--;
+
+        if (player->shieldTimer <= 0)
+        {
+            player->shieldTimer = 0;
+            player->hasShield = 0;
+        }
+    }
 }
 
 int isPlayerAlive(Player player)
@@ -176,6 +183,26 @@ float getPlayerSizeUpTimer(Player player)
     return player->sizeUpTimer;
 }
 
+int getPlayerShield(Player player)
+{
+    return player->hasShield;
+}
+
+void setPlayerShield(Player player, int value)
+{
+    player->hasShield = value;
+}
+
+float getPlayerShieldTimer(Player player)
+{
+    return player->shieldTimer;
+}
+
+void setPlayerShieldTimer(Player player, float timer)
+{
+    player->shieldTimer = timer;
+}
+
 //Implementation av setters metoder
 
 void setPlayerX(Player player, float x)
@@ -219,29 +246,6 @@ void setPlayerSpeedTimer(Player player, float timer)
     player->speedTimer = timer;
 }
 
-int getPlayerAnimationFrame(Player player) {
-    return player->animationFrame;
-}
-
-void setPlayerAnimation(Player player) {
-    int isMoving = (player->vx != 0 || player->vy != 0);
-
-    if (!isMoving) {
-        player->animationFrame = 0;
-        player->animationTimer = 0;
-        return;
-    }
-
-    player->animationTimer++;
-    if (player->animationTimer >= 10) {
-        player->animationTimer = 0;
-        if (player->animationFrame == 1)
-            player->animationFrame = 2;
-        else
-            player->animationFrame = 1;
-    }
-}
-
 void setPlayerFreezeTimer(Player player, float timer) 
 {
     player->freezeTimer = timer;
@@ -282,6 +286,5 @@ void playerMovement(
         vx = player->speedX;
 
     setPlayerVelocity(player, vx, vy);
-    setPlayerAnimation(player);
 }
 
