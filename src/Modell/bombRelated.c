@@ -20,7 +20,7 @@ Bomb createBomb(Player players[]){
     if (pBomb == NULL) return NULL;
     
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = BOMB_TIMER;  //ändra i bombRelated.h
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -34,7 +34,7 @@ void resetBomb(Bomb pBomb, Player players[]){
     if(pBomb==NULL) return;
 
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = BOMB_TIMER;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -46,15 +46,7 @@ void bombExplosion(Bomb pBomb, Player players[]){
     if(pBomb == NULL) return;
     if(pBomb->exploding) return;
 
-    if (getPlayerShield(players[pBomb->bombCarrier]))
-    {
-        setPlayerShield(players[pBomb->bombCarrier], 0);
-        setPlayerShieldTimer(players[pBomb->bombCarrier], 0);
-    }
-    else
-    {
-        damagePlayer(players[pBomb->bombCarrier]);
-    }
+    damagePlayer(players[pBomb->bombCarrier]);
 
     pBomb->active = 0;
     pBomb->exploding = 1;
