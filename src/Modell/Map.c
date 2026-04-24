@@ -157,9 +157,9 @@ void resolveCollision(Map map, Player player)
     int B3 = checkCollision(map, tileLeft, tileBottom);
     int B4 = checkCollision(map, tileRight, tileBottom);
 
-    int leftBlocked   = (A1 || B3);
-    int rightBlocked  = (A2 || B4);
-    int topBlocked    = (A1 || A2);
+    int leftBlocked;
+    int rightBlocked;
+    int topBlocked;
     int bottomBlocked;
 
     #define NORMAL_TILE 0 
