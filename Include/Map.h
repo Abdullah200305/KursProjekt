@@ -30,6 +30,7 @@ int Player_collisionWithOtherPlayer( float x1, float y1, float w1, float h1, flo
 int Collision_Map(Map map, float x, float y, float width, float height);
 int checkCollision(Map map, int x, int y);
 void resolveCollision(Map map, Player player);
+void resolveCollisionRate(Map map, Player player, int miliseconds);
 
 
 #endif // GAME_H
