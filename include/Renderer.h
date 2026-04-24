@@ -5,18 +5,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#define PLAYER_FRAME_WIDTH 471  //animation
-#define PLAYER_FRAME_HEIGHT 530
-
-
-
 typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
     SDL_Texture* backgroundTexture;
-    SDL_Texture *playerTexture[4];
+    SDL_Texture* playerTexture;
     SDL_Texture *abilityTextures[6];
-    SDL_Rect playerClips[3];
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
@@ -31,7 +25,7 @@ void Render_Map(Renderer* r, Map map);
 
 
 // Rendering the player
-void Render_Player(Renderer* r, Player player, int playerIndex);
+void Render_Player(Renderer* r, Player player);
 
 //Rendering the lives
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);

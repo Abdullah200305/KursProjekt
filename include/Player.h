@@ -25,9 +25,6 @@ float getPlayerWidth(Player player);
 float getPlayerHeight(Player player);
 int getPlayerLives(Player player);
 float getPlayerSpeedTimer(Player player);
-int getPlayerAnimationFrame(Player player);
-
-
 float getPlayerFreezeTimer(Player player);
 float getPlayerSizeUpTimer(Player player);
 
@@ -39,12 +36,12 @@ void setPlayerPosition(Player player, float x, float y);
 void setPlayerSize(Player player, float width, float height);
 void setPlayerSpeedYX(Player player, float speedY, float speedX);
 void setPlayerSpeedTimer(Player player, float timer);
-void setPlayerAnimation(Player player);
-
-
-//Player Movement
 void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
+int getPlayerShield(Player player);
+void setPlayerShield(Player player, int value);
+float getPlayerShieldTimer(Player player);
+void setPlayerShieldTimer(Player player, float timer);
 //MISC FUNCTIONS
 
 void playerMovement(
