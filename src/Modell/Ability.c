@@ -60,7 +60,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tileSize = getTileSize(map);
 
             system->items[i].active = true;
-            system->items[i].type = rand() % 5 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
+            system->items[i].type = 4; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
 
             system->items[i].width = 32;
             system->items[i].height = 32;
@@ -181,8 +181,8 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
             // apply SHIELD effect
             if (a->type == ABILITY_SHIELD)
             {
-            setPlayerShield(player, true);
-            setPlayerShieldTimer(player, 300);
+                setPlayerShield(player, true);
+                setPlayerShieldTimer(player, 300);
             }
         }
     }
