@@ -46,15 +46,7 @@ void bombExplosion(Bomb pBomb, Player players[]){
     if(pBomb == NULL) return;
     if(pBomb->exploding) return;
 
-    if (getPlayerShield(players[pBomb->bombCarrier]))
-    {
-        setPlayerShield(players[pBomb->bombCarrier], 0);
-        setPlayerShieldTimer(players[pBomb->bombCarrier], 0);
-    }
-    else
-    {
-        damagePlayer(players[pBomb->bombCarrier]);
-    }
+    damagePlayer(players[pBomb->bombCarrier]);
 
     pBomb->active = 0;
     pBomb->exploding = 1;

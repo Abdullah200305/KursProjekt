@@ -52,19 +52,11 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 
     //ABILITIES
     r->abilityTextures[0] = NULL;
-<<<<<<< HEAD
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_FREEZE.png");
     r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SWAP.png");
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = NULL;
-=======
-    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
-    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
-    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
-    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
->>>>>>> Zakia
     
     return 0;
 }

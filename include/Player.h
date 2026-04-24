@@ -45,10 +45,6 @@ void setPlayerAnimation(Player player);
 //Player Movement
 void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
-int getPlayerShield(Player player);
-void setPlayerShield(Player player, int value);
-float getPlayerShieldTimer(Player player);
-void setPlayerShieldTimer(Player player, float timer);
 //MISC FUNCTIONS
 
 void playerMovement(
