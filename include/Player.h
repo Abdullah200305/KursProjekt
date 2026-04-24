@@ -29,7 +29,7 @@ int getPlayerAnimationFrame(Player player);
 
 
 float getPlayerFreezeTimer(Player player);
-float getPlayerSizeUpTimer(Player player); //fg
+float getPlayerSizeUpTimer(Player player);
 
 //Setters metoder
 void setPlayerX(Player player, float x);
