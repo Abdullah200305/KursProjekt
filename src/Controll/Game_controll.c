@@ -113,25 +113,23 @@ void game_loop(Game *game, Renderer *renderer)
 
 void game_update(Game *game, Renderer *renderer)
 {
-    // // Update player position based on velocity and check for collisions
+    // Flytta alla spelare först så att alla positioner är uppdaterade
+    // innan vi kontrollerar kollisioner — annars missar vi kollisioner
+    // där det är den andre spelaren (inte bäraren) som rör sig.
     for (int i = 0; i < game->numPlayers; i++)
     {
-        Player p = game->players[i];
-        
-        movePlayer(game->map, p);
-
-        if (i == getBombCarrier(game->bomb))
-        {
-             movePlayerWithOther(
-                p,                      // current player
-                i,                      // index of current player
-                game->players,          // all players
-                game->numPlayers,       // count
-                game->bomb             // bomb pointer
-            );
-            //movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
-        }
+        movePlayer(game->map, game->players[i]);
     }
+
+    // Kontrollera om bombäraren kolliderar med någon annan spelare
+    int carrier = getBombCarrier(game->bomb);
+    movePlayerWithOther(
+        game->players[carrier],  // bäraren
+        carrier,                 // bärarens index
+        game->players,           // alla spelare
+        game->numPlayers,        // antal spelare
+        game->bomb               // bomben
+    );
 
     updateBomb(game->bomb, game->players);
 
