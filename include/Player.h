@@ -27,6 +27,8 @@ int getPlayerLives(Player player);
 float getPlayerSpeedTimer(Player player);
 float getPlayerFreezeTimer(Player player);
 float getPlayerSizeUpTimer(Player player);
+int getPlayerShield(Player player);
+float getPlayerShieldTimer(Player player);
 
 //Setters metoder
 void setPlayerX(Player player, float x);
@@ -38,6 +40,8 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX);
 void setPlayerSpeedTimer(Player player, float timer);
 void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
+void setPlayerShield(Player player, int value);
+void setPlayerShieldTimer(Player player, float timer);
 //MISC FUNCTIONS
 
 void playerMovement(

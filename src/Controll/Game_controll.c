@@ -186,13 +186,17 @@ void game_update(Game *game, Renderer *renderer)
         {
             int sizeUpTimer = getPlayerSizeUpTimer(game->players[i]);
             setPlayerSizeUpTimer(game->players[i], --sizeUpTimer);
+            resolveCollisionRate(game->map, game->players[i], 1);
 
             if (getPlayerSizeUpTimer(game->players[i]) == 0)
             {
                 setPlayerSize(game->players[i], 32, 32);
                 
             }
-        }            
+        }
+
+        // Shield Ability Loses i ability.c + bombrelated.c 
+
         //-----------------------------------------------------------------//
     }    
 
