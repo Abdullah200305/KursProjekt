@@ -1,42 +1,5 @@
 #include "game.h"
 
-
-// void run(Server server,Game game)
-// {
-//     while (getServerRunning(server))
-//     {
-//         Server_handlePackets(server);
-
-
- 
-//         // before game start
-//         if (!getGameStart(server) && getClientCount(server) == 1) {
-//         printf("Initializing game...\n");
-//         Game_Init(server, &game);
-//         Game_InitSendToClients(server, &game);
-//         setGameStart(server, 1);
-//         printf("Game started!\n");
-//         }       
-
-
-//         //uppdate game logic
-//         if (getGameStart(server))
-//         {
-//          Game_Update(server,&game);
-//         }
-//         SDL_Delay(1);
-//     }
-//     server_disconnet(server);
-
-//     Map_destroy(game.map);
-//     Destroy_Server(server);
-// };
-
-
-
-
-
-
 void run(Server server,Game game)
 {
 Uint32 lastTick = SDL_GetTicks();
@@ -63,20 +26,42 @@ while (getServerRunning(server))
 
         lastTick = now;
     }
+
+
+
+
+
 }
     server_disconnet(server);
-
     Map_destroy(game.map);
     Destroy_Server(server);
 };
 
-void Game_Init(Server server,Game *game){
-// Map_init in server  Map_Init()   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void Game_Init(Server server,Game *game){  
 game->map = Map_create(WIDTH, HEIGHT);
 game->state = GAME_STATE_PLAYING;
 game->numPlayers = getClientCount(server);
 
 // will be check after 
+game->abilitySystem = AbilitySystem_create();
+AbilitySystem_init(game->abilitySystem);
     // game->abilitySystem = AbilitySystem_create();
     // AbilitySystem_init(game->abilitySystem);
     // AbilitySystem_spawn(game->abilitySystem, game->map);
@@ -89,8 +74,26 @@ for (int  i = 0; i < game->numPlayers; i++)
 }
 
 // BombManager_Init() in server
-game->bomb = createBomb(game->players);    
+game->bomb = createBomb(game->players); 
+printf("init game done\n");   
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // sutff inside it maybe will write some where else
 void Game_Update(Server server, Game *game) {
@@ -100,12 +103,30 @@ void Game_Update(Server server, Game *game) {
         // this for test
         // printf("Player %d input: U:%d D:%d L:%d R:%d\n",
         //        i, in.up, in.down, in.left, in.right);
-        stopPlayer(game->players[i]);
-        if (in.up)    setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]), -5.0);
-        if (in.down)  setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]),  5.0);
-        if (in.left)  setPlayerVelocity(game->players[i], -5.0, getPlayerVelocityY(game->players[i]));
-        if (in.right) setPlayerVelocity(game->players[i],  5.0, getPlayerVelocityY(game->players[i]));
+        // stopPlayer(game->players[i]);
+        // if (in.up)    setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]), -5.0);
+        // if (in.down)  setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]),  5.0);
+        // if (in.left)  setPlayerVelocity(game->players[i], -5.0, getPlayerVelocityY(game->players[i]));
+        // if (in.right) setPlayerVelocity(game->players[i],  5.0, getPlayerVelocityY(game->players[i]));
       
+        
+
+ 
+        float vx = 0;
+        float vy = 0;
+       
+        float speedX =  getPlayerSpeedX(game->players[i]);
+        float speedY =  getPlayerSpeedY(game->players[i]);
+
+        if (in.up)    vy = -speedY;
+        if (in.down)  vy =  speedY;
+        if (in.left)  vx = -speedX;
+        if (in.right) vx =  speedX;
+
+        setPlayerVelocity(game->players[i], vx, vy);
+
+      
+
 
         // // Update player position based on velocity and check for collisions
         Player p = game->players[i];
@@ -120,11 +141,62 @@ void Game_Update(Server server, Game *game) {
                    game->numPlayers,       // count
                    game->bomb              // bomb pointer
                );
-            //    movePlayerWithOther(p, game->players, game->numPlayers, &game->bomb);
            }
     }
-
     updateBomb(game->bomb, game->players);
+
+
+    //-------------------------------------------------------------------//
+    //---------------------Ability Update Loop---------------------------//
+    int miliseconds = 4000; // 2 seconds
+    abilitySpawnRate(game->abilitySystem, game->map, miliseconds);
+   
+    int currentPlayers = 2;
+
+    for (int i = 0; i < currentPlayers; i++)
+    {
+        AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
+
+        if (getPlayerSpeedTimer(game->players[i]) > 0)
+        {
+            int speedTimer = getPlayerSpeedTimer(game->players[i]);
+            setPlayerSpeedTimer(game->players[i], --speedTimer);
+
+            if (getPlayerSpeedTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+
+        if (getPlayerFreezeTimer(game->players[i]) > 0)
+        {
+            int freezeTimer = getPlayerFreezeTimer(game->players[i]);
+            setPlayerFreezeTimer(game->players[i], --freezeTimer);
+
+            if (getPlayerFreezeTimer(game->players[i]) == 0)
+            {
+                setPlayerSpeedYX(game->players[i], 5, 5);
+            }
+        }
+
+        if (getPlayerSizeUpTimer(game->players[i]) > 0)
+        {
+            int sizeUpTimer = getPlayerSizeUpTimer(game->players[i]);
+            setPlayerSizeUpTimer(game->players[i], --sizeUpTimer);
+            resolveCollisionRate(game->map, game->players[i], 1);
+
+            if (getPlayerSizeUpTimer(game->players[i]) == 0)
+            {
+                setPlayerSize(game->players[i], 32, 32); 
+            }
+        }
+
+        //Shield Ability Loses i ability.c + bombrelated.c 
+    }
+
+
+
+    
     GameStatePacket send;
     Packet_BuildGameState(&send,game);
     Server_Broadcast(server,&send,sizeof(GameStatePacket));
@@ -139,23 +211,37 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 
         if (player != other)
         {
-            if (Player_collisionWithOtherPlayer(
-                    getPlayerX(player),
-                    getPlayerY(player),
-                    getPlayerX(other),
-                    getPlayerY(other)))
+
+             // why changed 
+             if (Player_collisionWithOtherPlayer(
+                getPlayerX(player),
+                getPlayerY(player),
+                getPlayerWidth(player),
+                getPlayerHeight(player),
+
+                getPlayerX(other),
+                getPlayerY(other),
+                getPlayerWidth(other),
+                getPlayerHeight(other)))
             {
                 int other_index = i;
 
-               printf("Collision between players detected!\n");
+               //printf("Collision between players detected!\n");
 
+               // explain this 
                 if (getBombCarrier(bomb) == p_index) {
                     setBombCarrier(bomb, other_index);
 
+                    // uppdate
+                    setPlayerSpeedYX(player, 6, 6);
+                    setPlayerSpeedYX(other, 5, 5);
                    // printf("Bomb moved to player %d\n", other_index);
                 }
                 else if (getBombCarrier(bomb) == other_index) {
                     setBombCarrier(bomb, p_index);
+                     // uppdate
+                    setPlayerSpeedYX(other, 6, 6);
+                    setPlayerSpeedYX(player, 5, 5);
 
                     // printf("Bomb moved to player %d\n", p_index);
                 }
@@ -168,52 +254,72 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 
 
 
-// this will move some where else
 // uppdate player position based on collision with the map and uppdate player position.
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX, getPlayerY(player));
-    if (colx == 1 || colx == 2)
+    int colx = Collision_Map(map, newX,
+        getPlayerY(player),
+        getPlayerWidth(player),
+        getPlayerHeight(player));
+    if (colx == 1 || colx == 2) // if player outside of map will make somthing
     {
         /// collision with tile type 1 or 2, stop player movement
     }
     else
     {
-        if (colx == 3) // I will update so here will move slow
+       
+        if (colx == 3)  // walk in sand 
         {
-            // printf("Collision with tile type 3 at (%d, %d)\n",
-            //        (int)(newX / getTileSize(map)),
-            //        (int)(getPlayerY(player) / getTileSize(map)));
             setPlayerPosition(player, newX, getPlayerY(player));
+            setPlayerSpeedYX(player, 3, 3);
         }
-        else
+        else // walk in grass
         {
             setPlayerPosition(player, newX, getPlayerY(player));
+            setPlayerSpeedYX(player, 5, 5);
         }
     }
 
     float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map, getPlayerX(player), newY);
+    int coly = Collision_Map(map, 
+    getPlayerX(player), 
+    newY,
+    getPlayerWidth(player),
+    getPlayerHeight(player));
+
     if (coly == 1 || coly == 2)
     {
         /// collision with tile type 1 or 2, stop player movement
     }
     else
     {
-        if (coly == 3) // I will update so here will move slow
+        if (coly == 3) 
         {
-            // printf("Collision with tile type 3 at (%d, %d)\n",
-            //        (int)(newX / getTileSize(map)),
-            //        (int)(getPlayerY(player) / getTileSize(map)));
             setPlayerPosition(player, getPlayerX(player), newY);
+            setPlayerSpeedYX(player, 3, 3);
         }
         else
         {
             setPlayerPosition(player, getPlayerX(player), newY);
+            setPlayerSpeedYX(player, 5, 5);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Game_InitSendToClients(Server server, Game *game) {
     if (!game || !game->map) {
@@ -243,6 +349,35 @@ void Server_Broadcast(Server server, void *packet, size_t packetSize) {
            
         }
     }
-    //printf("Broadcast sent to %d clients\n", sent);
     memset(packet, 0, packetSize);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

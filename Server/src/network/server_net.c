@@ -38,8 +38,10 @@ int ServerConnection(Server server, int port) {
         printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         return -1;
     }
-    server->recvPacket = SDLNet_AllocPacket(512);
-    server->sendPacket = SDLNet_AllocPacket(512);
+    // server->recvPacket = SDLNet_AllocPacket(512);
+    // server->sendPacket = SDLNet_AllocPacket(512);
+    server->recvPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
+    server->sendPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
     if (!server->recvPacket || !server->sendPacket) {
        printf("SDLNet_AllocPacket failed: %s\n", SDLNet_GetError());
        return -1;

@@ -66,6 +66,7 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
     Newpacket.data.bomb.x = getBombX(game->bomb);
     Newpacket.data.bomb.y = getBombY(game->bomb);
 
+   
     for (int i = 0; i < game->numPlayers; i++)
     {
         Newpacket.data.players[i].x = getPlayerX(game->players[i]);
@@ -78,11 +79,29 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
         Newpacket.data.players[i].alive = isPlayerAlive(game->players[i]);
         Newpacket.data.players[i].id = getPlayerId(game->players[i]);
 
+
+
+          
+
         // printf("Player %d -> x: %.2f y: %.2f\n",
         //        i,
         //        Newpacket.data.players[i].x,
         //        Newpacket.data.players[i].y);
     }
+
+    Newpacket.data.abilities.numAbilities = MAX_ABILITIES;
+    for (int i = 0; i < MAX_ABILITIES; i++)
+    {
+        Newpacket.data.abilities.items[i].active = AbilityItem_isActive(game->abilitySystem, i);
+        Newpacket.data.abilities.items[i].type   = AbilityItem_getType(game->abilitySystem, i);
+        Newpacket.data.abilities.items[i].x      = AbilityItem_getX(game->abilitySystem, i);
+        Newpacket.data.abilities.items[i].y      = AbilityItem_getY(game->abilitySystem, i);
+        Newpacket.data.abilities.items[i].width  = AbilityItem_getWidth(game->abilitySystem, i);
+        Newpacket.data.abilities.items[i].height = AbilityItem_getHeight(game->abilitySystem, i);
+    }
+    
+
     memcpy(packet, &Newpacket, sizeof(GameStatePacket));
-    // printf("Ready to send\n");
 }
+
+

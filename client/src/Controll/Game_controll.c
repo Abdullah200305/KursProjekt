@@ -50,7 +50,7 @@ while (game->state != GAME_STATE_GAME_OVER)
     game_update(game, renderer); // it will make only render
     SDL_Delay(1); 
 }
-}
+
     
 
 // will updte
@@ -74,7 +74,7 @@ while (game->state != GAME_STATE_GAME_OVER)
 //     renderer->window
 // );
 
-
+}
 
 
 
@@ -98,6 +98,13 @@ void game_update(Game *game, Renderer *renderer)
     }
     
 
+    AbilitySystem_render(game->abilitySystem, renderer);
+
+
+
+
+
+
     // will update
     Render_Bomb(renderer, game->bomb);
 
@@ -105,10 +112,12 @@ void game_update(Game *game, Renderer *renderer)
     {
         Render_PlayerLives(renderer, game->players[0], 20, 20);
     }
-    // if (isPlayerAlive(game->players[1]))
-    // {
-    //     Render_PlayerLives(renderer, game->players[1], 20, 50);
-    // }
+
+    
+    if (isPlayerAlive(game->players[1]))
+    {
+        Render_PlayerLives(renderer, game->players[1], 20, 50);
+    }
 
     // int aliveCount = 0;
 
@@ -210,6 +219,17 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].y
         );
 
+
+        // will remove
+        // setPlayerVelocity(game->players[i], 
+        //     packet.data.players[i].vx,
+        //     packet.data.players[i].vy
+        // );
+
+        setPlayerSize(game->players[i],
+            packet.data.players[i].width,
+            packet.data.players[i].height); 
+      
         setPlayerState(
             game->players[i],
             packet.data.players[i].lives,
@@ -226,9 +246,23 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
         packet.data.bomb.active,
         packet.data.bomb.exploding
     );
+   
+    for (int i = 0; i < packet.data.abilities.numAbilities; i++)
+    {  
 
-    //printf("[CLIENT] Applied GAME_STATE positions locally\n");
 
+    SetAbilityItemState(
+        game->abilitySystem,
+        i,
+        packet.data.abilities.items[i].type,
+        packet.data.abilities.items[i].x,
+        packet.data.abilities.items[i].y,
+        packet.data.abilities.items[i].width,
+        packet.data.abilities.items[i].height,
+        packet.data.abilities.items[i].active
+    );
+    }
+   // printf("[CLIENT] Applied GAME_STATE positions locally\n");
     ClientNet_ClearGameState(clientNet);
 }
 
@@ -264,11 +298,14 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     }
     game->bomb = createBomb(game->players);
 
+    
+    game->abilitySystem = AbilitySystem_create();
+    AbilitySystem_init(game->abilitySystem); 
 
+    
 
 
     // will remove
-   
     printf("%d server \n",packet.data.yourClientId);
     // this is id for server not any player
     //ClientNet_SetClientId(clientNet, packet.data.yourClientId);
@@ -276,12 +313,6 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     printf("[CLIENT] Applied GAME_INIT locally\n");
     return 0;
 }
-
-
-
-
-
-
 
 
 

@@ -178,9 +178,6 @@ void SetAbilityItemState(AbilitySystem *system, int index, AbilityType type, flo
     system->items[index].active = active;
 }
 
-
-
-
 // AbilityItem getters
 AbilityType AbilityItem_getType(AbilitySystem *system, int index)   { return system->items[index].type; }
 float       AbilityItem_getX(AbilitySystem *system, int index)      { return system->items[index].x; }
