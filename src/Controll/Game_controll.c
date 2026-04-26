@@ -206,7 +206,7 @@ void game_update(Game *game, Renderer *renderer)
     {
         if (isPlayerAlive(game->players[i]))
         {
-            Render_Player(renderer, game->players[i]);
+            Render_Player(renderer, game->players[i], i);
         }
     }
     Render_Bomb(renderer, game->bomb);

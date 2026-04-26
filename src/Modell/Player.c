@@ -15,6 +15,12 @@ struct  Player_type
     float speedY;
     float speedX;
 
+    //animation
+    int animationFrame;
+    int animationTimer;
+    int lastDirection;
+
+    //float speedTimer;
     float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
@@ -43,11 +49,17 @@ Player initPlayer(float x, float y)
     p->speedX = 5;
 
     p->speedTimer = 0;
+
+    //animation
+    p->animationFrame = 0;
+    p->animationTimer = 0;
+    p->lastDirection = 0;
+
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
     p->shieldTimer = 0;
-
     p->hasShield = 0;
+
     return p;
 }
 
@@ -246,6 +258,58 @@ void setPlayerSpeedTimer(Player player, float timer)
     player->speedTimer = timer;
 }
 
+int getPlayerAnimationFrame(Player player) {
+    return player->animationFrame;
+}
+
+void setPlayerAnimation(Player player) {
+    if(player->freezeTimer > 0){
+        player->animationFrame = 13;
+        return;
+    }
+    
+    int isMoving = (player->vx != 0 || player->vy != 0);
+
+    if (player->vy > 0)
+        player->lastDirection = 0;
+    else if (player->vx > 0)
+        player->lastDirection = 1;
+    else if (player->vx < 0) 
+        player->lastDirection = 2;
+    else if (player->vy < 0) 
+        player->lastDirection = 3;
+
+    if (!isMoving) {
+        switch (player->lastDirection) {
+            case 0: player->animationFrame = 0;  break;
+            case 1: player->animationFrame = 4;  break;
+            case 2: player->animationFrame = 7;  break;
+            case 3: player->animationFrame = 10; break;
+        }
+        player->animationTimer = 0;
+        return;
+    }
+
+    player->animationTimer++;
+    if (player->animationTimer >= 6) {
+        player->animationTimer = 0;
+        switch (player->lastDirection) {
+            case 0: 
+                player->animationFrame = (player->animationFrame == 2) ? 3 : 2;
+                break;
+            case 1: 
+                player->animationFrame = (player->animationFrame == 5) ? 6 : 5;
+                break;
+            case 2: 
+                player->animationFrame = (player->animationFrame == 8) ? 9 : 8;
+                break;
+            case 3: 
+                player->animationFrame = (player->animationFrame == 11) ? 12 : 11;
+                break;
+        }
+    }
+}
+
 void setPlayerFreezeTimer(Player player, float timer) 
 {
     player->freezeTimer = timer;
@@ -286,5 +350,6 @@ void playerMovement(
         vx = player->speedX;
 
     setPlayerVelocity(player, vx, vy);
+    setPlayerAnimation(player);
 }
 
