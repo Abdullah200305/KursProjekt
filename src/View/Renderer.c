@@ -40,9 +40,9 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
         }
     }
+    
     //ANIMATION
-
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 14; i++) {
         r->playerClips[i].x = i * PLAYER_FRAME_WIDTH;
         r->playerClips[i].y = 0;
         r->playerClips[i].w = PLAYER_FRAME_WIDTH;

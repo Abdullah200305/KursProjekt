@@ -19,6 +19,7 @@ struct  Player_type
     //animation
     int animationFrame;
     int animationTimer;
+    int lastDirection;
 
     //float speedTimer;
     float freezeTimer;
@@ -47,9 +48,11 @@ Player initPlayer(float x, float y)
 
     p->speedTimer = 0;
 
+    //animation
     p->animationFrame = 0;
     p->animationTimer = 0;
-    
+    p->lastDirection = 0;
+
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
     return p;
@@ -224,10 +227,29 @@ int getPlayerAnimationFrame(Player player) {
 }
 
 void setPlayerAnimation(Player player) {
+    if(player->freezeTimer > 0){
+        player->animationFrame = 13;
+        return;
+    }
+    
     int isMoving = (player->vx != 0 || player->vy != 0);
 
+    if (player->vy > 0)
+        player->lastDirection = 0;
+    else if (player->vx > 0)
+        player->lastDirection = 1;
+    else if (player->vx < 0) 
+        player->lastDirection = 2;
+    else if (player->vy < 0) 
+        player->lastDirection = 3;
+
     if (!isMoving) {
-        player->animationFrame = 0;
+        switch (player->lastDirection) {
+            case 0: player->animationFrame = 0;  break;
+            case 1: player->animationFrame = 4;  break;
+            case 2: player->animationFrame = 7;  break;
+            case 3: player->animationFrame = 10; break;
+        }
         player->animationTimer = 0;
         return;
     }
@@ -235,10 +257,20 @@ void setPlayerAnimation(Player player) {
     player->animationTimer++;
     if (player->animationTimer >= 10) {
         player->animationTimer = 0;
-        if (player->animationFrame == 1)
-            player->animationFrame = 2;
-        else
-            player->animationFrame = 1;
+        switch (player->lastDirection) {
+            case 0: 
+                player->animationFrame = (player->animationFrame == 2) ? 3 : 2;
+                break;
+            case 1: 
+                player->animationFrame = (player->animationFrame == 5) ? 6 : 5;
+                break;
+            case 2: 
+                player->animationFrame = (player->animationFrame == 8) ? 9 : 8;
+                break;
+            case 3: 
+                player->animationFrame = (player->animationFrame == 11) ? 12 : 11;
+                break;
+        }
     }
 }
 
