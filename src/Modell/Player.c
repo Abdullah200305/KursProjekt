@@ -14,7 +14,6 @@ struct  Player_type
 
     float speedY;
     float speedX;
-    float speedTimer; 
 
     //animation
     int animationFrame;
@@ -22,9 +21,12 @@ struct  Player_type
     int lastDirection;
 
     //float speedTimer;
+    float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
-     
+    float shieldTimer;
+
+    int hasShield;
 };
 
 
@@ -55,6 +57,9 @@ Player initPlayer(float x, float y)
 
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
+    p->shieldTimer = 0;
+    p->hasShield = 0;
+
     return p;
 }
 
@@ -78,6 +83,17 @@ void updatePlayer(Player player)
 {
     player->x += player->vx;
     player->y += player->vy;
+
+    if (player->shieldTimer > 0)
+    {
+        player->shieldTimer--;
+
+        if (player->shieldTimer <= 0)
+        {
+            player->shieldTimer = 0;
+            player->hasShield = 0;
+        }
+    }
 }
 
 int isPlayerAlive(Player player)
@@ -179,6 +195,26 @@ float getPlayerSizeUpTimer(Player player)
     return player->sizeUpTimer;
 }
 
+int getPlayerShield(Player player)
+{
+    return player->hasShield;
+}
+
+void setPlayerShield(Player player, int value)
+{
+    player->hasShield = value;
+}
+
+float getPlayerShieldTimer(Player player)
+{
+    return player->shieldTimer;
+}
+
+void setPlayerShieldTimer(Player player, float timer)
+{
+    player->shieldTimer = timer;
+}
+
 //Implementation av setters metoder
 
 void setPlayerX(Player player, float x)
@@ -255,7 +291,7 @@ void setPlayerAnimation(Player player) {
     }
 
     player->animationTimer++;
-    if (player->animationTimer >= 10) {
+    if (player->animationTimer >= 6) {
         player->animationTimer = 0;
         switch (player->lastDirection) {
             case 0: 

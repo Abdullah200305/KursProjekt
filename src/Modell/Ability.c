@@ -178,6 +178,12 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                 setPlayerSize(player, 64, 64);
             }
 
+            // apply SHIELD effect
+            if (a->type == ABILITY_SHIELD)
+            {
+                setPlayerShield(player, true);
+                setPlayerShieldTimer(player, 300);
+            }
         }
     }
 }

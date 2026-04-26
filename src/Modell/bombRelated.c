@@ -10,6 +10,7 @@ struct Bomb_type{
     int active;
     int exploding;
     int explosionTimer;
+    int transferCooldown; // frames kvar innan bomben kan skickas igen (60 = 1 sek)
 };
 
 
@@ -20,10 +21,11 @@ Bomb createBomb(Player players[]){
     if (pBomb == NULL) return NULL;
     
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = BOMB_TIMER;  //ändra i bombRelated.h
+    pBomb->timer = 200;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
+    pBomb->transferCooldown = 0;       // cooldown för bombens överföring mellan spelare
     pBomb->x = getPlayerX(players[0]);
     pBomb->y = getPlayerY(players[0]);
 
@@ -34,10 +36,11 @@ void resetBomb(Bomb pBomb, Player players[]){
     if(pBomb==NULL) return;
 
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = BOMB_TIMER;
+    pBomb->timer = 200;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
+    pBomb->transferCooldown = 0;       // cooldown för bombens överföring mellan spelare
     pBomb->x = getPlayerX(players[0]);
     pBomb->y = getPlayerY(players[0]);
 }
@@ -46,7 +49,15 @@ void bombExplosion(Bomb pBomb, Player players[]){
     if(pBomb == NULL) return;
     if(pBomb->exploding) return;
 
-    damagePlayer(players[pBomb->bombCarrier]);
+    if (getPlayerShield(players[pBomb->bombCarrier]))
+    {
+        setPlayerShield(players[pBomb->bombCarrier], 0);
+        setPlayerShieldTimer(players[pBomb->bombCarrier], 0);
+    }
+    else
+    {
+        damagePlayer(players[pBomb->bombCarrier]);
+    }
 
     pBomb->active = 0;
     pBomb->exploding = 1;
@@ -67,6 +78,9 @@ void updateBomb(Bomb pBomb, Player players[]){
     }
 
     if(!pBomb->active) return;
+
+    // Räkna ner cooldown för överföring mellan spelare
+    if (pBomb->transferCooldown > 0) pBomb->transferCooldown--;
 
     pBomb->x = getPlayerX(players[pBomb->bombCarrier]);
     pBomb->y = getPlayerY(players[pBomb->bombCarrier]);
@@ -101,5 +115,8 @@ int getBombActive(Bomb pBomb){
 
 
 void setBombCarrier(Bomb pBomb, int index){
+    if (pBomb->transferCooldown > 0) return;
+
     pBomb->bombCarrier = index;
+    pBomb->transferCooldown = 60;
 }

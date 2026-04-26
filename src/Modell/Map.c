@@ -7,6 +7,8 @@ struct Map_type{
     int height;
     int tileSize;
     int mapBuffer[TILE_COUNT_Y][TIlE_COUNT_X];
+
+    Uint32 ticker;
 };
 
 
@@ -57,6 +59,8 @@ Map Map_create(int width, int height)
         free(map);
         return NULL;
     }
+
+    map->ticker = 0;
 
     return map;
 }
@@ -128,7 +132,7 @@ int checkCollision(Map map, int x, int y) {
     // return 0;
 }
 
-/* a potential fix for sizeUp collission bug need more work
+
 void resolveCollision(Map map, Player player)
 {
     float x = getPlayerX(player);
@@ -153,23 +157,44 @@ void resolveCollision(Map map, Player player)
     int B3 = checkCollision(map, tileLeft, tileBottom);
     int B4 = checkCollision(map, tileRight, tileBottom);
 
-    int leftBlocked   = (A1 || B3);
-    int rightBlocked  = (A2 || B4);
-    int topBlocked    = (A1 || A2);
-    int bottomBlocked = (B3 || B4);
+    int leftBlocked;
+    int rightBlocked;
+    int topBlocked;
+    int bottomBlocked;
 
-    // push out
-    if (leftBlocked)
+    #define NORMAL_TILE 0 
+    #define SLOW_TILE 3
+
+    if ((A1 != NORMAL_TILE && A1 != SLOW_TILE) || (B3 != NORMAL_TILE && B3 != SLOW_TILE))
+    {
         x = (tileLeft + 1) * tileSize;
-
-    if (rightBlocked)
+    }
+    if ((A2 != NORMAL_TILE && A2 != SLOW_TILE) || (B4 != NORMAL_TILE && B4 != SLOW_TILE))
+    {
         x = tileRight * tileSize - w;
-
-    if (topBlocked)
+    }
+    if ((A1 != NORMAL_TILE && A1 != SLOW_TILE) || (A2 != NORMAL_TILE && A2 != SLOW_TILE))
+    {
         y = (tileTop + 1) * tileSize;
-
-    if (bottomBlocked)
+    }
+    if ((B3 != NORMAL_TILE && B3 != SLOW_TILE) || (B4 != NORMAL_TILE && B4 != SLOW_TILE))
+    {
         y = tileBottom * tileSize - h;
+    }
 
     setPlayerPosition(player, x, y);
-}*/
+}
+
+void resolveCollisionRate(Map map, Player player, int miliseconds)
+{
+    Uint32 now = SDL_GetTicks();
+
+    if (now <= map->ticker)
+        return;
+
+    // try to spawn
+    resolveCollision(map, player);
+
+    // set cooldown 
+    map->ticker = now + miliseconds;
+}

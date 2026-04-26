@@ -42,21 +42,23 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     }
     
     //ANIMATION
+    int PLAYER_FRAME_WIDTH = 471;
+    int PLAYER_FRAME_HEIGHT = 530;
+
     for (int i = 0; i < 14; i++) {
-        r->playerClips[i].x = i * PLAYER_FRAME_WIDTH;
-        r->playerClips[i].y = 0;
-        r->playerClips[i].w = PLAYER_FRAME_WIDTH;
-        r->playerClips[i].h = PLAYER_FRAME_HEIGHT;
+        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = 0;
+        r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     }
 
-
-    //ABILITIES
+    //ABILITY
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
     r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
-    r->abilityTextures[5] = NULL;
+    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
     
     return 0;
 }
@@ -83,7 +85,7 @@ void Renderer_Destroy(Renderer* r) {
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
-    
+
     for (int i = 0; i < 2; i++) 
     {
         if (r->playerTexture[i])
@@ -168,7 +170,9 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
-    SDL_Rect playerRect = {
+    SDL_Rect playerRect = 
+    {
+       
         getPlayerX(player) * scaleX,
         getPlayerY(player) * scaleY,
         getPlayerHeight(player) * scaleX,
@@ -177,7 +181,8 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
     
     SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
     SDL_RenderFillRect(r->sdlRenderer, &playerRect);   
-    SDL_RenderCopy(r->sdlRenderer, img, &r->playerClips[frame], &playerRect);
+    SDL_RenderCopy(r->sdlRenderer, img, &r->playerFrames[frame], &playerRect);
+
 
    
   // sencor four /// for testing 
