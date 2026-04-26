@@ -10,6 +10,7 @@ struct Bomb_type{
     int active;
     int exploding;
     int explosionTimer;
+    int transferCooldown; // frames kvar innan bomben kan skickas igen (60 = 1 sek)
 };
 
 
@@ -24,6 +25,7 @@ Bomb createBomb(Player players[]){
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
+    pBomb->transferCooldown = 0;       // cooldown för bombens överföring mellan spelare
     pBomb->x = getPlayerX(players[0]);
     pBomb->y = getPlayerY(players[0]);
 
@@ -38,6 +40,7 @@ void resetBomb(Bomb pBomb, Player players[]){
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
+    pBomb->transferCooldown = 0;       // cooldown för bombens överföring mellan spelare
     pBomb->x = getPlayerX(players[0]);
     pBomb->y = getPlayerY(players[0]);
 }
@@ -76,6 +79,9 @@ void updateBomb(Bomb pBomb, Player players[]){
 
     if(!pBomb->active) return;
 
+    // Räkna ner cooldown för överföring mellan spelare
+    if (pBomb->transferCooldown > 0) pBomb->transferCooldown--;
+
     pBomb->x = getPlayerX(players[pBomb->bombCarrier]);
     pBomb->y = getPlayerY(players[pBomb->bombCarrier]);
     pBomb->timer--;
@@ -109,5 +115,8 @@ int getBombActive(Bomb pBomb){
 
 
 void setBombCarrier(Bomb pBomb, int index){
+    if (pBomb->transferCooldown > 0) return;
+
     pBomb->bombCarrier = index;
+    pBomb->transferCooldown = 60;
 }
