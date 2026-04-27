@@ -40,6 +40,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "bombRelated.h"
+
 #include "Ability.h"
 
 
@@ -58,7 +59,6 @@ typedef struct {
     Map map;
     Player players[Max_Players];
     AbilitySystem *abilitySystem;
-
     int numPlayers;
     Bomb bomb;
 } Game;

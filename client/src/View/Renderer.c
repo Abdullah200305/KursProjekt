@@ -26,13 +26,34 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
-    r->playerTexture = IMG_LoadTexture(r->sdlRenderer, "link/Player.png");
-    if (!r->playerTexture) {
-        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+    
+    //SPELARE
+    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
+    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
+    //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
+    //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
+    for(int i = 0; i < 2; i++){
+        if (!r->playerTexture[i]) {
+        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
         Renderer_Destroy(r);
         return -1;
+        }
     }
 
+    
+    //ANIMATION
+    int PLAYER_FRAME_WIDTH = 471;
+    int PLAYER_FRAME_HEIGHT = 530;
+
+    for (int i = 0; i < 14; i++) {
+        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = 0;
+        r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
+    }
+
+    //ABILITY
+c
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
@@ -65,7 +86,18 @@ void Renderer_Destroy(Renderer* r) {
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
+<<<<<<< HEAD:client/src/View/Renderer.c
     SDL_DestroyTexture(r->playerTexture);
+=======
+
+    for (int i = 0; i < 2; i++) 
+    {
+        if (r->playerTexture[i])
+        {
+            SDL_DestroyTexture(r->playerTexture[i]);
+        }
+    }
+>>>>>>> main:src/View/Renderer.c
 
     for (int i = 0; i < 6; i++) 
     {
@@ -97,8 +129,9 @@ void Background_Image_Render(Renderer* r) {
 // Render the map based on the map buffer to make collision
 void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
-        for (int x = 0; x < TIlE_COUNT_X; x++) {
-              int tileType = getMapBufferItems(map,x,y);
+        for (int x = 0; x < TIlE_COUNT_X; x++)
+        {
+            int tileType = getMapBufferItems(map,x,y);
 
             float scaleX, scaleY;
             getScale(r, &scaleX, &scaleY);
@@ -137,14 +170,15 @@ void Render_Map(Renderer* r, Map map) {
 
 
 //******************  Player stuff  *******************//
-void Render_Player(Renderer* r, Player player) {
-    SDL_Texture *img = r->playerTexture;
+void Render_Player(Renderer* r, Player player, int playerIndex) {
+    SDL_Texture *img = r->playerTexture[playerIndex];
+    int frame = getPlayerAnimationFrame(player); 
+
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
     SDL_Rect playerRect = 
     {
-       
         getPlayerX(player) * scaleX,
         getPlayerY(player) * scaleY,
         getPlayerHeight(player) * scaleX,
@@ -152,8 +186,8 @@ void Render_Player(Renderer* r, Player player) {
     };
     
     SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
-    SDL_RenderFillRect(r->sdlRenderer, &playerRect);
-    SDL_RenderCopy(r->sdlRenderer, img, NULL, &playerRect);
+    SDL_RenderFillRect(r->sdlRenderer, &playerRect);   
+    SDL_RenderCopy(r->sdlRenderer, img, &r->playerFrames[frame], &playerRect);
 
 
    
@@ -247,12 +281,18 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
 
 void Render_Bomb(Renderer* r, Bomb bomb) {
     /* ===== Explosion visas först ===== */
-    if (getBombExploding(bomb)) {
-        SDL_Rect explosionOuter = { (int)getBombX(bomb) - 20, (int)getBombY(bomb) - 50, 70, 70 };
+
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    if (getBombExploding(bomb)) 
+    {
+
+        SDL_Rect explosionOuter = { ((int)getBombX(bomb) - 20) * scaleX, ((int)getBombY(bomb) - 50) * scaleY, 70 * scaleX, 70 * scaleY };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
         SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
 
-        SDL_Rect explosionInner = {  (int)getBombX(bomb) - 8, (int)getBombY(bomb) - 38, 46, 46 };
+        SDL_Rect explosionInner = {  ((int)getBombX(bomb) - 8) * scaleX, ((int)getBombY(bomb) - 38) * scaleY, 46 * scaleX, 46 * scaleY};
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
         SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
 
@@ -267,17 +307,17 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
         return;
     }
 
-    int maxTimer = 200;
+    int maxTimer = BOMB_TIMER;
     int bodyX = (int)getBombX(bomb) + 2;
     int bodyY = (int)getBombY(bomb) - 28;
 
     /* ===== Bombkropp ===== */
-    SDL_Rect body = { bodyX, bodyY, 24, 24 };
+    SDL_Rect body = { bodyX * scaleX, bodyY * scaleY, 24 * scaleX, 24 *scaleY};
     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderFillRect(r->sdlRenderer, &body);
 
     /* Lite highlight */
-    SDL_Rect shine = { bodyX + 4, bodyY + 4, 6, 6 };
+    SDL_Rect shine = { (bodyX + 4) * scaleX, (bodyY + 4) * scaleY, 6 * scaleX, 6 *scaleY};
     SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
     SDL_RenderFillRect(r->sdlRenderer, &shine);
 
@@ -286,7 +326,7 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
     SDL_RenderDrawRect(r->sdlRenderer, &body);
 
     /* ===== Toppdel ===== */
-    SDL_Rect cap = { bodyX + 8, bodyY - 4, 8, 5 };
+    SDL_Rect cap = { (bodyX + 8) * scaleX, (bodyY - 4) * scaleY, 8 * scaleX, 5 *scaleY};
     SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
     SDL_RenderFillRect(r->sdlRenderer, &cap);
 
@@ -300,11 +340,11 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
     /* ===== Gnista ===== */
     if ((getBombTimer(bomb) / 5) % 2 == 0) {
-        SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
+        SDL_Rect spark1 = { (bodyX + 21) * scaleX, (bodyY - 8) * scaleY, 4 * scaleX, 4 * scaleY};
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark1);
 
-        SDL_Rect spark2 = { bodyX + 23, bodyY - 10, 2, 2 };
+        SDL_Rect spark2 = { (bodyX + 23) * scaleX, (bodyY - 10) * scaleY, 2 * scaleX, 2 * scaleY};
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark2);
     }
@@ -317,19 +357,19 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
     int safeTimer = getBombTimer(bomb);
     if (safeTimer < 0) safeTimer = 0;
-    if (safeTimer > maxTimer) safeTimer = maxTimer;
+    if (safeTimer > maxTimer) safeTimer = BOMB_TIMER;
 
     int currentWidth = (safeTimer * barWidth) / maxTimer;
 
-    SDL_Rect barBg = { barX, barY, barWidth, barHeight };
+    SDL_Rect barBg = { barX * scaleX, barY * scaleY, barWidth * scaleX, barHeight * scaleY};
     SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
     SDL_RenderFillRect(r->sdlRenderer, &barBg);
 
-    SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
+    SDL_Rect barFill = { barX * scaleX, barY * scaleY, currentWidth * scaleX, barHeight * scaleY};
 
-    if (safeTimer > 120) {
+    if (safeTimer > (BOMB_TIMER*0.66)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-    } else if (safeTimer > 60) {
+    } else if (safeTimer > (BOMB_TIMER*0.33)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
     } else {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
