@@ -302,7 +302,7 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
         return;
     }
 
-    int maxTimer = 200;
+    int maxTimer = BOMB_TIMER;
     int bodyX = (int)getBombX(bomb) + 2;
     int bodyY = (int)getBombY(bomb) - 28;
 
@@ -352,7 +352,7 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
     int safeTimer = getBombTimer(bomb);
     if (safeTimer < 0) safeTimer = 0;
-    if (safeTimer > maxTimer) safeTimer = maxTimer;
+    if (safeTimer > maxTimer) safeTimer = BOMB_TIMER;
 
     int currentWidth = (safeTimer * barWidth) / maxTimer;
 
@@ -362,9 +362,9 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
     SDL_Rect barFill = { barX * scaleX, barY * scaleY, currentWidth * scaleX, barHeight * scaleY};
 
-    if (safeTimer > 120) {
+    if (safeTimer > (BOMB_TIMER*0.66)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-    } else if (safeTimer > 60) {
+    } else if (safeTimer > (BOMB_TIMER*0.33)) {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
     } else {
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);

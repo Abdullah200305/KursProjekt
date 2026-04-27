@@ -290,8 +290,10 @@ void setPlayerAnimation(Player player) {
         return;
     }
 
+    int animationSpeed = (player->speedTimer > 0) ? 3 : 6;
+
     player->animationTimer++;
-    if (player->animationTimer >= 6) {
+    if (player->animationTimer >= animationSpeed) {
         player->animationTimer = 0;
         switch (player->lastDirection) {
             case 0: 

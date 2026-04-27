@@ -21,7 +21,7 @@ Bomb createBomb(Player players[]){
     if (pBomb == NULL) return NULL;
     
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = BOMB_TIMER;      // ändra tid för bomb i bombRelated.h
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -36,7 +36,7 @@ void resetBomb(Bomb pBomb, Player players[]){
     if(pBomb==NULL) return;
 
     pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = BOMB_TIMER;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
