@@ -93,10 +93,11 @@ void game_update(Game *game, Renderer *renderer)
     {
         if (isPlayerAlive(game->players[i]))
         {
+            setPlayerAnimation(game->players[i]);
             Render_Player(renderer, game->players[i],i);
         }
     }
-    
+   
 
     AbilitySystem_render(game->abilitySystem, renderer);
 
@@ -219,6 +220,10 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].x,
             packet.data.players[i].y
         );
+
+        setPlayerVelocity(game->players[i],
+            packet.data.players[i].vx,
+            packet.data.players[i].vy);
 
         setPlayerSize(game->players[i],
             packet.data.players[i].width,

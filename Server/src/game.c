@@ -46,14 +46,6 @@ while (getServerRunning(server))
 
 
 
-
-
-
-
-
-
-
-
 void Game_Init(Server server,Game *game){  
 game->map = Map_create(WIDTH, HEIGHT);
 game->state = GAME_STATE_PLAYING;
@@ -62,10 +54,7 @@ game->numPlayers = getClientCount(server);
 // will be check after 
 game->abilitySystem = AbilitySystem_create();
 AbilitySystem_init(game->abilitySystem);
-    // game->abilitySystem = AbilitySystem_create();
-    // AbilitySystem_init(game->abilitySystem);
-    // AbilitySystem_spawn(game->abilitySystem, game->map);
-
+ 
 // PlayerManager_Init in server    
 for (int  i = 0; i < game->numPlayers; i++)
 {
@@ -100,15 +89,7 @@ void Game_Update(Server server, Game *game) {
     for (int i = 0; i < getClientCount(server); i++) {
         InputPacket in = getInputPlayer(server,i);
         int id =in.clientId;
-        // this for test
-        // printf("Player %d input: U:%d D:%d L:%d R:%d\n",
-        //        i, in.up, in.down, in.left, in.right);
-        // stopPlayer(game->players[i]);
-        // if (in.up)    setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]), -5.0);
-        // if (in.down)  setPlayerVelocity(game->players[i], getPlayerVelocityX(game->players[i]),  5.0);
-        // if (in.left)  setPlayerVelocity(game->players[i], -5.0, getPlayerVelocityY(game->players[i]));
-        // if (in.right) setPlayerVelocity(game->players[i],  5.0, getPlayerVelocityY(game->players[i]));
-      
+     
         
 
  
@@ -124,9 +105,6 @@ void Game_Update(Server server, Game *game) {
         if (in.right) vx =  speedX;
 
         setPlayerVelocity(game->players[i], vx, vy);
-
-      
-
 
         // // Update player position based on velocity and check for collisions
         Player p = game->players[i];
