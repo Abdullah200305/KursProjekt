@@ -252,12 +252,22 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
 }
 
 //Timers
-
 void setPlayerSpeedTimer(Player player, float timer) 
 {
     player->speedTimer = timer;
 }
 
+void setPlayerFreezeTimer(Player player, float timer) 
+{
+    player->freezeTimer = timer;
+}
+
+void setPlayerSizeUpTimer(Player player, float timer) 
+{
+    player->sizeUpTimer = timer;
+}
+
+//Player movement and Animation
 int getPlayerAnimationFrame(Player player) {
     return player->animationFrame;
 }
@@ -281,19 +291,27 @@ void setPlayerAnimation(Player player) {
 
     if (!isMoving) {
         switch (player->lastDirection) {
-            case 0: player->animationFrame = 0;  break;
-            case 1: player->animationFrame = 4;  break;
-            case 2: player->animationFrame = 7;  break;
-            case 3: player->animationFrame = 10; break;
+            case 0: 
+                player->animationFrame = 0;  
+                break;
+            case 1: 
+                player->animationFrame = 4;  
+                break;
+            case 2: 
+                player->animationFrame = 7;  
+                break;
+            case 3: 
+                player->animationFrame = 10; 
+                break;
         }
         player->animationTimer = 0;
         return;
     }
 
-    int animationSpeed = (player->speedTimer > 0) ? 3 : 6;
+    int animationTransitionSpeed = (player->speedTimer > 0) ? 3 : 6;
 
     player->animationTimer++;
-    if (player->animationTimer >= animationSpeed) {
+    if (player->animationTimer >= animationTransitionSpeed) {
         player->animationTimer = 0;
         switch (player->lastDirection) {
             case 0: 
@@ -312,23 +330,9 @@ void setPlayerAnimation(Player player) {
     }
 }
 
-void setPlayerFreezeTimer(Player player, float timer) 
-{
-    player->freezeTimer = timer;
-}
+void playerMovement(Player player,
+    SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right) {
 
-void setPlayerSizeUpTimer(Player player, float timer) 
-{
-    player->sizeUpTimer = timer;
-}
-
-//
-
-void playerMovement(
-    Player player,
-    SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right
-)
-{
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     float vx = 0;
