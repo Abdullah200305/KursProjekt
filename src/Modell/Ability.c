@@ -89,6 +89,9 @@ void abilitySpawnRate(AbilitySystem *system, Map map, int miliseconds)
 
 void AbilitySystem_render(const AbilitySystem *system, Renderer *r)
 {
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+    
     SDL_Rect rect;
 
     for (int i = 0; i < MAX_ABILITIES; i++)
@@ -96,10 +99,10 @@ void AbilitySystem_render(const AbilitySystem *system, Renderer *r)
         if (!system->items[i].active)
             continue;
 
-        rect.x = (int)system->items[i].x;
-        rect.y = (int)system->items[i].y;
-        rect.w = system->items[i].width;
-        rect.h = system->items[i].height;
+        rect.x = (int)system->items[i].x * scaleX;
+        rect.y = (int)system->items[i].y * scaleY;
+        rect.w = system->items[i].width * scaleX;
+        rect.h = system->items[i].height * scaleY;
 
         SDL_Texture *tex = r->abilityTextures[system->items[i].type];
 
