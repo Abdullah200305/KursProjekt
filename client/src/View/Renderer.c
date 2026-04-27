@@ -59,6 +59,11 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
+
+
+
+    //UI_playerState 
+    r->UI_playerState = IMG_LoadTexture(r->sdlRenderer,"link/UI_state/UI_Player.png");
     
     return 0;
 }
@@ -255,226 +260,153 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// void Render_Bomb(Renderer* r, Bomb bomb) {
-//     /* ===== Explosion visas först ===== */
-
-//     float scaleX, scaleY;
-//     getScale(r, &scaleX, &scaleY);
-
-//     if (getBombExploding(bomb)) 
-//     {
-
-//         SDL_Rect explosionOuter = { ((int)getBombX(bomb) - 20) * scaleX, ((int)getBombY(bomb) - 50) * scaleY, 70 * scaleX, 70 * scaleY };
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
-//         SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
-
-//         SDL_Rect explosionInner = {  ((int)getBombX(bomb) - 8) * scaleX, ((int)getBombY(bomb) - 38) * scaleY, 46 * scaleX, 46 * scaleY};
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
-//         SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
-
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-//         SDL_RenderDrawRect(r->sdlRenderer, &explosionOuter);
-
-//         return;
-//     }
-
-//     /* ===== Om bomben inte är aktiv, rita inget ===== */
-//     if (!getBombActive(bomb)) {
-//         return;
-//     }
-
-//     int maxTimer = BOMB_TIMER;
-//     int bodyX = (int)getBombX(bomb) + 2;
-//     int bodyY = (int)getBombY(bomb) - 28;
-
-//     /* ===== Bombkropp ===== */
-//     SDL_Rect body = { bodyX * scaleX, bodyY * scaleY, 24 * scaleX, 24 *scaleY};
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
-//     SDL_RenderFillRect(r->sdlRenderer, &body);
-
-//     /* Lite highlight */
-//     SDL_Rect shine = { (bodyX + 4) * scaleX, (bodyY + 4) * scaleY, 6 * scaleX, 6 *scaleY};
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
-//     SDL_RenderFillRect(r->sdlRenderer, &shine);
-
-//     /* Kontur */
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-//     SDL_RenderDrawRect(r->sdlRenderer, &body);
-
-//     /* ===== Toppdel ===== */
-//     SDL_Rect cap = { (bodyX + 8) * scaleX, (bodyY - 4) * scaleY, 8 * scaleX, 5 *scaleY};
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
-//     SDL_RenderFillRect(r->sdlRenderer, &cap);
-
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-//     SDL_RenderDrawRect(r->sdlRenderer, &cap);
-
-//     /* ===== Säkring ===== */
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);
-//     SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
-//     SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
-
-//     /* ===== Gnista ===== */
-//     if ((getBombTimer(bomb) / 5) % 2 == 0) {
-//         SDL_Rect spark1 = { (bodyX + 21) * scaleX, (bodyY - 8) * scaleY, 4 * scaleX, 4 * scaleY};
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
-//         SDL_RenderFillRect(r->sdlRenderer, &spark1);
-
-//         SDL_Rect spark2 = { (bodyX + 23) * scaleX, (bodyY - 10) * scaleY, 2 * scaleX, 2 * scaleY};
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
-//         SDL_RenderFillRect(r->sdlRenderer, &spark2);
-//     }
-
-//     /* ===== Timer-bar ===== */
-//     int barWidth = 24;
-//     int barHeight = 5;
-//     int barX = bodyX;
-//     int barY = bodyY - 12;
-
-//     int safeTimer = getBombTimer(bomb);
-//     if (safeTimer < 0) safeTimer = 0;
-//     if (safeTimer > maxTimer) safeTimer = BOMB_TIMER;
-
-//     int currentWidth = (safeTimer * barWidth) / maxTimer;
-
-//     SDL_Rect barBg = { barX * scaleX, barY * scaleY, barWidth * scaleX, barHeight * scaleY};
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
-//     SDL_RenderFillRect(r->sdlRenderer, &barBg);
-
-//     SDL_Rect barFill = { barX * scaleX, barY * scaleY, currentWidth * scaleX, barHeight * scaleY};
-
-//     if (safeTimer > (BOMB_TIMER*0.66)) {
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-//     } else if (safeTimer > (BOMB_TIMER*0.33)) {
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
-//     } else {
-//         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
-//     }
-
-//     SDL_RenderFillRect(r->sdlRenderer, &barFill);
-
-//     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-//     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
-// }
-
-
-
-
-
-
-
-
-//// old version 
-
-
 void Render_Bomb(Renderer* r, Bomb bomb) {
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
     /* ===== Explosion visas först ===== */
-    if (getBombExploding(bomb)) {
-        SDL_Rect explosionOuter = { (int)getBombX(bomb) - 20, (int)getBombY(bomb) - 50, 70, 70 };
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
+    if (getBombExploding(bomb)) 
+    {
+        SDL_Rect explosionOuter = { 
+            (int)((getBombX(bomb) - 20) * scaleX), 
+            (int)((getBombY(bomb) - 50) * scaleY), 
+            (int)(70 * scaleX), 
+            (int)(70 * scaleY) 
+        };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
 
-        SDL_Rect explosionInner = {  (int)getBombX(bomb) - 8, (int)getBombY(bomb) - 38, 46, 46 };
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
+        SDL_Rect explosionInner = { 
+            (int)((getBombX(bomb) - 8)  * scaleX), 
+            (int)((getBombY(bomb) - 38) * scaleY), 
+            (int)(46 * scaleX), 
+            (int)(46 * scaleY) 
+        };
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
 
         SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
         SDL_RenderDrawRect(r->sdlRenderer, &explosionOuter);
-
         return;
     }
 
     /* ===== Om bomben inte är aktiv, rita inget ===== */
-    if (!getBombActive(bomb)) {
-        return;
-    }
+    if (!getBombActive(bomb)) return;
 
-    int maxTimer = 200;
+    int maxTimer = BOMB_TIMER;   
     int bodyX = (int)getBombX(bomb) + 2;
     int bodyY = (int)getBombY(bomb) - 28;
 
     /* ===== Bombkropp ===== */
-    SDL_Rect body = { bodyX, bodyY, 24, 24 };
+    SDL_Rect body = { 
+        (int)(bodyX * scaleX), 
+        (int)(bodyY * scaleY), 
+        (int)(24 * scaleX), 
+        (int)(24 * scaleY) 
+    };
     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderFillRect(r->sdlRenderer, &body);
 
-    /* Lite highlight */
-    SDL_Rect shine = { bodyX + 4, bodyY + 4, 6, 6 };
+    SDL_Rect shine = { 
+        (int)((bodyX + 4) * scaleX), 
+        (int)((bodyY + 4) * scaleY), 
+        (int)(6 * scaleX), 
+        (int)(6 * scaleY) 
+    };
     SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
     SDL_RenderFillRect(r->sdlRenderer, &shine);
 
-    /* Kontur */
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &body);
 
     /* ===== Toppdel ===== */
-    SDL_Rect cap = { bodyX + 8, bodyY - 4, 8, 5 };
+    SDL_Rect cap = { 
+        (int)((bodyX + 8) * scaleX), 
+        (int)((bodyY - 4) * scaleY), 
+        (int)(8 * scaleX), 
+        (int)(5 * scaleY) 
+    };
     SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
     SDL_RenderFillRect(r->sdlRenderer, &cap);
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &cap);
 
-    /* ===== Säkring ===== */
+    /* ===== Säkring (BUG 2 fixed: now scaled) ===== */
     SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);
-    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
-    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
+    SDL_RenderDrawLine(r->sdlRenderer,
+        (int)((bodyX + 12) * scaleX), (int)((bodyY - 4)  * scaleY),
+        (int)((bodyX + 18) * scaleX), (int)((bodyY - 10) * scaleY));
+    SDL_RenderDrawLine(r->sdlRenderer,
+        (int)((bodyX + 18) * scaleX), (int)((bodyY - 10) * scaleY),
+        (int)((bodyX + 22) * scaleX), (int)((bodyY - 6)  * scaleY));
 
     /* ===== Gnista ===== */
     if ((getBombTimer(bomb) / 5) % 2 == 0) {
-        SDL_Rect spark1 = { bodyX + 21, bodyY - 8, 4, 4 };
+        SDL_Rect spark1 = { 
+            (int)((bodyX + 21) * scaleX), 
+            (int)((bodyY - 8)  * scaleY), 
+            (int)(4 * scaleX), 
+            (int)(4 * scaleY) 
+        };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark1);
 
-        SDL_Rect spark2 = { bodyX + 23, bodyY - 10, 2, 2 };
+        SDL_Rect spark2 = { 
+            (int)((bodyX + 23) * scaleX), 
+            (int)((bodyY - 10) * scaleY), 
+            (int)(2 * scaleX), 
+            (int)(2 * scaleY) 
+        };
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
         SDL_RenderFillRect(r->sdlRenderer, &spark2);
     }
 
     /* ===== Timer-bar ===== */
-    int barWidth = 24;
+    int barWidth  = 24;
     int barHeight = 5;
     int barX = bodyX;
     int barY = bodyY - 12;
 
     int safeTimer = getBombTimer(bomb);
-    if (safeTimer < 0) safeTimer = 0;
-    if (safeTimer > maxTimer) safeTimer = maxTimer;
+    if (safeTimer < 0)        safeTimer = 0;
+    if (safeTimer > maxTimer) safeTimer = maxTimer;  
 
     int currentWidth = (safeTimer * barWidth) / maxTimer;
 
-    SDL_Rect barBg = { barX, barY, barWidth, barHeight };
+    SDL_Rect barBg = { 
+        (int)(barX * scaleX), 
+        (int)(barY * scaleY), 
+        (int)(barWidth  * scaleX), 
+        (int)(barHeight * scaleY) 
+    };
     SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
     SDL_RenderFillRect(r->sdlRenderer, &barBg);
 
-    SDL_Rect barFill = { barX, barY, currentWidth, barHeight };
+    SDL_Rect barFill = { 
+        (int)(barX * scaleX), 
+        (int)(barY * scaleY), 
+        (int)(currentWidth * scaleX), 
+        (int)(barHeight    * scaleY) 
+    };
 
-    if (safeTimer > 120) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-    } else if (safeTimer > 60) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
-    } else {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
-    }
+   
+    if      (safeTimer > (int)(maxTimer * 0.66f)) SDL_SetRenderDrawColor(r->sdlRenderer, 0,   255, 0,   255);
+    else if (safeTimer > (int)(maxTimer * 0.33f)) SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0,   255);
+    else                                          SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0,   0,   255);
 
     SDL_RenderFillRect(r->sdlRenderer, &barFill);
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 }
+
+
+
+
+
+
+
 
 
 
@@ -503,6 +435,66 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+void UI_playerState(Player player[4], Renderer *r) {
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    /* ===== Bigger Background box ===== */
+    int boxX = (int)(160 * scaleX);     // moved slightly left
+    int boxY = (int)(500 * scaleY);     // slightly higher
+    int boxW = (int)(1000 * scaleX);    // bigger width
+    int boxH = (int)(260 * scaleY);     // bigger height
+
+    SDL_Rect box = { boxX, boxY, boxW, boxH };
+
+    SDL_RenderCopy(r->sdlRenderer, r->UI_playerState, NULL, &box);
+
+    /* ===== Slots (smaller + more breathing space) ===== */
+    int numSlots = 2;
+
+    // Smaller slots
+    int slotW = (int)(boxW * 0.25f);   // ↓ from 35% → 25%
+    int slotH = (int)(boxH * 0.55f);   // ↓ from 65% → 55%
+
+    // More spacing
+    int gap = (int)(boxW * 0.08f);     // ↑ more gap between slots
+
+    // Center vertically
+    int startY = boxY + (boxH - slotH) / 2;
+
+    // Center horizontally
+    int totalSlotsW = numSlots * slotW + (numSlots - 1) * gap;
+    int startX = boxX + (boxW - totalSlotsW) / 2;
+
+    for (int i = 0; i < numSlots; i++)
+    {
+        int slotX = startX + i * (slotW + gap);
+
+        SDL_Rect slot = { slotX, startY, slotW, slotH };
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 70, 40, 15, 200);
+        SDL_RenderFillRect(r->sdlRenderer, &slot);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 200, 150, 80, 255);
+        SDL_RenderDrawRect(r->sdlRenderer, &slot);
+
+        /* Lives — keep nicely inside */
+        int livesX = (int)(slotX / scaleX) + 12;
+        int livesY = (int)((startY + slotH * 0.5f) / scaleY);
+
+        Render_PlayerLives(r, player[i], livesX, livesY);
+    }
+}
 
 
 

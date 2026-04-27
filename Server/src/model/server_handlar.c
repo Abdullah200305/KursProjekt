@@ -1,10 +1,6 @@
 #include "server_handlar.h"
 
 
-
-
- 
-
 void Server_handlePackets(Server server){
     void* packet;
     IPaddress ip; 

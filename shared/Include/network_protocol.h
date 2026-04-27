@@ -44,6 +44,7 @@ typedef struct
     int lives;  
     int alive;  
     int id;
+    float freezeTimer;  
 }PlayerInitData;
 
 

@@ -114,7 +114,7 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
             // apply SPEED effect
             if (a->type == ABILITY_SPEED)
             {
-                setPlayerSpeedYX(player, 10, 10);
+                  setPlayerSpeedYX(player, 20, 20);
                 setPlayerSpeedTimer(player, 300);
             }
 

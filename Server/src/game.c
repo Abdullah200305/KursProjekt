@@ -13,6 +13,7 @@ while (getServerRunning(server))
     {
         Server_handlePackets(server);
 
+        // player size will change
         if (!getGameStart(server) && getClientCount(server) == 2) {
             Game_Init(server, &game);
             Game_InitSendToClients(server, &game);
@@ -26,11 +27,6 @@ while (getServerRunning(server))
 
         lastTick = now;
     }
-
-
-
-
-
 }
     server_disconnet(server);
     Map_destroy(game.map);
@@ -39,13 +35,7 @@ while (getServerRunning(server))
 
 
 
-
-
-
-
-
-
-
+/*********Game_init********/
 void Game_Init(Server server,Game *game){  
 game->map = Map_create(WIDTH, HEIGHT);
 game->state = GAME_STATE_PLAYING;
@@ -69,22 +59,7 @@ printf("init game done\n");
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// sutff inside it maybe will write some where else
+/*********Game_start********/
 void Game_Update(Server server, Game *game) {
     for (int i = 0; i < getClientCount(server); i++) {
         InputPacket in = getInputPlayer(server,i);
@@ -123,6 +98,8 @@ void Game_Update(Server server, Game *game) {
            }
     }
     updateBomb(game->bomb, game->players);
+
+
 
 
     //-------------------------------------------------------------------//
@@ -169,17 +146,18 @@ void Game_Update(Server server, Game *game) {
                 setPlayerSize(game->players[i], 32, 32); 
             }
         }
-
-        //Shield Ability Loses i ability.c + bombrelated.c 
     }
 
 
 
-    
+    // packetBuilder+send
     GameStatePacket send;
     Packet_BuildGameState(&send,game);
     Server_Broadcast(server,&send,sizeof(GameStatePacket));
 }
+
+
+
 
 // maybe will move
 void movePlayerWithOther(Player player, int p_index, Player players[], int count, Bomb bomb)
@@ -285,19 +263,6 @@ void movePlayer(Map map, Player player)
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void Game_InitSendToClients(Server server, Game *game) {

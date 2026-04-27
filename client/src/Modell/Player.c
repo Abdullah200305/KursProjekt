@@ -1,4 +1,6 @@
 #include "Player.h"
+
+// no need 
 #include <SDL2/SDL.h>
 
 struct  Player_type
@@ -28,10 +30,6 @@ struct  Player_type
 
     int hasShield;
 };
-
-
-
-
  
 Player initPlayer(float x, float y)
 {
@@ -336,8 +334,8 @@ void setPlayerSizeUpTimer(Player player, float timer)
     player->sizeUpTimer = timer;
 }
 
-//
 
+// this will remove 
 void playerMovement(
     Player player,
     SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right

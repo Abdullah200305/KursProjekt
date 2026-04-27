@@ -88,24 +88,37 @@ void game_update(Game *game, Renderer *renderer)
 
     // this for test 
     //Render_Map(renderer, game->map);
-
+    UI_playerState(game->players,renderer);
   
    
 
     AbilitySystem_render(game->abilitySystem, renderer);
-
+   for (int i = 0; i < game->numPlayers; i++)
+    {
+        setPlayerAnimation(game->players[i]);
+    }
 
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
         {
             Render_Player(renderer, game->players[i],i);
-            setPlayerAnimation(game->players[i]);
         }
     }
 
 
     Render_Bomb(renderer, game->bomb);
+
+
+    
+
+
+
+
+
+
+
+
 
 
     // this will uppdate
@@ -232,6 +245,12 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].lives,
             packet.data.players[i].alive
         );
+
+
+        setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer); 
+
+
+        
         //printf("%d livesss %d\n",i,getPlayerLives(game->players[i]));
        
     }

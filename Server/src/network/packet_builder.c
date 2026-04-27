@@ -78,6 +78,7 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
         Newpacket.data.players[i].lives = getPlayerLives(game->players[i]);
         Newpacket.data.players[i].alive = isPlayerAlive(game->players[i]);
         Newpacket.data.players[i].id = getPlayerId(game->players[i]);
+        Newpacket.data.players[i].freezeTimer = getPlayerFreezeTimer(game->players[i]);
     }
 
     Newpacket.data.abilities.numAbilities = MAX_ABILITIES;
