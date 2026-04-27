@@ -102,11 +102,6 @@ void game_update(Game *game, Renderer *renderer)
     AbilitySystem_render(game->abilitySystem, renderer);
 
 
-
-
-
-
-    
     Render_Bomb(renderer, game->bomb);
 
 
@@ -234,6 +229,7 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].lives,
             packet.data.players[i].alive
         );
+       
     }
     
     setBombState(

@@ -238,3 +238,14 @@ void setBombCarrier(Bomb pBomb, int index){
     pBomb->bombCarrier = index;
     pBomb->transferCooldown = 60;
 }
+
+void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding){
+    if (pBomb == NULL) return;
+
+    pBomb->x = x;
+    pBomb->y = y;
+    pBomb->timer = timer;
+    pBomb->bombCarrier = bombCarrier;
+    pBomb->active = active ? 1 : 0;
+    pBomb->exploding = exploding ? 1 : 0;
+}

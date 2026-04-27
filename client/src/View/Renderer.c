@@ -179,9 +179,32 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
         getPlayerHeight(player) * scaleX,
         getPlayerWidth(player) * scaleY
     };
+    
     SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
     SDL_RenderFillRect(r->sdlRenderer, &playerRect);   
     SDL_RenderCopy(r->sdlRenderer, img, &r->playerFrames[frame], &playerRect);
+
+
+   
+  // sencor four /// for testing 
+    // SDL_Rect top = { (int)player->x+64/2, (int)player->y, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &top); 
+
+    // SDL_Rect left = { (int)player->x, (int)player->y+64/2, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &left); 
+
+    // SDL_Rect right = { (int)player->x+64-1, (int)player->y+64/2, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &right); 
+
+    // SDL_Rect bottom = { (int)player->x+64/2, (int)player->y+64-1, 1, 1 };
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
+    // SDL_RenderFillRect(r->sdlRenderer, &bottom); 
+
+
+  
 }
 
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
@@ -355,6 +378,7 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
 
 
+
 void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 {
     SDL_Rect rect;
@@ -371,6 +395,67 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r)
             SDL_RenderCopy(r->sdlRenderer, tex, NULL, &rect);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
