@@ -16,6 +16,11 @@ struct  Player_type
     float speedY;
     float speedX;
 
+      //animation
+    int animationFrame;
+    int animationTimer;
+    int lastDirection;
+
     float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
@@ -39,6 +44,12 @@ Player initPlayer(float x, float y)
 
     p->speedY = 5;
     p->speedX = 5;
+
+    
+    //animation
+    p->animationFrame = 0;
+    p->animationTimer = 0;
+    p->lastDirection = 0;
 
     p->speedTimer = 0;
     p->freezeTimer = 0;
@@ -136,7 +147,9 @@ void killPlayer(Player player)
 
 
 //Implementation av getters metoder
-
+int getPlayerAnimationFrame(Player player) {
+    return player->animationFrame;
+}
 int getPlayerId(Player player){
     return player->id;
 }
@@ -221,6 +234,11 @@ void setPlayerShieldTimer(Player player, float timer)
 }
 
 //Implementation av setters metoder
+void setPlayerState(Player player, int lives, int alive) {
+    if (player == NULL) {
+        return;
+    }
+}
 
 void setPlayerX(Player player, float x)
 {
@@ -255,6 +273,13 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedY = speedY;
     player->speedX = speedX;
 }
+
+void setPlayerAnimation(Player player) {
+    if(player->freezeTimer > 0){
+        player->animationFrame = 13;
+        return;
+    }
+}    
 
 //Timers
 
@@ -308,6 +333,35 @@ void playerMovement(
 void PlayerDestroy(Player player){
     free(player);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

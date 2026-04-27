@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+
 int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     printf("Initializing SDL...\n");
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -39,7 +40,6 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
         }
     }
-
     
     //ANIMATION
     int PLAYER_FRAME_WIDTH = 471;
@@ -53,7 +53,6 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     }
 
     //ABILITY
-c
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
@@ -86,9 +85,6 @@ void Renderer_Destroy(Renderer* r) {
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
-<<<<<<< HEAD:client/src/View/Renderer.c
-    SDL_DestroyTexture(r->playerTexture);
-=======
 
     for (int i = 0; i < 2; i++) 
     {
@@ -97,7 +93,6 @@ void Renderer_Destroy(Renderer* r) {
             SDL_DestroyTexture(r->playerTexture[i]);
         }
     }
->>>>>>> main:src/View/Renderer.c
 
     for (int i = 0; i < 6; i++) 
     {
@@ -383,7 +378,6 @@ void Render_Bomb(Renderer* r, Bomb bomb) {
 
 
 
-
 void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 {
     SDL_Rect rect;
@@ -404,11 +398,6 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 
 
 
-
-
-void PlayerUIState_render(Renderer* r,Player player,int index){
-    
-}
 
 
 

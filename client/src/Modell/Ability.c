@@ -15,7 +15,6 @@ struct AbilitySystem_type
 };
 
 
-
 AbilitySystem* AbilitySystem_create()
 {
     AbilitySystem *system = malloc(sizeof(AbilitySystem));
@@ -60,7 +59,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tileSize = getTileSize(map);
 
             system->items[i].active = true;
-            system->items[i].type = rand() % 4 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
+            system->items[i].type = rand() % 5 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
 
             system->items[i].width = 32;
             system->items[i].height = 32;
@@ -168,6 +167,10 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
         }
     }
 }
+
+
+
+
 void SetAbilityItemState(AbilitySystem *system, int index, AbilityType type, float x, float y, int width, int height, bool active)
 {
     system->items[index].type   = type;
@@ -177,9 +180,6 @@ void SetAbilityItemState(AbilitySystem *system, int index, AbilityType type, flo
     system->items[index].height = height;
     system->items[index].active = active;
 }
-
-
-
 
 // AbilityItem getters
 AbilityType AbilityItem_getType(AbilitySystem *system, int index)   { return system->items[index].type; }

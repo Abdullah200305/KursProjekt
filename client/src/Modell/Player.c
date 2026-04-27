@@ -151,21 +151,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include "Player.h"
 #include <SDL2/SDL.h>
 
@@ -184,6 +169,11 @@ struct  Player_type
     float speedY;
     float speedX;
 
+      //animation
+    int animationFrame;
+    int animationTimer;
+    int lastDirection;
+
     float speedTimer;
     float freezeTimer;
     float sizeUpTimer;
@@ -193,9 +183,6 @@ struct  Player_type
 };
 
 
-
-
- 
 Player initPlayer(float x, float y)
 {
     Player p = malloc(sizeof(struct Player_type));
@@ -211,6 +198,12 @@ Player initPlayer(float x, float y)
     p->speedY = 5;
     p->speedX = 5;
 
+    
+    //animation
+    p->animationFrame = 0;
+    p->animationTimer = 0;
+    p->lastDirection = 0;
+
     p->speedTimer = 0;
     p->freezeTimer = 0;
     p->sizeUpTimer = 0;
@@ -220,13 +213,15 @@ Player initPlayer(float x, float y)
     return p;
 }
 
+
+
+// will use abody
 void damagePlayer(Player player) 
 {
     if (player->alive == 0) 
     {
         return;
     }
-
     player->lives--;
 
     if (player->lives <= 0) 
@@ -258,6 +253,8 @@ int isPlayerAlive(Player player)
     return player->alive;
 }
 
+
+// will remove
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY)
 {
     if (player->x < minX) 
@@ -281,17 +278,17 @@ void clampPlayerToMap(Player player, float minX, float minY, float maxX, float m
     } 
 }
 
-
+// will remove
 void stopPlayer(Player player) 
 {
     player->vx = 0;
     player->vy = 0;
 }
-
+// will remove
 // void resetPlayer(Player player, float x, float y) {
 //     initPlayer(player, x, y);
 // }
-
+// will remove
 void killPlayer(Player player) 
 {
     player->lives = 0;
@@ -303,7 +300,9 @@ void killPlayer(Player player)
 
 
 //Implementation av getters metoder
-
+int getPlayerAnimationFrame(Player player) {
+    return player->animationFrame;
+}
 int getPlayerId(Player player){
     return player->id;
 }
@@ -340,6 +339,14 @@ float getPlayerHeight(Player player)
 int getPlayerLives(Player player) 
 {
     return player->lives;
+}
+float getPlayerSpeedX(Player p)
+{
+    return p->speedX;
+}
+float getPlayerSpeedY(Player p)
+{
+    return p->speedY;
 }
 
 // Timers
@@ -380,19 +387,9 @@ void setPlayerShieldTimer(Player player, float timer)
 }
 
 //Implementation av setters metoder
-
-
 void setPlayerState(Player player, int lives, int alive) {
     if (player == NULL) {
         return;
-    }
-    if (lives < 0) {
-        lives = 0;
-    }
-    player->lives = lives;
-    player->alive = alive ? 1 : 0;
-    if (player->lives == 0) {
-        player->alive = 0;
     }
 }
 void setPlayerX(Player player, float x)
@@ -428,6 +425,13 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedY = speedY;
     player->speedX = speedX;
 }
+
+void setPlayerAnimation(Player player) {
+    if(player->freezeTimer > 0){
+        player->animationFrame = 13;
+        return;
+    }
+}    
 
 //Timers
 
@@ -477,6 +481,39 @@ void playerMovement(
 
     setPlayerVelocity(player, vx, vy);
 }
+
 void PlayerDestroy(Player player){
     free(player);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

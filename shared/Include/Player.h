@@ -91,6 +91,7 @@ float getPlayerShieldTimer(Player player);
 int getPlayerId(Player player);
 float getPlayerSpeedX(Player p);
 float getPlayerSpeedY(Player p);
+int getPlayerAnimationFrame(Player player);
 
 
 
@@ -108,6 +109,7 @@ void setPlayerFreezeTimer(Player player, float timer);
 void setPlayerSizeUpTimer(Player player, float timer);
 void setPlayerShield(Player player, int value);
 void setPlayerShieldTimer(Player player, float timer);
+void setPlayerAnimation(Player player);
 //MISC FUNCTIONS
 
 void playerMovement(
@@ -120,3 +122,5 @@ void uncollidePlayer(Player player);
 void PlayerDestroy(Player player);
 
 #endif
+
+

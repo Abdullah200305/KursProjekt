@@ -93,7 +93,7 @@ void game_update(Game *game, Renderer *renderer)
     {
         if (isPlayerAlive(game->players[i]))
         {
-            Render_Player(renderer, game->players[i]);
+            Render_Player(renderer, game->players[i],i);
         }
     }
     
@@ -142,10 +142,6 @@ void game_update(Game *game, Renderer *renderer)
 
     Renderer_Present(renderer);
 }
-
-
-
-
 
 
 // init stuff before game start like map, bomb and players
