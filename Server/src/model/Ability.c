@@ -1,4 +1,4 @@
-#include "Ability.h"
+#include "ability.h"
 
 // Intern struct
 typedef struct {
@@ -13,6 +13,7 @@ struct AbilitySystem_type
     AbilityItem items[MAX_ABILITIES];
     Uint32 nextSpawnTime;
 };
+
 
 
 AbilitySystem* AbilitySystem_create()
@@ -167,7 +168,6 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
         }
     }
 }
-
 
 
 

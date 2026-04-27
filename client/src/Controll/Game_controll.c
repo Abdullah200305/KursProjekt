@@ -89,17 +89,20 @@ void game_update(Game *game, Renderer *renderer)
     // this for test 
     //Render_Map(renderer, game->map);
 
+  
+   
+
+    AbilitySystem_render(game->abilitySystem, renderer);
+
+
     for (int i = 0; i < game->numPlayers; i++)
     {
         if (isPlayerAlive(game->players[i]))
         {
-            setPlayerAnimation(game->players[i]);
             Render_Player(renderer, game->players[i],i);
+            setPlayerAnimation(game->players[i]);
         }
     }
-   
-
-    AbilitySystem_render(game->abilitySystem, renderer);
 
 
     Render_Bomb(renderer, game->bomb);
@@ -229,6 +232,7 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].lives,
             packet.data.players[i].alive
         );
+        //printf("%d livesss %d\n",i,getPlayerLives(game->players[i]));
        
     }
     

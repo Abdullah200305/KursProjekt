@@ -815,7 +815,23 @@ void setPlayerState(Player player, int lives, int alive) {
     if (player == NULL) {
         return;
     }
+
+    if (lives < 0) {
+        lives = 0;
+    }
+
+    player->lives = lives;
+    player->alive = alive ? 1 : 0;
+
+    if (player->lives == 0) {
+        player->alive = 0;
+    }
 }
+
+
+
+
+
 
 //Timers
 
@@ -888,7 +904,7 @@ void setPlayerSizeUpTimer(Player player, float timer)
     player->sizeUpTimer = timer;
 }
 
-//
+
 
 void playerMovement(
     Player player,

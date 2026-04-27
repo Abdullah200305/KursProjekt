@@ -105,6 +105,7 @@ void Game_Update(Server server, Game *game) {
         if (in.right) vx =  speedX;
 
         setPlayerVelocity(game->players[i], vx, vy);
+       
 
         // // Update player position based on velocity and check for collisions
         Player p = game->players[i];
