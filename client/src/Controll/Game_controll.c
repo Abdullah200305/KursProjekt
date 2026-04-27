@@ -53,26 +53,26 @@ while (game->state != GAME_STATE_GAME_OVER)
 
     
 
-// will updte
-// const char *message = "Game over! Click OK to close.";
-// if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-// {
-//     message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
-// }
-// else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
-// {
-//     message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
-// }
-// else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-// {
-//     message = "Game over!\nBoth players died.\nClick OK to close.";
-// }
-// SDL_ShowSimpleMessageBox(
-//     SDL_MESSAGEBOX_INFORMATION,
-//     "Game Over",
-//     message,
-//     renderer->window
-// );
+//will updte
+const char *message = "Game over! Click OK to close.";
+if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+{
+    message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+}
+else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+{
+    message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+}
+else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+{
+    message = "Game over!\nBoth players died.\nClick OK to close.";
+}
+SDL_ShowSimpleMessageBox(
+    SDL_MESSAGEBOX_INFORMATION,
+    "Game Over",
+    message,
+    renderer->window
+);
 
 }
 
@@ -105,9 +105,11 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-    // will update
+    
     Render_Bomb(renderer, game->bomb);
 
+
+    // this will uppdate
     if (isPlayerAlive(game->players[0]))
     {
         Render_PlayerLives(renderer, game->players[0], 20, 20);
@@ -119,20 +121,23 @@ void game_update(Game *game, Renderer *renderer)
         Render_PlayerLives(renderer, game->players[1], 20, 50);
     }
 
-    // int aliveCount = 0;
+    int aliveCount = 0;
 
-    // for (int i = 0; i < game->numPlayers; i++)
-    // {
-    //     if (isPlayerAlive(game->players[i]))
-    //     {
-    //         aliveCount++;
-    //     }
-    // }
+    for (int i = 0; i < game->numPlayers; i++)
+    {
+        if (isPlayerAlive(game->players[i]))
+        {
+            aliveCount++;
+        }
+    }
 
-    // if (aliveCount <= 1)
-    // {
-    //     game->state = GAME_STATE_GAME_OVER;
-    // }
+    if (aliveCount <= 1)
+    {
+        game->state = GAME_STATE_GAME_OVER;
+    }
+
+
+
 
 
     Renderer_Present(renderer);
@@ -218,13 +223,6 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].x,
             packet.data.players[i].y
         );
-
-
-        // will remove
-        // setPlayerVelocity(game->players[i], 
-        //     packet.data.players[i].vx,
-        //     packet.data.players[i].vy
-        // );
 
         setPlayerSize(game->players[i],
             packet.data.players[i].width,

@@ -78,15 +78,6 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
         Newpacket.data.players[i].lives = getPlayerLives(game->players[i]);
         Newpacket.data.players[i].alive = isPlayerAlive(game->players[i]);
         Newpacket.data.players[i].id = getPlayerId(game->players[i]);
-
-
-
-          
-
-        // printf("Player %d -> x: %.2f y: %.2f\n",
-        //        i,
-        //        Newpacket.data.players[i].x,
-        //        Newpacket.data.players[i].y);
     }
 
     Newpacket.data.abilities.numAbilities = MAX_ABILITIES;
