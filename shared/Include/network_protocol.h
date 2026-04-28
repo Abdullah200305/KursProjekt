@@ -3,7 +3,7 @@
 
 #define MAX_PLAYERS 4
 #define MAP_ID_ISLAND 1
-
+#define MAX_ABILITIES 10
 typedef enum {
     PACKET_JOIN_REQUEST = 1,
     PACKET_JOIN_ACCEPT = 2,
@@ -33,16 +33,6 @@ typedef struct {
 } HeaderPacket;
 
 
-// abid old version
-// typedef struct {
-//     float x;
-//     float y;
-//     int lives;
-//     int alive;
-// } PlayerInitData;
-
-
-// add by abody
 typedef struct
 {
     float x;
@@ -54,6 +44,7 @@ typedef struct
     int lives;  
     int alive;  
     int id;
+    float freezeTimer;  
 }PlayerInitData;
 
 
@@ -67,7 +58,6 @@ typedef struct {
     int timer;
 } BombInitData;
 
-// add by abody
 typedef struct 
 {
     int mapId;
@@ -89,11 +79,26 @@ typedef struct {
 } GameInitPacket;
 
 
+typedef struct {
+    int   active;
+    int   type;      
+    float x;
+    float y;
+    int   width;
+    int   height;
+} AbilityNetData;
+
+typedef struct {
+    int    numAbilities;         
+    AbilityNetData items[10];
+} AbilityStateData;
+
 
 typedef struct {
     int numPlayers;
     PlayerInitData players[MAX_PLAYERS];
     BombInitData bomb;
+    AbilityStateData abilities;
 } GameStateData;
 
 typedef struct {
@@ -112,3 +117,11 @@ typedef struct {
 
 
 #endif
+
+
+
+
+
+
+
+

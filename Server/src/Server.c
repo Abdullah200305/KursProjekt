@@ -20,6 +20,11 @@ ServerConnection(server,2000);
 printf("Server Init SDL_NET\n");
 printf("Startning the Server\n");
 
+
+
+
+
+
 signal(SIGINT, handle_sigint); 
 
 g_server = server;

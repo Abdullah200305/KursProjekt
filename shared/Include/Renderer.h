@@ -9,7 +9,10 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
     SDL_Texture* backgroundTexture;
-    SDL_Texture* playerTexture;
+    SDL_Texture* UI_playerState;
+    SDL_Texture* playerTexture[4];
+    SDL_Texture *abilityTextures[6];
+    SDL_Rect playerFrames[14];
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
@@ -24,7 +27,7 @@ void Render_Map(Renderer* r, Map map);
 
 
 // Rendering the player
-void Render_Player(Renderer* r, Player player);
+void Render_Player(Renderer* r, Player player, int playerIndex);
 
 //Rendering the lives
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);
@@ -32,7 +35,17 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);
 //rendering bomb
 void Render_Bomb(Renderer* r, Bomb bomb);
 
+// rendering Abilit
+void AbilitySystem_render(AbilitySystem *system, Renderer *r);
+
+
+void UI_playerState(Player player[4],Renderer *r);
+
+
+
+
 #endif // RENDERER_H
+
 
 
 

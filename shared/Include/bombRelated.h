@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "Player.h"
+#include <Player.h>
+
+
+#define BOMB_TIMER 200
+
 
 typedef struct Bomb_type *Bomb;
 
@@ -29,3 +33,6 @@ int getBombActive(Bomb pBomb);
 void setBombCarrier(Bomb pBomb, int index);
 void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding);
 #endif 
+
+
+

@@ -58,8 +58,10 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
         return NULL;
     }
 
-    client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
-    client->recvPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    // client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    // client->recvPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    client->recvPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
+    client->sendPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
 
     if (client->sendPacket == NULL || client->recvPacket == NULL) {
         printf("SDLNet_AllocPacket failed: %s\n", SDLNet_GetError());
@@ -210,9 +212,10 @@ int ClientNet_TryReceive(ClientNet client)
 
         return 1;
     }
+   
     if (packetType == PACKET_GAME_STATE) {
         GameStatePacket packet;
-
+       
         if (client->recvPacket->len < (int)sizeof(GameStatePacket)) {
             printf("[CLIENT] GAME_STATE packet too small\n");
             return 1;
@@ -226,8 +229,8 @@ int ClientNet_TryReceive(ClientNet client)
 
 
         // abody stop 
-       // printf("[CLIENT] GAME_STATE received\n");
-       // printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+    //    printf("[CLIENT] GAME_STATE received\n");
+    //    printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
 
         return 1;
     }
