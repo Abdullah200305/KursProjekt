@@ -14,7 +14,7 @@ while (getServerRunning(server))
         Server_handlePackets(server);
 
         // player size will change
-        if (!getGameStart(server) && getClientCount(server) == 2) {
+        if (!getGameStart(server) && getClientCount(server) == 4) {
             Game_Init(server, &game);
             Game_InitSendToClients(server, &game);
             setGameStart(server, 1);

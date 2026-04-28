@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     Game game;
     Renderer renderer;
     InputState *input = Input_Init();
-    ClientNet clientNet = ClientNet_Init("127.0.0.1", 2000);
+    ClientNet clientNet = ClientNet_Init("10.22.9.254", 2000);
  
 
     // will be change place it 
