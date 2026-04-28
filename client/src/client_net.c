@@ -234,6 +234,20 @@ int ClientNet_TryReceive(ClientNet client)
 
         return 1;
     }
+    if (packetType == PACKET_DISCONNECT) {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket)) {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        printf("[CLIENT] Client %d disconnected\n", packet.clientId);
+
+        return 1;
+    }
 
     printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
