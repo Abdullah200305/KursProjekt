@@ -6,10 +6,11 @@
 
 int main(int argc, char *argv[])
 {
+   
     Game game;
     Renderer renderer;
     InputState *input = Input_Init();
-    ClientNet clientNet = ClientNet_Init("10.22.9.254", 2000);
+    ClientNet clientNet = ClientNet_Init("10.22.9.254", 8080);
  
 
     // will be change place it 
