@@ -11,7 +11,7 @@ typedef struct {
     SDL_Texture* backgroundTexture;
     SDL_Texture* playerTexture[4];
     SDL_Texture *abilityTextures[6];
-    SDL_Rect playerFrames[14];
+    SDL_Rect playerFrames[17];
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);

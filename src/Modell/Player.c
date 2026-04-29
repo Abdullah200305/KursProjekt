@@ -273,11 +273,32 @@ int getPlayerAnimationFrame(Player player) {
 }
 
 void setPlayerAnimation(Player player) {
+    int animationTransitionSpeed = (player->speedTimer > 0) ? 3 : 6;
+
+    //FREEZE ANIMATION
     if(player->freezeTimer > 0){
         player->animationFrame = 13;
         return;
     }
+
+    //SHIELD ANIMATION
+    if (player->shieldTimer > 0) {
+        if (player->vy > 0)      player->animationFrame = 14;
+        else if (player->vx > 0) player->animationFrame = 15;  
+        else if (player->vx < 0) player->animationFrame = 16; 
+        
+        else if (player->vy < 0) {    
+            player->animationTimer++;
+            if (player->animationTimer >= 6) {
+                player->animationTimer = 0;
+                player->animationFrame = (player->animationFrame == 11) ? 12 : 11;
+            }
+        }
+        return;
+    }
     
+    
+    //NORMAL ANIMATION
     int isMoving = (player->vx != 0 || player->vy != 0);
 
     if (player->vy > 0)
@@ -307,8 +328,6 @@ void setPlayerAnimation(Player player) {
         player->animationTimer = 0;
         return;
     }
-
-    int animationTransitionSpeed = (player->speedTimer > 0) ? 3 : 6;
 
     player->animationTimer++;
     if (player->animationTimer >= animationTransitionSpeed) {
