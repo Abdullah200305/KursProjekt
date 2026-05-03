@@ -895,15 +895,19 @@ void Render_Bomb(Renderer* r, Bomb bomb)
         int cx = (int)((getBombX(bomb) + 14) * scaleX);
         int cy = (int)((getBombY(bomb) - 16) * scaleY);
 
-        int outerRadius = (int)(38 * scaleX);
-        int innerRadius = (int)(24 * scaleX);
+        int outerRadius = (int)(46 * scaleX);
+        int middleRadius = (int)(32 * scaleX);
+        int innerRadius = (int)(18 * scaleX);
 
         if (outerRadius < 1) outerRadius = 1;
+        if (middleRadius < 1) middleRadius = 1;
         if (innerRadius < 1) innerRadius = 1;
 
-        /* Outer explosion glow */
         SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 190);
+
+        /* ===== Outer red/orange glow ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 60, 20, 120);
 
         for (int dy = -outerRadius; dy <= outerRadius; dy++)
         {
@@ -916,8 +920,24 @@ void Render_Bomb(Renderer* r, Bomb bomb)
             }
         }
 
-        /* Inner explosion */
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 225, 35, 230);
+        /* ===== Middle orange explosion ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 135, 20, 210);
+
+        for (int dy = -middleRadius; dy <= middleRadius; dy++)
+        {
+            for (int dx = -middleRadius; dx <= middleRadius; dx++)
+            {
+                if (dx * dx + dy * dy <= middleRadius * middleRadius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
+
+        /* ===== Bright yellow core ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 235, 55, 245);
 
         for (int dy = -innerRadius; dy <= innerRadius; dy++)
         {
@@ -929,6 +949,58 @@ void Render_Bomb(Renderer* r, Bomb bomb)
                 }
             }
         }
+
+        /* ===== Sharp burst lines ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 230, 70, 255);
+
+        SDL_RenderDrawLine(r->sdlRenderer, cx, cy - 55, cx, cy - 20);
+        SDL_RenderDrawLine(r->sdlRenderer, cx, cy + 20, cx, cy + 55);
+        SDL_RenderDrawLine(r->sdlRenderer, cx - 55, cy, cx - 20, cy);
+        SDL_RenderDrawLine(r->sdlRenderer, cx + 20, cy, cx + 55, cy);
+
+        SDL_RenderDrawLine(r->sdlRenderer, cx - 38, cy - 38, cx - 15, cy - 15);
+        SDL_RenderDrawLine(r->sdlRenderer, cx + 15, cy - 15, cx + 38, cy - 38);
+        SDL_RenderDrawLine(r->sdlRenderer, cx - 38, cy + 38, cx - 15, cy + 15);
+        SDL_RenderDrawLine(r->sdlRenderer, cx + 15, cy + 15, cx + 38, cy + 38);
+
+        /* ===== Small sparks around explosion ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 120, 0, 230);
+
+        SDL_Rect spark1 = {cx - 52, cy - 18, 7, 7};
+        SDL_Rect spark2 = {cx + 46, cy - 24, 6, 6};
+        SDL_Rect spark3 = {cx - 30, cy + 42, 6, 6};
+        SDL_Rect spark4 = {cx + 26, cy + 38, 8, 8};
+
+        SDL_RenderFillRect(r->sdlRenderer, &spark1);
+        SDL_RenderFillRect(r->sdlRenderer, &spark2);
+        SDL_RenderFillRect(r->sdlRenderer, &spark3);
+        SDL_RenderFillRect(r->sdlRenderer, &spark4);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 245, 90, 255);
+
+        SDL_Rect sparkCore1 = {cx - 50, cy - 16, 3, 3};
+        SDL_Rect sparkCore2 = {cx + 48, cy - 22, 2, 2};
+        SDL_Rect sparkCore3 = {cx - 28, cy + 44, 2, 2};
+        SDL_Rect sparkCore4 = {cx + 29, cy + 41, 3, 3};
+
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore1);
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore2);
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore3);
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore4);
+
+        /* ===== Dark smoke chunks ===== */
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 45, 35, 30, 120);
+
+        SDL_Rect smoke1 = {cx - 40, cy - 10, 14, 10};
+        SDL_Rect smoke2 = {cx + 28, cy + 4, 16, 11};
+        SDL_Rect smoke3 = {cx - 8, cy + 28, 15, 10};
+
+        SDL_RenderFillRect(r->sdlRenderer, &smoke1);
+        SDL_RenderFillRect(r->sdlRenderer, &smoke2);
+        SDL_RenderFillRect(r->sdlRenderer, &smoke3);
 
         return;
     }
