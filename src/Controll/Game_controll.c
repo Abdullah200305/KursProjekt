@@ -314,6 +314,8 @@ int windowW = 0;
 int windowH = 0;
 SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
+Render_BombHUD(renderer, game->bomb, (windowW / 2) - 130, 20);
+
 int hudPlayerCount = game->numPlayers;
 
 if (hudPlayerCount > 4)

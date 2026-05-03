@@ -448,6 +448,127 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
     SDL_RenderFillRect(r->sdlRenderer, &rope4);
 }
 
+void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
+{
+    if (r == NULL || bomb == NULL)
+    {
+        return;
+    }
+
+    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+    int panelW = 260;
+    int panelH = 82;
+
+    /* ===== Shadow ===== */
+
+    SDL_Rect shadow = {x + 5, y + 5, panelW, panelH};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 130);
+    SDL_RenderFillRect(r->sdlRenderer, &shadow);
+
+    /* ===== Wooden panel ===== */
+
+    SDL_Rect outerFrame = {x, y, panelW, panelH};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 92, 49, 18, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &outerFrame);
+
+    SDL_Rect woodPanel = {x + 6, y + 6, panelW - 12, panelH - 12};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 176, 104, 42, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &woodPanel);
+
+    SDL_Rect innerPanel = {x + 12, y + 12, panelW - 24, panelH - 24};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 222, 161, 77, 240);
+    SDL_RenderFillRect(r->sdlRenderer, &innerPanel);
+
+    SDL_Rect highlight = {x + 14, y + 14, panelW - 28, 7};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 130, 160);
+    SDL_RenderFillRect(r->sdlRenderer, &highlight);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 55, 28, 10, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &outerFrame);
+    SDL_RenderDrawRect(r->sdlRenderer, &woodPanel);
+
+    /* ===== Text ===== */
+
+    SDL_Color darkText = {45, 25, 10, 255};
+    SDL_Color lightText = {255, 235, 170, 255};
+
+    Render_HUDText(r, "BOMB TIMER", x + 62, y + 8, darkText);
+
+    int safeTimer = getBombTimer(bomb);
+
+    if (safeTimer < 0)
+    {
+        safeTimer = 0;
+    }
+
+    if (safeTimer > BOMB_TIMER)
+    {
+        safeTimer = BOMB_TIMER;
+    }
+
+    int timerSeconds = (safeTimer + 59) / 60;
+
+    char timerText[16];
+    snprintf(timerText, sizeof(timerText), "%d", timerSeconds);
+
+    Render_HUDText(r, timerText, x + 120, y + 32, lightText);
+
+    /* ===== Timer bar ===== */
+
+    int barW = 210;
+    int barH = 12;
+    int barX = x + 25;
+    int barY = y + 62;
+
+    SDL_Rect barBg = {barX, barY, barW, barH};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 70, 38, 18, 220);
+    SDL_RenderFillRect(r->sdlRenderer, &barBg);
+
+    int fillW = 0;
+
+    if (BOMB_TIMER > 0)
+    {
+        fillW = (safeTimer * barW) / BOMB_TIMER;
+    }
+
+    SDL_Rect barFill = {barX, barY, fillW, barH};
+
+    if (safeTimer > (BOMB_TIMER * 0.66))
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 60, 210, 70, 255);
+    }
+    else if (safeTimer > (BOMB_TIMER * 0.33))
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 245, 210, 55, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 230, 55, 35, 255);
+    }
+
+    SDL_RenderFillRect(r->sdlRenderer, &barFill);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 35, 18, 8, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &barBg);
+
+    /* ===== Small rope-like corner decorations ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 230, 190, 95, 255);
+
+    SDL_Rect rope1 = {x + 5, y + 5, 14, 5};
+    SDL_Rect rope2 = {x + panelW - 19, y + 5, 14, 5};
+    SDL_Rect rope3 = {x + 5, y + panelH - 10, 14, 5};
+    SDL_Rect rope4 = {x + panelW - 19, y + panelH - 10, 14, 5};
+
+    SDL_RenderFillRect(r->sdlRenderer, &rope1);
+    SDL_RenderFillRect(r->sdlRenderer, &rope2);
+    SDL_RenderFillRect(r->sdlRenderer, &rope3);
+    SDL_RenderFillRect(r->sdlRenderer, &rope4);
+}
+
+
+
 void Render_Bomb(Renderer* r, Bomb bomb) {
     /* ===== Explosion visas först ===== */
 

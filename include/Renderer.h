@@ -36,5 +36,6 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
 
 //rendering bomb
 void Render_Bomb(Renderer* r, Bomb bomb);
+void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y);
 
 #endif // RENDERER_H
