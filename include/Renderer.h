@@ -4,6 +4,7 @@
 #include "Game_state.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct {
     SDL_Window* window;
@@ -12,6 +13,7 @@ typedef struct {
     SDL_Texture* playerTexture[4];
     SDL_Texture *abilityTextures[6];
     SDL_Rect playerFrames[17];
+    TTF_Font* hudFont;
 } Renderer;
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);

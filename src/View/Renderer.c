@@ -2,9 +2,16 @@
 
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height) {
+    r->hudFont = NULL;
+
     printf("Initializing SDL...\n");
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+        return -1;
+    }
+    if (TTF_Init() != 0) {
+        fprintf(stderr, "TTF_Init Error: %s\n", TTF_GetError());
+        SDL_Quit();
         return -1;
     }
     r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -19,6 +26,16 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         Renderer_Destroy(r);
         return -1;
+    }
+    
+    r->hudFont = TTF_OpenFont("C:/Windows/Fonts/arialbd.ttf", 20);
+
+    if (r->hudFont == NULL) {
+        r->hudFont = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
+    }
+
+    if (r->hudFont == NULL) {
+        fprintf(stderr, "TTF_OpenFont Error: %s\n", TTF_GetError());
     }
    
     r->backgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
@@ -82,6 +99,12 @@ void Renderer_Present(Renderer* r) {
 }
 
 void Renderer_Destroy(Renderer* r) {
+    if (r->hudFont)
+    {
+        TTF_CloseFont(r->hudFont);
+        r->hudFont = NULL;
+    }
+    
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->backgroundTexture);
@@ -101,7 +124,7 @@ void Renderer_Destroy(Renderer* r) {
             SDL_DestroyTexture(r->abilityTextures[i]);
         }
     }
-
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -274,6 +297,39 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
 
 }
 
+static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Color color)
+{
+    if (r == NULL || r->hudFont == NULL || text == NULL)
+    {
+        return;
+    }
+
+    SDL_Surface* surface = TTF_RenderUTF8_Blended(r->hudFont, text, color);
+
+    if (surface == NULL)
+    {
+        fprintf(stderr, "TTF_RenderUTF8_Blended Error: %s\n", TTF_GetError());
+        return;
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(r->sdlRenderer, surface);
+
+    if (texture == NULL)
+    {
+        fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface);
+        return;
+    }
+
+    SDL_Rect dst = {x, y, surface->w, surface->h};
+
+    SDL_FreeSurface(surface);
+
+    SDL_RenderCopy(r->sdlRenderer, texture, NULL, &dst);
+    SDL_DestroyTexture(texture);
+}
+
+
 void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
 {
     if (r == NULL || player == NULL)
@@ -339,16 +395,43 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &portraitFrame);
 
-    /* ===== HP area ===== */
+    
 
-    SDL_Rect hpBackground = {x + 78, y + 20, 122, 30};
+    /* ===== Player name + HP ===== */
+
+    SDL_Color darkText = {45, 25, 10, 255};
+    SDL_Color lightText = {255, 235, 170, 255};
+
+    const char* playerName = "Player";
+
+    if (playerIndex == 0)
+    {
+        playerName = "Player 1";
+    }
+    else if (playerIndex == 1)
+    {
+        playerName = "Player 2";
+    }
+    else if (playerIndex == 2)
+    {
+        playerName = "Player 3";
+    }
+    else if (playerIndex == 3)
+    {
+        playerName = "Player 4";
+    }
+
+    Render_HUDText(r, playerName, x + 78, y + 8, darkText);
+
+    SDL_Rect hpBackground = {x + 78, y + 34, 122, 26};
     SDL_SetRenderDrawColor(r->sdlRenderer, 90, 50, 25, 180);
     SDL_RenderFillRect(r->sdlRenderer, &hpBackground);
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 45, 25, 12, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &hpBackground);
 
-    Render_PlayerLives(r, player, x + 88, y + 25);
+    Render_HUDText(r, "HP", x + 84, y + 36, lightText);
+    Render_PlayerLives(r, player, x + 118, y + 38);
 
     /* ===== Small rope-like corner decorations ===== */
 
