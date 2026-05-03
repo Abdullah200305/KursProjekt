@@ -703,6 +703,181 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
     SDL_RenderFillRect(r->sdlRenderer, &accentShine);
 }
 
+
+void Render_ScreenFrame(Renderer* r)
+{
+    if (r == NULL)
+    {
+        return;
+    }
+
+    int windowW = 0;
+    int windowH = 0;
+
+    SDL_GetRendererOutputSize(r->sdlRenderer, &windowW, &windowH);
+
+    if (windowW <= 0 || windowH <= 0)
+    {
+        return;
+    }
+
+    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+    int topH = 16;
+    int bottomH = 18;
+    int sideW = 12;
+    int cornerSize = 42;
+
+    /* ===== Soft dark vignette around edges ===== */
+
+    SDL_Rect topShade = {0, 0, windowW, 34};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 55);
+    SDL_RenderFillRect(r->sdlRenderer, &topShade);
+
+    SDL_Rect bottomShade = {0, windowH - 38, windowW, 38};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 65);
+    SDL_RenderFillRect(r->sdlRenderer, &bottomShade);
+
+    SDL_Rect leftShade = {0, 0, 28, windowH};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 45);
+    SDL_RenderFillRect(r->sdlRenderer, &leftShade);
+
+    SDL_Rect rightShade = {windowW - 28, 0, 28, windowH};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 45);
+    SDL_RenderFillRect(r->sdlRenderer, &rightShade);
+
+    /* ===== Wooden outer borders ===== */
+
+    SDL_Rect topWood = {0, 0, windowW, topH};
+    SDL_Rect bottomWood = {0, windowH - bottomH, windowW, bottomH};
+    SDL_Rect leftWood = {0, 0, sideW, windowH};
+    SDL_Rect rightWood = {windowW - sideW, 0, sideW, windowH};
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 66, 37, 16, 245);
+    SDL_RenderFillRect(r->sdlRenderer, &topWood);
+    SDL_RenderFillRect(r->sdlRenderer, &bottomWood);
+    SDL_RenderFillRect(r->sdlRenderer, &leftWood);
+    SDL_RenderFillRect(r->sdlRenderer, &rightWood);
+
+    /* ===== Golden inner lines ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 238, 177, 72, 255);
+
+    SDL_Rect topGold = {0, topH - 4, windowW, 4};
+    SDL_Rect bottomGold = {0, windowH - bottomH, windowW, 4};
+    SDL_Rect leftGold = {sideW - 4, 0, 4, windowH};
+    SDL_Rect rightGold = {windowW - sideW, 0, 4, windowH};
+
+    SDL_RenderFillRect(r->sdlRenderer, &topGold);
+    SDL_RenderFillRect(r->sdlRenderer, &bottomGold);
+    SDL_RenderFillRect(r->sdlRenderer, &leftGold);
+    SDL_RenderFillRect(r->sdlRenderer, &rightGold);
+
+    /* ===== Rope-like lines ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 190, 135, 55, 255);
+
+    for (int i = 0; i < windowW; i += 18)
+    {
+        SDL_RenderDrawLine(r->sdlRenderer, i, 5, i + 10, 11);
+        SDL_RenderDrawLine(r->sdlRenderer, i + 10, 5, i, 11);
+    }
+
+    for (int i = 0; i < windowW; i += 18)
+    {
+        SDL_RenderDrawLine(r->sdlRenderer, i, windowH - 13, i + 10, windowH - 7);
+        SDL_RenderDrawLine(r->sdlRenderer, i + 10, windowH - 13, i, windowH - 7);
+    }
+
+    for (int i = 0; i < windowH; i += 18)
+    {
+        SDL_RenderDrawLine(r->sdlRenderer, 4, i, 10, i + 10);
+        SDL_RenderDrawLine(r->sdlRenderer, 10, i, 4, i + 10);
+    }
+
+    for (int i = 0; i < windowH; i += 18)
+    {
+        SDL_RenderDrawLine(r->sdlRenderer, windowW - 10, i, windowW - 4, i + 10);
+        SDL_RenderDrawLine(r->sdlRenderer, windowW - 4, i, windowW - 10, i + 10);
+    }
+
+    /* ===== Big corner wooden blocks ===== */
+
+    SDL_Rect topLeftCorner = {0, 0, cornerSize, cornerSize};
+    SDL_Rect topRightCorner = {windowW - cornerSize, 0, cornerSize, cornerSize};
+    SDL_Rect bottomLeftCorner = {0, windowH - cornerSize, cornerSize, cornerSize};
+    SDL_Rect bottomRightCorner = {windowW - cornerSize, windowH - cornerSize, cornerSize, cornerSize};
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 82, 45, 20, 250);
+    SDL_RenderFillRect(r->sdlRenderer, &topLeftCorner);
+    SDL_RenderFillRect(r->sdlRenderer, &topRightCorner);
+    SDL_RenderFillRect(r->sdlRenderer, &bottomLeftCorner);
+    SDL_RenderFillRect(r->sdlRenderer, &bottomRightCorner);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 238, 177, 72, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &topLeftCorner);
+    SDL_RenderDrawRect(r->sdlRenderer, &topRightCorner);
+    SDL_RenderDrawRect(r->sdlRenderer, &bottomLeftCorner);
+    SDL_RenderDrawRect(r->sdlRenderer, &bottomRightCorner);
+
+    /* ===== Corner highlights ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 110, 200);
+
+    SDL_Rect tlShine1 = {6, 6, cornerSize - 12, 4};
+    SDL_Rect tlShine2 = {6, 6, 4, cornerSize - 12};
+
+    SDL_Rect trShine1 = {windowW - cornerSize + 6, 6, cornerSize - 12, 4};
+    SDL_Rect trShine2 = {windowW - 10, 6, 4, cornerSize - 12};
+
+    SDL_Rect blShine1 = {6, windowH - 10, cornerSize - 12, 4};
+    SDL_Rect blShine2 = {6, windowH - cornerSize + 6, 4, cornerSize - 12};
+
+    SDL_Rect brShine1 = {windowW - cornerSize + 6, windowH - 10, cornerSize - 12, 4};
+    SDL_Rect brShine2 = {windowW - 10, windowH - cornerSize + 6, 4, cornerSize - 12};
+
+    SDL_RenderFillRect(r->sdlRenderer, &tlShine1);
+    SDL_RenderFillRect(r->sdlRenderer, &tlShine2);
+    SDL_RenderFillRect(r->sdlRenderer, &trShine1);
+    SDL_RenderFillRect(r->sdlRenderer, &trShine2);
+    SDL_RenderFillRect(r->sdlRenderer, &blShine1);
+    SDL_RenderFillRect(r->sdlRenderer, &blShine2);
+    SDL_RenderFillRect(r->sdlRenderer, &brShine1);
+    SDL_RenderFillRect(r->sdlRenderer, &brShine2);
+
+    /* ===== Small leaf/jungle accents in corners ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 38, 130, 48, 230);
+
+    SDL_Rect leaf1 = {18, 20, 20, 7};
+    SDL_Rect leaf2 = {22, 29, 16, 6};
+    SDL_Rect leaf3 = {windowW - 38, 20, 20, 7};
+    SDL_Rect leaf4 = {windowW - 38, 29, 16, 6};
+
+    SDL_Rect leaf5 = {18, windowH - 34, 20, 7};
+    SDL_Rect leaf6 = {22, windowH - 25, 16, 6};
+    SDL_Rect leaf7 = {windowW - 38, windowH - 34, 20, 7};
+    SDL_Rect leaf8 = {windowW - 38, windowH - 25, 16, 6};
+
+    SDL_RenderFillRect(r->sdlRenderer, &leaf1);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf2);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf3);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf4);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf5);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf6);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf7);
+    SDL_RenderFillRect(r->sdlRenderer, &leaf8);
+
+    /* ===== Final dark outline ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 10, 5, 255);
+
+    SDL_Rect fullFrame = {0, 0, windowW - 1, windowH - 1};
+    SDL_RenderDrawRect(r->sdlRenderer, &fullFrame);
+}
+
+
+
 void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
 {
     if (r == NULL || bomb == NULL)

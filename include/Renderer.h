@@ -25,6 +25,7 @@ void getScale(Renderer* r, float* scaleX, float* scaleY);
 // Rendering to the map and background
 void Background_Image_Render(Renderer* r);
 void Render_Map(Renderer* r, Map map);
+void Render_ScreenFrame(Renderer* r);
 
 
 // Rendering the player

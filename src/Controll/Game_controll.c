@@ -309,6 +309,7 @@ void game_update(Game *game, Renderer *renderer)
     }
     Render_Bomb(renderer, game->bomb);
 
+    Render_ScreenFrame(renderer);
 
 int windowW = 0;
 int windowH = 0;
