@@ -1,7 +1,7 @@
 #include "Game_controll.h"
 #include "bombRelated.h"
 #include "Ability.h"
-
+#define SHOW_DEBUG_GRID 0
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 //GAMLA GAME_LOOP-KODEN SPARAD HÄR FÖR SÄKERHET.
 
@@ -237,7 +237,10 @@ void game_update(Game *game, Renderer *renderer)
 
     // Render the game state
     Background_Image_Render(renderer);
+
+    #if SHOW_DEBUG_GRID
     Render_Map(renderer, game->map);
+    #endif
     
     
     //-------------------------------------------------------------------//
