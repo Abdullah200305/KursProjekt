@@ -712,8 +712,8 @@ void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
 
     SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
 
-    int panelW = 260;
-    int panelH = 88;
+    int panelW = 280;
+    int panelH = 100;
 
     int safeTimer = getBombTimer(bomb);
 
@@ -729,159 +729,195 @@ void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
 
     int timerSeconds = (safeTimer + 59) / 60;
 
+    int showWarning = (timerSeconds > 0 && timerSeconds <= 5);
     int isDanger = safeTimer <= (BOMB_TIMER * 0.33);
     int blinkOn = ((safeTimer / 8) % 2 == 0);
 
-    /* ===== Danger glow behind panel ===== */
+    /* ===== Outer warning glow ===== */
 
-    if (isDanger && blinkOn)
+    if (showWarning && blinkOn)
     {
-        SDL_Rect dangerGlow = {x - 8, y - 8, panelW + 16, panelH + 16};
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 60, 30, 70);
+        SDL_Rect dangerGlow = {x - 10, y - 10, panelW + 20, panelH + 20};
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 60, 20, 80);
         SDL_RenderFillRect(r->sdlRenderer, &dangerGlow);
     }
     else
     {
-        SDL_Rect softGlow = {x - 5, y - 5, panelW + 10, panelH + 10};
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 190, 65, 35);
+        SDL_Rect softGlow = {x - 6, y - 6, panelW + 12, panelH + 12};
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 170, 50, 40);
         SDL_RenderFillRect(r->sdlRenderer, &softGlow);
     }
 
-    /* ===== Strong shadow ===== */
+    /* ===== Shadow ===== */
 
     SDL_Rect deepShadow = {x + 8, y + 8, panelW, panelH};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 120);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 130);
     SDL_RenderFillRect(r->sdlRenderer, &deepShadow);
 
     SDL_Rect softShadow = {x + 4, y + 4, panelW, panelH};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 80);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 90);
     SDL_RenderFillRect(r->sdlRenderer, &softShadow);
 
-    /* ===== Wooden panel layers ===== */
+    /* ===== Main dark panel ===== */
 
     SDL_Rect outerFrame = {x, y, panelW, panelH};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 55, 27, 10, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 35, 20, 18, 255);
     SDL_RenderFillRect(r->sdlRenderer, &outerFrame);
 
-    SDL_Rect goldFrame = {x + 3, y + 3, panelW - 6, panelH - 6};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 235, 178, 72, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &goldFrame);
+    SDL_Rect orangeFrame = {x + 4, y + 4, panelW - 8, panelH - 8};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 230, 105, 35, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &orangeFrame);
 
-    SDL_Rect darkWood = {x + 7, y + 7, panelW - 14, panelH - 14};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 105, 57, 22, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &darkWood);
+    SDL_Rect darkPanel = {x + 8, y + 8, panelW - 16, panelH - 16};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 38, 28, 35, 245);
+    SDL_RenderFillRect(r->sdlRenderer, &darkPanel);
 
-    SDL_Rect woodPanel = {x + 11, y + 11, panelW - 22, panelH - 22};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 211, 135, 55, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &woodPanel);
-
-    SDL_Rect innerPanel = {x + 16, y + 16, panelW - 32, panelH - 32};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 235, 172, 85, 245);
+    SDL_Rect innerPanel = {x + 14, y + 14, panelW - 28, panelH - 28};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 58, 38, 38, 235);
     SDL_RenderFillRect(r->sdlRenderer, &innerPanel);
 
     /* Top shine */
-    SDL_Rect topShine = {x + 18, y + 18, panelW - 36, 7};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 230, 145, 180);
+    SDL_Rect topShine = {x + 16, y + 16, panelW - 32, 5};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 180, 80, 90);
     SDL_RenderFillRect(r->sdlRenderer, &topShine);
 
-    SDL_Rect thinShine = {x + 22, y + 27, panelW - 44, 2};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 240, 180, 100);
-    SDL_RenderFillRect(r->sdlRenderer, &thinShine);
-
-    /* Bottom depth */
-    SDL_Rect bottomDepth = {x + 10, y + panelH - 14, panelW - 20, 7};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 80, 42, 16, 160);
-    SDL_RenderFillRect(r->sdlRenderer, &bottomDepth);
-
-    /* Outlines */
-    SDL_SetRenderDrawColor(r->sdlRenderer, 35, 16, 6, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 15, 8, 8, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &outerFrame);
 
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 105, 255);
-    SDL_RenderDrawRect(r->sdlRenderer, &goldFrame);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 165, 55, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &orangeFrame);
 
-    SDL_SetRenderDrawColor(r->sdlRenderer, 55, 28, 10, 255);
-    SDL_RenderDrawRect(r->sdlRenderer, &darkWood);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 10, 10, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &darkPanel);
 
-    /* ===== Decorative corner pieces ===== */
-
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 215, 95, 255);
-
-    SDL_Rect c1 = {x + 3, y + 3, 18, 6};
-    SDL_Rect c2 = {x + panelW - 21, y + 3, 18, 6};
-    SDL_Rect c3 = {x + 3, y + panelH - 9, 18, 6};
-    SDL_Rect c4 = {x + panelW - 21, y + panelH - 9, 18, 6};
-
-    SDL_RenderFillRect(r->sdlRenderer, &c1);
-    SDL_RenderFillRect(r->sdlRenderer, &c2);
-    SDL_RenderFillRect(r->sdlRenderer, &c3);
-    SDL_RenderFillRect(r->sdlRenderer, &c4);
-
-    /* Small nails */
-    SDL_SetRenderDrawColor(r->sdlRenderer, 95, 48, 18, 255);
-
-    SDL_Rect nail1 = {x + 8, y + 8, 5, 5};
-    SDL_Rect nail2 = {x + panelW - 13, y + 8, 5, 5};
-    SDL_Rect nail3 = {x + 8, y + panelH - 13, 5, 5};
-    SDL_Rect nail4 = {x + panelW - 13, y + panelH - 13, 5, 5};
-
-    SDL_RenderFillRect(r->sdlRenderer, &nail1);
-    SDL_RenderFillRect(r->sdlRenderer, &nail2);
-    SDL_RenderFillRect(r->sdlRenderer, &nail3);
-    SDL_RenderFillRect(r->sdlRenderer, &nail4);
-
-    /* ===== Title plate ===== */
-
-    SDL_Rect titlePlate = {x + 42, y + 12, 176, 24};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 205, 95, 95);
-    SDL_RenderFillRect(r->sdlRenderer, &titlePlate);
-
-    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 65, 24, 140);
-    SDL_RenderDrawRect(r->sdlRenderer, &titlePlate);
-
-    SDL_Color titleShadow = {120, 70, 25, 180};
-    SDL_Color titleColor = {45, 25, 10, 255};
-
-    Render_HUDText(r, "BOMB TIMER", x + 57, y + 8, titleShadow);
-    Render_HUDText(r, "BOMB TIMER", x + 55, y + 6, titleColor);
-
-    /* ===== Timer number ===== */
+    /* ===== Big timer number ===== */
 
     char timerText[16];
     snprintf(timerText, sizeof(timerText), "%d", timerSeconds);
 
-    SDL_Color timerShadow = {120, 55, 20, 200};
+    SDL_Color timerShadow = {80, 20, 10, 255};
     SDL_Color timerColor;
 
-    if (safeTimer > (BOMB_TIMER * 0.66))
+    if (showWarning && blinkOn)
     {
-        timerColor = (SDL_Color){255, 245, 185, 255};
+        timerColor = (SDL_Color){255, 70, 45, 255};
     }
-    else if (safeTimer > (BOMB_TIMER * 0.33))
+    else if (isDanger)
     {
-        timerColor = (SDL_Color){255, 230, 80, 255};
+        timerColor = (SDL_Color){255, 115, 55, 255};
     }
     else
     {
-        timerColor = (SDL_Color){255, 95, 55, 255};
+        timerColor = (SDL_Color){255, 220, 80, 255};
     }
 
-    Render_HUDText(r, timerText, x + 121, y + 34, timerShadow);
-    Render_HUDText(r, timerText, x + 119, y + 32, timerColor);
+    /*
+        Existing Render_HUDText uses your current HUD font size.
+        We place the number high and centered to imitate the reference.
+    */
+    Render_HUDText(r, timerText, x + 132, y + 10, timerShadow);
+    Render_HUDText(r, timerText, x + 130, y + 8, timerColor);
+
+    /* ===== Small bomb icon on the left ===== */
+
+    int bombCx = x + 48;
+    int bombCy = y + 48;
+    int radius = 14;
+
+    /* Bomb glow */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 35, 90);
+
+    for (int dy = -radius - 5; dy <= radius + 5; dy++)
+    {
+        for (int dx = -radius - 5; dx <= radius + 5; dx++)
+        {
+            if (dx * dx + dy * dy <= (radius + 5) * (radius + 5))
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, bombCx + dx, bombCy + dy);
+            }
+        }
+    }
+
+    /* Bomb body */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 18, 18, 20, 255);
+
+    for (int dy = -radius; dy <= radius; dy++)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            if (dx * dx + dy * dy <= radius * radius)
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, bombCx + dx, bombCy + dy);
+            }
+        }
+    }
+
+    /* Bomb outline */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+
+    for (int dy = -radius; dy <= radius; dy++)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            int dist = dx * dx + dy * dy;
+
+            if (dist <= radius * radius && dist >= (radius - 2) * (radius - 2))
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, bombCx + dx, bombCy + dy);
+            }
+        }
+    }
+
+    /* Bomb shine */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 125, 255);
+
+    for (int dy = -4; dy <= 4; dy++)
+    {
+        for (int dx = -4; dx <= 4; dx++)
+        {
+            if (dx * dx + dy * dy <= 16)
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, bombCx - 5 + dx, bombCy - 5 + dy);
+            }
+        }
+    }
+
+    /* Fuse */
+    SDL_Rect cap = {bombCx + 3, bombCy - radius - 4, 10, 6};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 90, 90, 90, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &cap);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 135, 70, 25, 255);
+    SDL_RenderDrawLine(r->sdlRenderer, bombCx + 11, bombCy - radius - 4, bombCx + 24, bombCy - radius - 13);
+
+    /* Spark */
+    if (blinkOn)
+    {
+        int sparkX = bombCx + 26;
+        int sparkY = bombCy - radius - 14;
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 125, 0, 255);
+        SDL_RenderDrawLine(r->sdlRenderer, sparkX - 5, sparkY, sparkX + 5, sparkY);
+        SDL_RenderDrawLine(r->sdlRenderer, sparkX, sparkY - 5, sparkX, sparkY + 5);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 245, 80, 255);
+        SDL_Rect sparkCore = {sparkX - 2, sparkY - 2, 4, 4};
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore);
+    }
 
     /* ===== Timer bar ===== */
 
-    int barW = 212;
-    int barH = 14;
-    int barX = x + 24;
-    int barY = y + 66;
+    int barW = 185;
+    int barH = 16;
+    int barX = x + 78;
+    int barY = y + 45;
 
     SDL_Rect barOuter = {barX - 4, barY - 4, barW + 8, barH + 8};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 45, 22, 8, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 10, 8, 8, 255);
     SDL_RenderFillRect(r->sdlRenderer, &barOuter);
 
     SDL_Rect barBg = {barX, barY, barW, barH};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 72, 38, 17, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 45, 25, 25, 255);
     SDL_RenderFillRect(r->sdlRenderer, &barBg);
 
     int fillW = 0;
@@ -893,55 +929,63 @@ void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
 
     SDL_Rect barFill = {barX, barY, fillW, barH};
 
-    if (safeTimer > (BOMB_TIMER * 0.66))
+    if (showWarning)
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 45, 35, 255);
+    }
+    else if (safeTimer > (BOMB_TIMER * 0.66))
     {
         SDL_SetRenderDrawColor(r->sdlRenderer, 65, 220, 75, 255);
     }
     else if (safeTimer > (BOMB_TIMER * 0.33))
     {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 215, 45, 255);
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 210, 45, 255);
     }
     else
     {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 235, 55, 35, 255);
+        SDL_SetRenderDrawColor(r->sdlRenderer, 235, 60, 35, 255);
     }
 
     SDL_RenderFillRect(r->sdlRenderer, &barFill);
 
-    /* Bar shine */
     if (fillW > 4)
     {
-        SDL_Rect barShine = {barX + 2, barY + 2, fillW - 4, 3};
+        SDL_Rect barShine = {barX + 2, barY + 2, fillW - 4, 4};
         SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 210, 90);
         SDL_RenderFillRect(r->sdlRenderer, &barShine);
     }
 
-    SDL_SetRenderDrawColor(r->sdlRenderer, 25, 12, 5, 255);
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &barOuter);
     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 
-    /* ===== Small side fuse sparks when dangerous ===== */
+    /* ===== Warning message ===== */
 
-    if (isDanger && blinkOn)
+    if (showWarning)
     {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 120, 0, 255);
+        SDL_Rect warningPlate = {x + 35, y + 72, panelW - 70, 22};
 
-        SDL_Rect sparkL1 = {x + 25, y + 38, 5, 5};
-        SDL_Rect sparkR1 = {x + panelW - 30, y + 38, 5, 5};
+        if (blinkOn)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 20, 15, 230);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 65, 25, 25, 220);
+        }
 
-        SDL_RenderFillRect(r->sdlRenderer, &sparkL1);
-        SDL_RenderFillRect(r->sdlRenderer, &sparkR1);
+        SDL_RenderFillRect(r->sdlRenderer, &warningPlate);
 
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 240, 80, 255);
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 150, 45, 255);
+        SDL_RenderDrawRect(r->sdlRenderer, &warningPlate);
 
-        SDL_Rect sparkL2 = {x + 27, y + 40, 2, 2};
-        SDL_Rect sparkR2 = {x + panelW - 28, y + 40, 2, 2};
+        SDL_Color warningShadow = {60, 10, 5, 255};
+        SDL_Color warningText = {255, 240, 155, 255};
 
-        SDL_RenderFillRect(r->sdlRenderer, &sparkL2);
-        SDL_RenderFillRect(r->sdlRenderer, &sparkR2);
+        Render_HUDText(r, "PASS THE BOMB!", x + 57, y + 67, warningShadow);
+        Render_HUDText(r, "PASS THE BOMB!", x + 55, y + 65, warningText);
     }
 }
-
 
 
 void Render_Bomb(Renderer* r, Bomb bomb)
