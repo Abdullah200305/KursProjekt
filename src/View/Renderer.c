@@ -236,9 +236,20 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
     }
 
     int lives = getPlayerLives(player);
-    int maxLives = 3;     /* Just nu kör spelet med 3 liv */
-    int size = 3;         /* pixel block-storlek */
-    int spacing = 26;     /* avstånd mellan hjärtan */
+
+    if (lives < 0)
+    {
+        lives = 0;
+    }
+
+    if (lives > 3)
+    {
+        lives = 3;
+    }
+
+    int maxLives = 3;
+    int size = 4;
+    int spacing = 29;
 
     for (int heartIndex = 0; heartIndex < maxLives; heartIndex++)
     {
@@ -246,15 +257,6 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
         int y = startY;
 
         int isFilled = (heartIndex < lives);
-
-        /*
-            Hjärtats blockmönster:
-            Vi använder samma form som du redan hade, men nu ritar vi:
-            1. shadow
-            2. outline/base
-            3. fill
-            4. shine
-        */
 
         SDL_Rect blocks[20] = {
             {x + size,     y,             size, size},
@@ -283,28 +285,29 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
             {x + 3 * size, y + 4 * size,  size, size}
         };
 
-        /* ===== 1. Shadow ===== */
-        SDL_SetRenderDrawColor(r->sdlRenderer, 60, 0, 0, 120);
+        /* ===== Shadow ===== */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 45, 0, 0, 130);
 
         for (int i = 0; i < 20; i++)
         {
             SDL_Rect shadow = {
-                blocks[i].x + 1,
-                blocks[i].y + 1,
+                blocks[i].x + 2,
+                blocks[i].y + 2,
                 blocks[i].w,
                 blocks[i].h
             };
+
             SDL_RenderFillRect(r->sdlRenderer, &shadow);
         }
 
-        /* ===== 2. Outline / base ===== */
+        /* ===== Dark outline ===== */
         if (isFilled)
         {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 0, 15, 255);
+            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 0, 10, 255);
         }
         else
         {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 70, 45, 35, 220);
+            SDL_SetRenderDrawColor(r->sdlRenderer, 65, 35, 25, 230);
         }
 
         for (int i = 0; i < 20; i++)
@@ -312,14 +315,14 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
             SDL_RenderFillRect(r->sdlRenderer, &blocks[i]);
         }
 
-        /* ===== 3. Inner fill ===== */
+        /* ===== Main fill ===== */
         if (isFilled)
         {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 220, 35, 55, 255);
+            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 25, 35, 255);
         }
         else
         {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 85, 65, 160);
+            SDL_SetRenderDrawColor(r->sdlRenderer, 95, 60, 45, 170);
         }
 
         for (int i = 0; i < 20; i++)
@@ -337,20 +340,23 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
             }
         }
 
-        /* ===== 4. Highlight / shine ===== */
+        /* ===== Bright highlight on filled hearts ===== */
         if (isFilled)
         {
-            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 160, 180, 220);
+            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 145, 160, 240);
 
-            SDL_Rect shine1 = {x + size + 1,     y + 1,             size - 1, size - 1};
-            SDL_Rect shine2 = {x + 2 * size + 1, y + 1,             size - 1, size - 1};
-            SDL_Rect shine3 = {x + 1,            y + size + 1,      size - 1, size - 1};
-            SDL_Rect shine4 = {x + size + 1,     y + size + 1,      size - 1, size - 1};
+            SDL_Rect shine1 = {x + size + 1,     y + 1,        size - 1, size - 1};
+            SDL_Rect shine2 = {x + 2 * size + 1, y + 1,        size - 1, size - 1};
+            SDL_Rect shine3 = {x + 1,            y + size + 1, size - 1, size - 1};
 
-            if (shine1.w > 0 && shine1.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine1);
-            if (shine2.w > 0 && shine2.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine2);
-            if (shine3.w > 0 && shine3.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine3);
-            if (shine4.w > 0 && shine4.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine4);
+            SDL_RenderFillRect(r->sdlRenderer, &shine1);
+            SDL_RenderFillRect(r->sdlRenderer, &shine2);
+            SDL_RenderFillRect(r->sdlRenderer, &shine3);
+
+            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 70, 85, 255);
+
+            SDL_Rect deepRed = {x + 3 * size, y + 2 * size, size, size};
+            SDL_RenderFillRect(r->sdlRenderer, &deepRed);
         }
     }
 }
