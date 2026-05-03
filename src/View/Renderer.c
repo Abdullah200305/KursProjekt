@@ -228,71 +228,131 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
   
 }
 
-void Render_PlayerLives(Renderer* r, Player player, int startX, int startY) {
-    int lives = getPlayerLives(player);
-    int size = 4;      // storlek på varje liten blockbit
-    int spacing = 30;  // avstånd mellan hjärtan
-
-    for (int h = 0; h < lives; h++) {
-        int x = startX + h * spacing;
-        int y = startY;
-
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
-
-        // övre vänster
-        SDL_Rect a = {x + size, y, size, size};
-        SDL_Rect b = {x + 2 * size, y, size, size};
-
-        // övre höger
-        SDL_Rect c = {x + 4 * size, y, size, size};
-        SDL_Rect d = {x + 5 * size, y, size, size};
-
-        // andra raden
-        SDL_Rect e = {x, y + size, size, size};
-        SDL_Rect f = {x + size, y + size, size, size};
-        SDL_Rect g = {x + 2 * size, y + size, size, size};
-        SDL_Rect h1 = {x + 3 * size, y + size, size, size};
-        SDL_Rect i = {x + 4 * size, y + size, size, size};
-        SDL_Rect j = {x + 5 * size, y + size, size, size};
-        SDL_Rect k = {x + 6 * size, y + size, size, size};
-
-        // tredje raden
-        SDL_Rect l = {x + size, y + 2 * size, size, size};
-        SDL_Rect m = {x + 2 * size, y + 2 * size, size, size};
-        SDL_Rect n = {x + 3 * size, y + 2 * size, size, size};
-        SDL_Rect o = {x + 4 * size, y + 2 * size, size, size};
-        SDL_Rect p = {x + 5 * size, y + 2 * size, size, size};
-
-        // fjärde raden
-        SDL_Rect q = {x + 2 * size, y + 3 * size, size, size};
-        SDL_Rect r1 = {x + 3 * size, y + 3 * size, size, size};
-        SDL_Rect s = {x + 4 * size, y + 3 * size, size, size};
-
-        // nedersta spetsen
-        SDL_Rect t = {x + 3 * size, y + 4 * size, size, size};
-
-        SDL_RenderFillRect(r->sdlRenderer, &a);
-        SDL_RenderFillRect(r->sdlRenderer, &b);
-        SDL_RenderFillRect(r->sdlRenderer, &c);
-        SDL_RenderFillRect(r->sdlRenderer, &d);
-        SDL_RenderFillRect(r->sdlRenderer, &e);
-        SDL_RenderFillRect(r->sdlRenderer, &f);
-        SDL_RenderFillRect(r->sdlRenderer, &g);
-        SDL_RenderFillRect(r->sdlRenderer, &h1);
-        SDL_RenderFillRect(r->sdlRenderer, &i);
-        SDL_RenderFillRect(r->sdlRenderer, &j);
-        SDL_RenderFillRect(r->sdlRenderer, &k);
-        SDL_RenderFillRect(r->sdlRenderer, &l);
-        SDL_RenderFillRect(r->sdlRenderer, &m);
-        SDL_RenderFillRect(r->sdlRenderer, &n);
-        SDL_RenderFillRect(r->sdlRenderer, &o);
-        SDL_RenderFillRect(r->sdlRenderer, &p);
-        SDL_RenderFillRect(r->sdlRenderer, &q);
-        SDL_RenderFillRect(r->sdlRenderer, &r1);
-        SDL_RenderFillRect(r->sdlRenderer, &s);
-        SDL_RenderFillRect(r->sdlRenderer, &t);
+void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
+{
+    if (r == NULL || player == NULL)
+    {
+        return;
     }
 
+    int lives = getPlayerLives(player);
+    int maxLives = 3;     /* Just nu kör spelet med 3 liv */
+    int size = 3;         /* pixel block-storlek */
+    int spacing = 26;     /* avstånd mellan hjärtan */
+
+    for (int heartIndex = 0; heartIndex < maxLives; heartIndex++)
+    {
+        int x = startX + heartIndex * spacing;
+        int y = startY;
+
+        int isFilled = (heartIndex < lives);
+
+        /*
+            Hjärtats blockmönster:
+            Vi använder samma form som du redan hade, men nu ritar vi:
+            1. shadow
+            2. outline/base
+            3. fill
+            4. shine
+        */
+
+        SDL_Rect blocks[20] = {
+            {x + size,     y,             size, size},
+            {x + 2 * size, y,             size, size},
+            {x + 4 * size, y,             size, size},
+            {x + 5 * size, y,             size, size},
+
+            {x,            y + size,      size, size},
+            {x + size,     y + size,      size, size},
+            {x + 2 * size, y + size,      size, size},
+            {x + 3 * size, y + size,      size, size},
+            {x + 4 * size, y + size,      size, size},
+            {x + 5 * size, y + size,      size, size},
+            {x + 6 * size, y + size,      size, size},
+
+            {x + size,     y + 2 * size,  size, size},
+            {x + 2 * size, y + 2 * size,  size, size},
+            {x + 3 * size, y + 2 * size,  size, size},
+            {x + 4 * size, y + 2 * size,  size, size},
+            {x + 5 * size, y + 2 * size,  size, size},
+
+            {x + 2 * size, y + 3 * size,  size, size},
+            {x + 3 * size, y + 3 * size,  size, size},
+            {x + 4 * size, y + 3 * size,  size, size},
+
+            {x + 3 * size, y + 4 * size,  size, size}
+        };
+
+        /* ===== 1. Shadow ===== */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 60, 0, 0, 120);
+
+        for (int i = 0; i < 20; i++)
+        {
+            SDL_Rect shadow = {
+                blocks[i].x + 1,
+                blocks[i].y + 1,
+                blocks[i].w,
+                blocks[i].h
+            };
+            SDL_RenderFillRect(r->sdlRenderer, &shadow);
+        }
+
+        /* ===== 2. Outline / base ===== */
+        if (isFilled)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 0, 15, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 70, 45, 35, 220);
+        }
+
+        for (int i = 0; i < 20; i++)
+        {
+            SDL_RenderFillRect(r->sdlRenderer, &blocks[i]);
+        }
+
+        /* ===== 3. Inner fill ===== */
+        if (isFilled)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 220, 35, 55, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 120, 85, 65, 160);
+        }
+
+        for (int i = 0; i < 20; i++)
+        {
+            SDL_Rect inner = {
+                blocks[i].x + 1,
+                blocks[i].y + 1,
+                blocks[i].w - 1,
+                blocks[i].h - 1
+            };
+
+            if (inner.w > 0 && inner.h > 0)
+            {
+                SDL_RenderFillRect(r->sdlRenderer, &inner);
+            }
+        }
+
+        /* ===== 4. Highlight / shine ===== */
+        if (isFilled)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 255, 160, 180, 220);
+
+            SDL_Rect shine1 = {x + size + 1,     y + 1,             size - 1, size - 1};
+            SDL_Rect shine2 = {x + 2 * size + 1, y + 1,             size - 1, size - 1};
+            SDL_Rect shine3 = {x + 1,            y + size + 1,      size - 1, size - 1};
+            SDL_Rect shine4 = {x + size + 1,     y + size + 1,      size - 1, size - 1};
+
+            if (shine1.w > 0 && shine1.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine1);
+            if (shine2.w > 0 && shine2.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine2);
+            if (shine3.w > 0 && shine3.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine3);
+            if (shine4.w > 0 && shine4.h > 0) SDL_RenderFillRect(r->sdlRenderer, &shine4);
+        }
+    }
 }
 
 static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Color color)
