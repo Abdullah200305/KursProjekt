@@ -372,26 +372,50 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
     SDL_SetRenderDrawColor(r->sdlRenderer, 65, 35, 18, 255);
     SDL_RenderFillRect(r->sdlRenderer, &portraitFrame);
 
+
+
     SDL_Rect portrait = {x + 19, y + 19, 36, 36};
 
-    if (playerIndex == 0)
+    /*
+        Render real player sprite inside HUD portrait.
+        If texture is missing, fall back to colored placeholder.
+    */
+    if (playerIndex >= 0 && playerIndex < 4 && r->playerTexture[playerIndex] != NULL)
     {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 210, 70, 150, 255);
-    }
-    else if (playerIndex == 1)
-    {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 80, 120, 230, 255);
-    }
-    else if (playerIndex == 2)
-    {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 70, 190, 90, 255);
+        SDL_Rect portraitDst = {x + 17, y + 15, 42, 46};
+
+        /*
+            We use frame 0 as a simple portrait frame.
+            If another frame looks better later, we only change this number.
+        */
+        SDL_RenderCopy(
+            r->sdlRenderer,
+            r->playerTexture[playerIndex],
+            &r->playerFrames[0],
+            &portraitDst
+        );
     }
     else
     {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 230, 200, 70, 255);
-    }
+        if (playerIndex == 0)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 210, 70, 150, 255);
+        }
+        else if (playerIndex == 1)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 80, 120, 230, 255);
+        }
+        else if (playerIndex == 2)
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 70, 190, 90, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(r->sdlRenderer, 230, 200, 70, 255);
+        }
 
-    SDL_RenderFillRect(r->sdlRenderer, &portrait);
+        SDL_RenderFillRect(r->sdlRenderer, &portrait);
+    }
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &portraitFrame);
