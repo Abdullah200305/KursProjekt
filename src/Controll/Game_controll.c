@@ -3,6 +3,9 @@
 #include "Ability.h"
 
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
+//GAMLA GAME_LOOP-KODEN SPARAD HÄR FÖR SÄKERHET.
+
+#if 0
 void game_loop(Game *game, Renderer *renderer)
 {
     SDL_Event event;
@@ -68,20 +71,14 @@ void game_loop(Game *game, Renderer *renderer)
             setPlayerVelocity(game->players[1], -5.0, getPlayerVelocityY(game->players[1]));
         if (state[SDL_SCANCODE_RIGHT])
             setPlayerVelocity(game->players[1], 5.0, getPlayerVelocityY(game->players[1]));
-        */
+        
 
         game_update(game, renderer);
         SDL_Delay(16); // Delay to cap the frame rate (approximately 60 FPS)
     }
 
 
-
-
-
     const char *message = "Game over! Click OK to close.";
-
-
-
 
 
     if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
@@ -102,10 +99,114 @@ void game_loop(Game *game, Renderer *renderer)
         "Game Over",
         message,
         renderer->window
-    );
+    );*/
+}
+#endif
+
+void reset_game(Game *game)
+{
+    game->state = GAME_STATE_PLAYING;
+    game->numPlayers = 2;
+
+    game->players[0] = initPlayer(230, 300);
+    game->players[1] = initPlayer(270, 300);
+
+    game->bomb = createBomb(game->players);
+
+    if (game->abilitySystem != NULL)
+    {
+        AbilitySystem_destroy(game->abilitySystem);
+    }
+
+    game->abilitySystem = AbilitySystem_create();
+    AbilitySystem_init(game->abilitySystem);
 }
 
 
+/// This function will handle the main game loop, including event handling, updating game state, and rendering
+
+void game_loop(Game *game, Renderer *renderer)
+{
+    SDL_Event event;
+    int running = 1;
+    int gameOverShown = 0;
+
+    while (running)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                running = 0;
+                break;
+
+            case SDL_KEYDOWN:
+                if (game->state == GAME_STATE_PLAYING)
+                {
+                    if (event.key.keysym.sym == SDLK_h)
+                    {
+                        damagePlayer(game->players[0]);
+                    }
+                }
+
+                if (game->state == GAME_STATE_GAME_OVER)
+                {
+                    if (event.key.keysym.sym == SDLK_r)
+                    {
+                        reset_game(game);
+                        gameOverShown = 0;
+                    }
+
+                    if (event.key.keysym.sym == SDLK_m)
+                    {
+                        printf("Back to menu pressed\n");
+                    }
+                }
+                break;
+            }
+        }
+
+        if (game->state == GAME_STATE_PLAYING)
+        {
+            playerMovement(game->players[0], SDL_SCANCODE_W, SDL_SCANCODE_S, SDL_SCANCODE_A, SDL_SCANCODE_D);
+            playerMovement(game->players[1], SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
+
+            game_update(game, renderer);
+        }
+        else if (game->state == GAME_STATE_GAME_OVER)
+        {
+            if (!gameOverShown)
+            {
+                const char *message = "Game over!";
+
+                if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+                {
+                    message = "Game over!\nPlayer 1 wins.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+                else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+                {
+                    message = "Game over!\nPlayer 2 wins.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+                else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+                {
+                    message = "Game over!\nBoth players died.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+
+                SDL_ShowSimpleMessageBox(
+                    SDL_MESSAGEBOX_INFORMATION,
+                    "Game Over",
+                    message,
+                    renderer->window
+                );
+
+                gameOverShown = 1;
+            }
+        }
+
+        SDL_Delay(16);
+    }
+}
 
 
 
@@ -134,16 +235,10 @@ void game_update(Game *game, Renderer *renderer)
     updateBomb(game->bomb, game->players);
 
 
-
-
-
-
     // Render the game state
     Background_Image_Render(renderer);
     Render_Map(renderer, game->map);
     
-
-
     
     //-------------------------------------------------------------------//
     //---------------------Ability Update Loop---------------------------//
@@ -210,18 +305,6 @@ void game_update(Game *game, Renderer *renderer)
         }
     }
     Render_Bomb(renderer, game->bomb);
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     if (isPlayerAlive(game->players[0]))
@@ -327,9 +410,6 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 
 
 
-
-
-
 void movePlayer(Map map, Player player)
 {
     float newX = getPlayerX(player) + getPlayerVelocityX(player);
@@ -408,8 +488,5 @@ void game_init(Game *game, Renderer *renderer)
 
   
     Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
-
-
-    
        
 }
