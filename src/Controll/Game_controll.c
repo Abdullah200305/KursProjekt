@@ -316,6 +316,11 @@ SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
 Render_BombHUD(renderer, game->bomb, (windowW / 2) - 130, 20);
 
+const int hudPanelW = 250;
+const int hudPanelH = 74;
+const int hudMargin = 20;
+
+
 int hudPlayerCount = game->numPlayers;
 
 if (hudPlayerCount > 4)
@@ -330,28 +335,30 @@ for (int i = 0; i < hudPlayerCount; i++)
 
     if (i == 0)
     {
-        hudX = 20;
-        hudY = 20;
+        hudX = hudMargin;
+        hudY = hudMargin;
     }
     else if (i == 1)
     {
-        hudX = windowW - 240;
-        hudY = 20;
+        hudX = windowW - hudPanelW - hudMargin;
+        hudY = hudMargin;
     }
     else if (i == 2)
     {
-        hudX = 20;
-        hudY = windowH - 100;
+        hudX = hudMargin;
+        hudY = windowH - hudPanelH - hudMargin;
     }
     else if (i == 3)
     {
-        hudX = windowW - 240;
-        hudY = windowH - 100;
+        hudX = windowW - hudPanelW - hudMargin;
+        hudY = windowH - hudPanelH - hudMargin;
     }
 
     if (game->players[i] != NULL && isPlayerAlive(game->players[i]))
     {
-        Render_PlayerHUD(renderer, game->players[i], i, hudX, hudY);
+        int hasBomb = (i == getBombCarrier(game->bomb));
+
+        Render_PlayerHUD(renderer, game->players[i], i, hudX, hudY, hasBomb);
     }
 }
 

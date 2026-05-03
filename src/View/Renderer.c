@@ -202,9 +202,7 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
         getPlayerHeight(player) * scaleX,
         getPlayerWidth(player) * scaleY
     };
-    
-    SDL_SetRenderDrawColor(r->sdlRenderer,0, 255, 0, 255); // to test the player render
-    SDL_RenderFillRect(r->sdlRenderer, &playerRect);   
+      
     SDL_RenderCopy(r->sdlRenderer, img, &r->playerFrames[frame], &playerRect);
 
 
@@ -330,7 +328,7 @@ static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Colo
 }
 
 
-void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
+void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y, int hasBomb)
 {
     if (r == NULL || player == NULL)
     {
@@ -339,25 +337,28 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
 
     SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
 
+    int panelW = 250;
+    int panelH = 74;
+
     /* ===== Adventure Island HUD panel ===== */
 
-    SDL_Rect shadow = {x + 4, y + 4, 220, 70};
+    SDL_Rect shadow = {x + 4, y + 4, panelW, panelH};
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 120);
     SDL_RenderFillRect(r->sdlRenderer, &shadow);
 
-    SDL_Rect outerFrame = {x, y, 220, 70};
+    SDL_Rect outerFrame = {x, y, panelW, panelH};
     SDL_SetRenderDrawColor(r->sdlRenderer, 92, 49, 18, 255);
     SDL_RenderFillRect(r->sdlRenderer, &outerFrame);
 
-    SDL_Rect woodPanel = {x + 5, y + 5, 210, 60};
+    SDL_Rect woodPanel = {x + 5, y + 5, panelW - 10, panelH - 10};
     SDL_SetRenderDrawColor(r->sdlRenderer, 176, 104, 42, 255);
     SDL_RenderFillRect(r->sdlRenderer, &woodPanel);
 
-    SDL_Rect innerPanel = {x + 10, y + 10, 200, 50};
+    SDL_Rect innerPanel = {x + 10, y + 10, panelW - 20, panelH - 20};
     SDL_SetRenderDrawColor(r->sdlRenderer, 222, 161, 77, 240);
     SDL_RenderFillRect(r->sdlRenderer, &innerPanel);
 
-    SDL_Rect highlight = {x + 12, y + 12, 196, 6};
+    SDL_Rect highlight = {x + 12, y + 12, panelW - 24, 6};
     SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 130, 160);
     SDL_RenderFillRect(r->sdlRenderer, &highlight);
 
@@ -365,7 +366,7 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
     SDL_RenderDrawRect(r->sdlRenderer, &outerFrame);
     SDL_RenderDrawRect(r->sdlRenderer, &woodPanel);
 
-    /* ===== Player portrait placeholder ===== */
+    /* ===== Player portrait ===== */
 
     SDL_Rect portraitFrame = {x + 14, y + 14, 46, 46};
     SDL_SetRenderDrawColor(r->sdlRenderer, 65, 35, 18, 255);
@@ -395,7 +396,71 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
     SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &portraitFrame);
 
-    
+    /* ===== Dedicated bomb slot ===== */
+
+    SDL_Rect bombSlot = {x + 66, y + 36, 24, 24};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 95, 55, 25, 200);
+    SDL_RenderFillRect(r->sdlRenderer, &bombSlot);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 45, 25, 12, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &bombSlot);
+
+    if (hasBomb)
+    {
+        /* Small bomb icon centered inside the bomb slot */
+        int cx = x + 78;
+        int cy = y + 48;
+        int radius = 8;
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
+
+        for (int dy = -radius; dy <= radius; dy++)
+        {
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                if (dx * dx + dy * dy <= radius * radius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
+
+        /* shine */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
+        for (int dy = -2; dy <= 2; dy++)
+        {
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                if (dx * dx + dy * dy <= 4)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx - 3 + dx, cy - 3 + dy);
+                }
+            }
+        }
+
+        /* cap */
+        SDL_Rect fuseCap = {cx + 1, cy - 10, 6, 4};
+        SDL_SetRenderDrawColor(r->sdlRenderer, 90, 90, 90, 255);
+        SDL_RenderFillRect(r->sdlRenderer, &fuseCap);
+
+        /* fuse */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 120, 65, 25, 255);
+        SDL_RenderDrawLine(r->sdlRenderer, cx + 6, cy - 10, cx + 10, cy - 14);
+
+        /* spark */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 120, 0, 255);
+        SDL_RenderDrawPoint(r->sdlRenderer, cx + 11, cy - 15);
+        SDL_RenderDrawPoint(r->sdlRenderer, cx + 12, cy - 14);
+        SDL_RenderDrawPoint(r->sdlRenderer, cx + 10, cy - 14);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 240, 80, 255);
+        SDL_RenderDrawPoint(r->sdlRenderer, cx + 11, cy - 14);
+
+        /* subtle highlight around portrait when holding bomb */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 210, 60, 255);
+        SDL_Rect portraitGlow = {x + 12, y + 12, 50, 50};
+        SDL_RenderDrawRect(r->sdlRenderer, &portraitGlow);
+    }
 
     /* ===== Player name + HP ===== */
 
@@ -421,26 +486,26 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y)
         playerName = "Player 4";
     }
 
-    Render_HUDText(r, playerName, x + 78, y + 8, darkText);
+    Render_HUDText(r, playerName, x + 98, y + 8, darkText);
 
-    SDL_Rect hpBackground = {x + 78, y + 34, 122, 26};
+    SDL_Rect hpBackground = {x + 98, y + 36, 138, 24};
     SDL_SetRenderDrawColor(r->sdlRenderer, 90, 50, 25, 180);
     SDL_RenderFillRect(r->sdlRenderer, &hpBackground);
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 45, 25, 12, 255);
     SDL_RenderDrawRect(r->sdlRenderer, &hpBackground);
 
-    Render_HUDText(r, "HP", x + 84, y + 36, lightText);
-    Render_PlayerLives(r, player, x + 118, y + 38);
+    Render_HUDText(r, "HP", x + 104, y + 36, lightText);
+    Render_PlayerLives(r, player, x + 138, y + 39);
 
-    /* ===== Small rope-like corner decorations ===== */
+    /* ===== Rope-like corner details ===== */
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 230, 190, 95, 255);
 
     SDL_Rect rope1 = {x + 4, y + 4, 12, 5};
-    SDL_Rect rope2 = {x + 204, y + 4, 12, 5};
-    SDL_Rect rope3 = {x + 4, y + 61, 12, 5};
-    SDL_Rect rope4 = {x + 204, y + 61, 12, 5};
+    SDL_Rect rope2 = {x + panelW - 16, y + 4, 12, 5};
+    SDL_Rect rope3 = {x + 4, y + panelH - 9, 12, 5};
+    SDL_Rect rope4 = {x + panelW - 16, y + panelH - 9, 12, 5};
 
     SDL_RenderFillRect(r->sdlRenderer, &rope1);
     SDL_RenderFillRect(r->sdlRenderer, &rope2);
