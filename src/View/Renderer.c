@@ -878,106 +878,289 @@ void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
 
 
 
-void Render_Bomb(Renderer* r, Bomb bomb) {
-    /* ===== Explosion visas först ===== */
+void Render_Bomb(Renderer* r, Bomb bomb)
+{
+    if (r == NULL || bomb == NULL)
+    {
+        return;
+    }
 
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
-    if (getBombExploding(bomb)) 
+    /* ===== Explosion visas först ===== */
+
+    if (getBombExploding(bomb))
     {
+        int cx = (int)((getBombX(bomb) + 14) * scaleX);
+        int cy = (int)((getBombY(bomb) - 16) * scaleY);
 
-        SDL_Rect explosionOuter = { ((int)getBombX(bomb) - 20) * scaleX, ((int)getBombY(bomb) - 50) * scaleY, 70 * scaleX, 70 * scaleY };
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 255);   // orange
-        SDL_RenderFillRect(r->sdlRenderer, &explosionOuter);
+        int outerRadius = (int)(38 * scaleX);
+        int innerRadius = (int)(24 * scaleX);
 
-        SDL_Rect explosionInner = {  ((int)getBombX(bomb) - 8) * scaleX, ((int)getBombY(bomb) - 38) * scaleY, 46 * scaleX, 46 * scaleY};
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 220, 0, 255);  // gul mitt
-        SDL_RenderFillRect(r->sdlRenderer, &explosionInner);
+        if (outerRadius < 1) outerRadius = 1;
+        if (innerRadius < 1) innerRadius = 1;
 
-        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-        SDL_RenderDrawRect(r->sdlRenderer, &explosionOuter);
+        /* Outer explosion glow */
+        SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 80, 0, 190);
+
+        for (int dy = -outerRadius; dy <= outerRadius; dy++)
+        {
+            for (int dx = -outerRadius; dx <= outerRadius; dx++)
+            {
+                if (dx * dx + dy * dy <= outerRadius * outerRadius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
+
+        /* Inner explosion */
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 225, 35, 230);
+
+        for (int dy = -innerRadius; dy <= innerRadius; dy++)
+        {
+            for (int dx = -innerRadius; dx <= innerRadius; dx++)
+            {
+                if (dx * dx + dy * dy <= innerRadius * innerRadius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
 
         return;
     }
 
     /* ===== Om bomben inte är aktiv, rita inget ===== */
-    if (!getBombActive(bomb)) {
+
+    if (!getBombActive(bomb))
+    {
         return;
     }
 
+    SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+
     int maxTimer = BOMB_TIMER;
-    int bodyX = (int)getBombX(bomb) + 2;
-    int bodyY = (int)getBombY(bomb) - 28;
 
-    /* ===== Bombkropp ===== */
-    SDL_Rect body = { bodyX * scaleX, bodyY * scaleY, 24 * scaleX, 24 *scaleY};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &body);
-
-    /* Lite highlight */
-    SDL_Rect shine = { (bodyX + 4) * scaleX, (bodyY + 4) * scaleY, 6 * scaleX, 6 *scaleY};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 120, 120, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &shine);
-
-    /* Kontur */
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(r->sdlRenderer, &body);
-
-    /* ===== Toppdel ===== */
-    SDL_Rect cap = { (bodyX + 8) * scaleX, (bodyY - 4) * scaleY, 8 * scaleX, 5 *scaleY};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 100, 100, 100, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &cap);
-
-    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(r->sdlRenderer, &cap);
-
-    /* ===== Säkring ===== */
-    SDL_SetRenderDrawColor(r->sdlRenderer, 139, 69, 19, 255);
-    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 12, bodyY - 4, bodyX + 18, bodyY - 10);
-    SDL_RenderDrawLine(r->sdlRenderer, bodyX + 18, bodyY - 10, bodyX + 22, bodyY - 6);
-
-    /* ===== Gnista ===== */
-    if ((getBombTimer(bomb) / 5) % 2 == 0) {
-        SDL_Rect spark1 = { (bodyX + 21) * scaleX, (bodyY - 8) * scaleY, 4 * scaleX, 4 * scaleY};
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 140, 0, 255);
-        SDL_RenderFillRect(r->sdlRenderer, &spark1);
-
-        SDL_Rect spark2 = { (bodyX + 23) * scaleX, (bodyY - 10) * scaleY, 2 * scaleX, 2 * scaleY};
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
-        SDL_RenderFillRect(r->sdlRenderer, &spark2);
+    if (maxTimer <= 0)
+    {
+        maxTimer = 1;
     }
 
-    /* ===== Timer-bar ===== */
-    int barWidth = 24;
-    int barHeight = 5;
-    int barX = bodyX;
-    int barY = bodyY - 12;
-
     int safeTimer = getBombTimer(bomb);
-    if (safeTimer < 0) safeTimer = 0;
-    if (safeTimer > maxTimer) safeTimer = BOMB_TIMER;
+
+    if (safeTimer < 0)
+    {
+        safeTimer = 0;
+    }
+
+    if (safeTimer > maxTimer)
+    {
+        safeTimer = maxTimer;
+    }
+
+    int isDanger = safeTimer <= (BOMB_TIMER * 0.33);
+    int blinkOn = ((safeTimer / 5) % 2 == 0);
+
+    /*
+        Bomb position in screen coordinates.
+        getBombX/Y is game/world coordinate, so we scale it.
+    */
+    int cx = (int)((getBombX(bomb) + 14) * scaleX);
+    int cy = (int)((getBombY(bomb) - 16) * scaleY);
+
+    int radius = (int)(14 * scaleX);
+
+    if (radius < 6)
+    {
+        radius = 6;
+    }
+
+    /* ===== Soft shadow under bomb ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 90);
+
+    for (int dy = -5; dy <= 5; dy++)
+    {
+        for (int dx = -14; dx <= 14; dx++)
+        {
+            if ((dx * dx) / 2 + dy * dy <= 70)
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + radius + 7 + dy);
+            }
+        }
+    }
+
+    /* ===== Danger glow when timer is low ===== */
+
+    if (isDanger && blinkOn)
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 70, 25, 90);
+
+        int glowRadius = radius + 8;
+
+        for (int dy = -glowRadius; dy <= glowRadius; dy++)
+        {
+            for (int dx = -glowRadius; dx <= glowRadius; dx++)
+            {
+                if (dx * dx + dy * dy <= glowRadius * glowRadius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 210, 60, 45);
+
+        int glowRadius = radius + 5;
+
+        for (int dy = -glowRadius; dy <= glowRadius; dy++)
+        {
+            for (int dx = -glowRadius; dx <= glowRadius; dx++)
+            {
+                if (dx * dx + dy * dy <= glowRadius * glowRadius)
+                {
+                    SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+                }
+            }
+        }
+    }
+
+    /* ===== Bomb body ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 18, 18, 20, 255);
+
+    for (int dy = -radius; dy <= radius; dy++)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            if (dx * dx + dy * dy <= radius * radius)
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+            }
+        }
+    }
+
+    /* Dark outline */
+    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+
+    for (int dy = -radius; dy <= radius; dy++)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            int dist = dx * dx + dy * dy;
+
+            if (dist <= radius * radius && dist >= (radius - 2) * (radius - 2))
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, cx + dx, cy + dy);
+            }
+        }
+    }
+
+    /* ===== Bomb shine ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 105, 105, 110, 255);
+
+    int shineRadius = 4;
+
+    for (int dy = -shineRadius; dy <= shineRadius; dy++)
+    {
+        for (int dx = -shineRadius; dx <= shineRadius; dx++)
+        {
+            if (dx * dx + dy * dy <= shineRadius * shineRadius)
+            {
+                SDL_RenderDrawPoint(r->sdlRenderer, cx - 5 + dx, cy - 5 + dy);
+            }
+        }
+    }
+
+    /* ===== Bomb cap ===== */
+
+    SDL_Rect cap = {cx + 2, cy - radius - 5, 10, 6};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 90, 90, 90, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &cap);
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &cap);
+
+    /* ===== Fuse ===== */
+
+    SDL_SetRenderDrawColor(r->sdlRenderer, 120, 65, 25, 255);
+
+    SDL_RenderDrawLine(
+        r->sdlRenderer,
+        cx + 10,
+        cy - radius - 5,
+        cx + 18,
+        cy - radius - 14
+    );
+
+    SDL_RenderDrawLine(
+        r->sdlRenderer,
+        cx + 18,
+        cy - radius - 14,
+        cx + 24,
+        cy - radius - 10
+    );
+
+    /* ===== Spark ===== */
+
+    if (blinkOn)
+    {
+        int sparkX = cx + 25;
+        int sparkY = cy - radius - 11;
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 120, 0, 255);
+
+        SDL_RenderDrawLine(r->sdlRenderer, sparkX - 4, sparkY, sparkX + 4, sparkY);
+        SDL_RenderDrawLine(r->sdlRenderer, sparkX, sparkY - 4, sparkX, sparkY + 4);
+
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 235, 70, 255);
+
+        SDL_Rect sparkCore = {sparkX - 2, sparkY - 2, 4, 4};
+        SDL_RenderFillRect(r->sdlRenderer, &sparkCore);
+    }
+
+    /* ===== Small timer bar above bomb ===== */
+
+    int barWidth = 30;
+    int barHeight = 5;
+    int barX = cx - (barWidth / 2);
+    int barY = cy - radius - 18;
+
+    SDL_Rect barOuter = {barX - 2, barY - 2, barWidth + 4, barHeight + 4};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 20, 20, 20, 220);
+    SDL_RenderFillRect(r->sdlRenderer, &barOuter);
+
+    SDL_Rect barBg = {barX, barY, barWidth, barHeight};
+    SDL_SetRenderDrawColor(r->sdlRenderer, 65, 45, 30, 255);
+    SDL_RenderFillRect(r->sdlRenderer, &barBg);
 
     int currentWidth = (safeTimer * barWidth) / maxTimer;
 
-    SDL_Rect barBg = { barX * scaleX, barY * scaleY, barWidth * scaleX, barHeight * scaleY};
-    SDL_SetRenderDrawColor(r->sdlRenderer, 60, 60, 60, 255);
-    SDL_RenderFillRect(r->sdlRenderer, &barBg);
+    SDL_Rect barFill = {barX, barY, currentWidth, barHeight};
 
-    SDL_Rect barFill = { barX * scaleX, barY * scaleY, currentWidth * scaleX, barHeight * scaleY};
-
-    if (safeTimer > (BOMB_TIMER*0.66)) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 255);
-    } else if (safeTimer > (BOMB_TIMER*0.33)) {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 255, 0, 255);
-    } else {
-        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    if (safeTimer > (BOMB_TIMER * 0.66))
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 65, 220, 75, 255);
+    }
+    else if (safeTimer > (BOMB_TIMER * 0.33))
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 255, 215, 45, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(r->sdlRenderer, 235, 55, 35, 255);
     }
 
     SDL_RenderFillRect(r->sdlRenderer, &barFill);
 
     SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(r->sdlRenderer, &barOuter);
     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 }
-
 
