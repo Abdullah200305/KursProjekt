@@ -307,19 +307,50 @@ void game_update(Game *game, Renderer *renderer)
     Render_Bomb(renderer, game->bomb);
 
 
-    int windowW = 0;
-    int windowH = 0;
-    SDL_GetWindowSize(renderer->window, &windowW, &windowH);
+int windowW = 0;
+int windowH = 0;
+SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
-    if (isPlayerAlive(game->players[0]))
+int hudPlayerCount = game->numPlayers;
+
+if (hudPlayerCount > 4)
+{
+    hudPlayerCount = 4;
+}
+
+for (int i = 0; i < hudPlayerCount; i++)
+{
+    int hudX = 20;
+    int hudY = 20;
+
+    if (i == 0)
     {
-        Render_PlayerHUD(renderer, game->players[0], 0, 20, 20);
+        hudX = 20;
+        hudY = 20;
+    }
+    else if (i == 1)
+    {
+        hudX = windowW - 240;
+        hudY = 20;
+    }
+    else if (i == 2)
+    {
+        hudX = 20;
+        hudY = windowH - 100;
+    }
+    else if (i == 3)
+    {
+        hudX = windowW - 240;
+        hudY = windowH - 100;
     }
 
-    if (isPlayerAlive(game->players[1]))
+    if (game->players[i] != NULL && isPlayerAlive(game->players[i]))
     {
-        Render_PlayerHUD(renderer, game->players[1], 1, windowW - 240, 20);
+        Render_PlayerHUD(renderer, game->players[i], i, hudX, hudY);
     }
+}
+
+
     int aliveCount = 0;
 
     for (int i = 0; i < game->numPlayers; i++)
