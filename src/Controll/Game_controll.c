@@ -534,6 +534,6 @@ void game_init(Game *game, Renderer *renderer)
 
 
   
-    Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
+    Renderer_Init(renderer, "Tick Tock Bomb", getWidth(game->map), getHeight(game->map)); // will be update to be as ADT
        
 }
