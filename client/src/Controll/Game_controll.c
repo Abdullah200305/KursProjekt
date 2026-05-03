@@ -122,16 +122,16 @@ void game_update(Game *game, Renderer *renderer)
 
 
     // this will uppdate
-    if (isPlayerAlive(game->players[0]))
-    {
-        Render_PlayerLives(renderer, game->players[0], 20, 20);
-    }
+    // if (isPlayerAlive(game->players[0]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[0], 20, 20);
+    // }
 
     
-    if (isPlayerAlive(game->players[1]))
-    {
-        Render_PlayerLives(renderer, game->players[1], 20, 50);
-    }
+    // if (isPlayerAlive(game->players[1]))
+    // {
+    //     Render_PlayerLives(renderer, game->players[1], 20, 50);
+    // }
 
     int aliveCount = 0;
 
@@ -248,11 +248,6 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
 
 
         setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer); 
-
-
-        
-        //printf("%d livesss %d\n",i,getPlayerLives(game->players[i]));
-       
     }
     
     setBombState(
@@ -280,7 +275,6 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
         packet.data.abilities.items[i].active
     );
     }
-   // printf("[CLIENT] Applied GAME_STATE positions locally\n");
     ClientNet_ClearGameState(clientNet);
 }
 

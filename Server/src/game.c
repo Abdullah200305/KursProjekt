@@ -107,7 +107,7 @@ void Game_Update(Server server, Game *game) {
     int miliseconds = 4000; // 2 seconds
     abilitySpawnRate(game->abilitySystem, game->map, miliseconds);
    
-    int currentPlayers = 2;
+    int currentPlayers = getClientCount(server);
 
     for (int i = 0; i < currentPlayers; i++)
     {

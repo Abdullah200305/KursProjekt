@@ -21,7 +21,7 @@ Bomb createBomb(Player players[]){
     if (pBomb == NULL) return NULL;
     
     pBomb->bombCarrier = rand() % 4;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = 1000;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -36,7 +36,7 @@ void resetBomb(Bomb pBomb, Player players[]){
     if(pBomb==NULL) return;
 
     pBomb->bombCarrier = rand() % 4;   // demo: vi har 2 spelare
-    pBomb->timer = 200;
+    pBomb->timer = 1000;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
