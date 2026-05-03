@@ -307,14 +307,18 @@ void game_update(Game *game, Renderer *renderer)
     Render_Bomb(renderer, game->bomb);
 
 
+    int windowW = 0;
+    int windowH = 0;
+    SDL_GetWindowSize(renderer->window, &windowW, &windowH);
+
     if (isPlayerAlive(game->players[0]))
     {
-        Render_PlayerLives(renderer, game->players[0], 20, 20);
+        Render_PlayerHUD(renderer, game->players[0], 0, 20, 20);
     }
 
     if (isPlayerAlive(game->players[1]))
     {
-        Render_PlayerLives(renderer, game->players[1], 20, 50);
+        Render_PlayerHUD(renderer, game->players[1], 1, windowW - 240, 20);
     }
     int aliveCount = 0;
 

@@ -30,6 +30,7 @@ void Render_Player(Renderer* r, Player player, int playerIndex);
 
 //Rendering the lives
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY);
+void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y);
 
 //rendering bomb
 void Render_Bomb(Renderer* r, Bomb bomb);
