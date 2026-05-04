@@ -131,41 +131,132 @@ void game_loop(Game *game, Renderer *renderer)
     int running = 1;
     int gameOverShown = 0;
 
+    int mouseX, mouseY;
+
+    SDL_Point mousePoint = {
+        mouseX,
+        mouseY 
+    };
+
     while (running)
     {
+
+
+
+
+
         while (SDL_PollEvent(&event))
-        {
+        {   
+
             switch (event.type)
             {
-            case SDL_QUIT:
-                running = 0;
-                break;
+                case SDL_QUIT:
+                    running = 0;
+                    break;
 
-            case SDL_KEYDOWN:
-                if (game->state == GAME_STATE_PLAYING)
-                {
-                    if (event.key.keysym.sym == SDLK_h)
+                case SDL_KEYDOWN:
+
+                    if (game->state == GAME_STATE_MENU)
                     {
-                        damagePlayer(game->players[0]);
+                        if (event.key.keysym.sym == SDLK_h)
+                        {
+                            reset_game(game);
+                            printf("hello!");
+                        }  
                     }
+
+                    if (game->state == GAME_STATE_GAME_OVER)
+                    {
+                        if (event.key.keysym.sym == SDLK_r)
+                        {
+                            reset_game(game);
+                            gameOverShown = 0;
+                        }
+
+                        if (event.key.keysym.sym == SDLK_m)
+                        {
+                            game->state = GAME_STATE_MENU;
+                            printf("Back to menu pressed\n");
+                        }
+                    }
+                    break;
+            }
+
+            if (game->state == GAME_STATE_MENU)
+            {
+                //----------------------------------------------------------------------------//
+                //Ineffktiv lösning för att få knapparnas rect//
+                 float scaleX, scaleY;
+                getScale(renderer, &scaleX, &scaleY);
+
+                int w, h;
+                SDL_GetWindowSize(renderer->window, &w, &h);
+
+                    // --- Button size ---
+                float buttonWidth = 750 * 0.5 * scaleX;
+                float buttonHeight = 170 * 0.5 * scaleY;
+
+                // --- Center X ---
+                int centerX = w / 2 - buttonWidth / 2;
+
+                // --- Vertical layout ---
+                SDL_Rect startRect   = { centerX, 300 * scaleY, buttonWidth, buttonHeight };
+                SDL_Rect optionsRect = { centerX, 420 * scaleY,  buttonWidth, buttonHeight };
+                SDL_Rect quitRect    = { centerX, 540 * scaleY,  buttonWidth, buttonHeight };
+                //---------------------------------------------------------------------------//
+                //---------------------------------------------------------------------------//
+
+                SDL_GetMouseState(&mousePoint.x, &mousePoint.y);
+
+                if (SDL_PointInRect(&mousePoint, &startRect) || SDL_PointInRect(&mousePoint, &optionsRect) || SDL_PointInRect(&mousePoint, &quitRect))
+                {
+                    SDL_SetCursor(renderer->cursorHand);
+                }
+                else
+                {
+                    SDL_SetCursor(renderer->cursorArrow);
                 }
 
-                if (game->state == GAME_STATE_GAME_OVER)
-                {
-                    if (event.key.keysym.sym == SDLK_r)
-                    {
+
+                if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+                {   
+
+
+                    //if mouse clicks on start button
+                    if(SDL_PointInRect(&mousePoint, &startRect))
+                    {   
+                        SDL_SetCursor(renderer->cursorArrow);
                         reset_game(game);
-                        gameOverShown = 0;
                     }
 
-                    if (event.key.keysym.sym == SDLK_m)
+                    //if mouse clicks on options button
+                    if(SDL_PointInRect(&mousePoint, &optionsRect))
                     {
-                        printf("Back to menu pressed\n");
+                        continue;
+                    }
+
+                    //if mouse click son quit button
+                    if(SDL_PointInRect(&mousePoint, &quitRect))
+                    {
+                        running = 0;
+                        break;
                     }
                 }
-                break;
             }
         }
+
+
+        if (game->state == GAME_STATE_MENU)
+        {
+            SDL_RenderClear(renderer->sdlRenderer);
+
+            Render_Menu(renderer);
+
+            SDL_RenderPresent(renderer->sdlRenderer);
+            
+        }
+
+
 
         if (game->state == GAME_STATE_PLAYING)
         {
@@ -174,6 +265,7 @@ void game_loop(Game *game, Renderer *renderer)
 
             game_update(game, renderer);
         }
+
         else if (game->state == GAME_STATE_GAME_OVER)
         {
             if (!gameOverShown)
@@ -203,6 +295,8 @@ void game_loop(Game *game, Renderer *renderer)
                 gameOverShown = 1;
             }
         }
+
+        
 
         SDL_Delay(16);
     }
@@ -236,7 +330,7 @@ void game_update(Game *game, Renderer *renderer)
 
 
     // Render the game state
-    Background_Image_Render(renderer);
+    Background_Image_Render(renderer, renderer->mapBackgroundTexture);
 
     #if SHOW_DEBUG_GRID
     Render_Map(renderer, game->map);
@@ -507,11 +601,16 @@ void game_cleanup(Game *game, Renderer *renderer)
     AbilitySystem_destroy(game->abilitySystem);
 }
 
+void game_menu_init()
+{
+
+}
+
 
 void game_init(Game *game, Renderer *renderer)
 {
     game->map = Map_create(WIDTH, HEIGHT);
-    game->state = GAME_STATE_PLAYING;
+    game->state = GAME_STATE_MENU;
     game->numPlayers = 2;
     
     game->abilitySystem = AbilitySystem_create();

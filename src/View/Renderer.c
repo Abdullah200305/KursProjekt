@@ -37,9 +37,45 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     if (r->hudFont == NULL) {
         fprintf(stderr, "TTF_OpenFont Error: %s\n", TTF_GetError());
     }
-   
-    r->backgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
-    if (!r->backgroundTexture) {
+
+
+    r->menuBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MENU_BACKGROUND.png");
+    if (!r->menuBackgroundTexture)
+    {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+    }
+
+    r->startButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/START_BUTTON.png");
+    if (!r->startButtonTexture)
+    {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+    }
+
+    r->optionsButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/OPTIONS_BUTTON.png");
+    if (!r->optionsButtonTexture)
+    {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+    }
+
+    r->quitButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/QUIT_BUTTON.png");
+    if (!r->quitButtonTexture)
+    {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+    }
+
+
+
+    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    if (!r->mapBackgroundTexture)
+    {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
         Renderer_Destroy(r);
         return -1;
@@ -50,7 +86,8 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
     //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
     //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 2; i++)
+    {
         if (!r->playerTexture[i]) {
         fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
         Renderer_Destroy(r);
@@ -76,6 +113,13 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
+    
+    //Initialize SDL Cursor//
+    r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+
+    SDL_SetCursor(r->cursorArrow);
+    //---------------------//
     
     return 0;
 }
@@ -107,7 +151,9 @@ void Renderer_Destroy(Renderer* r) {
     
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
-    SDL_DestroyTexture(r->backgroundTexture);
+    SDL_DestroyTexture(r->mapBackgroundTexture);
+    SDL_DestroyTexture(r->menuBackgroundTexture);
+
 
     for (int i = 0; i < 2; i++) 
     {
@@ -128,11 +174,8 @@ void Renderer_Destroy(Renderer* r) {
     SDL_Quit();
 }
 
-
-
-//******************  Map stuff  *******************//
-void Background_Image_Render(Renderer* r) {
-    SDL_Texture* img = r->backgroundTexture;
+//************RENDERS MENU AND OR MAP********************//
+void Background_Image_Render(Renderer* r, SDL_Texture* img) {
 
     int w, h;
     SDL_GetWindowSize(r->window, &w, &h);
@@ -142,6 +185,8 @@ void Background_Image_Render(Renderer* r) {
     SDL_RenderClear(r->sdlRenderer);
     SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
 }
+//******************  Map stuff  *******************//
+
 
 
 // Render the map based on the map buffer to make collision
@@ -1521,3 +1566,36 @@ void Render_Bomb(Renderer* r, Bomb bomb)
     SDL_RenderDrawRect(r->sdlRenderer, &barBg);
 }
 
+//*******************Renders the menu and buttons position and size***********************//
+
+
+void Render_Menu(Renderer *r)
+{
+
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    int w, h;
+    SDL_GetWindowSize(r->window, &w, &h);
+
+    // --- Draw background (full screen) ---
+    SDL_Rect bg = {0, 0, w, h};
+    SDL_RenderCopy(r->sdlRenderer, r->menuBackgroundTexture, NULL, &bg);
+
+    // --- Button size ---
+    float buttonWidth = 750 * 0.5 * scaleX;
+    float buttonHeight = 170 * 0.5 * scaleY;
+
+    // --- Center X ---
+    int centerX = w / 2 - buttonWidth / 2;
+
+    // --- Vertical layout ---
+    SDL_Rect startRect   = { centerX, 300 * scaleY, buttonWidth, buttonHeight };
+    SDL_Rect optionsRect = { centerX, 420 * scaleY,  buttonWidth, buttonHeight };
+    SDL_Rect quitRect    = { centerX, 540 * scaleY,  buttonWidth, buttonHeight };
+
+    // --- Draw buttons (on top of background) ---
+    SDL_RenderCopy(r->sdlRenderer, r->startButtonTexture, NULL, &startRect);
+    SDL_RenderCopy(r->sdlRenderer, r->optionsButtonTexture, NULL, &optionsRect);
+    SDL_RenderCopy(r->sdlRenderer, r->quitButtonTexture, NULL, &quitRect);
+}
