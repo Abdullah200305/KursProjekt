@@ -302,10 +302,7 @@ void game_update(Game *game, Renderer *renderer)
 
     for (int i = 0; i < game->numPlayers; i++)
     {
-        if (isPlayerAlive(game->players[i]))
-        {
-            Render_Player(renderer, game->players[i], i);
-        }
+        Render_Player(renderer, game->players[i], i);
     }
     Render_Bomb(renderer, game->bomb);
 
@@ -376,6 +373,13 @@ for (int i = 0; i < hudPlayerCount; i++)
 
     if (aliveCount <= 1)
     {
+        for (int i = 0; i < game->numPlayers; i++)
+        {
+            if (isPlayerAlive(game->players[i]))
+            {
+                setPlayerWinner(game->players[i], 1);
+            }
+        }
         game->state = GAME_STATE_GAME_OVER;
     }
 

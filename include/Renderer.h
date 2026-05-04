@@ -12,7 +12,7 @@ typedef struct {
     SDL_Texture* backgroundTexture;
     SDL_Texture* playerTexture[4];
     SDL_Texture *abilityTextures[6];
-    SDL_Rect playerFrames[17];
+    SDL_Rect playerFrames[20];
     TTF_Font* hudFont;
 } Renderer;
 
