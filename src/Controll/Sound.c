@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int Sound_Init(SoundSystem *s) {
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         fprintf(stderr, "SDL_mixer Error: %s\n", Mix_GetError());
         return -1;
     }
