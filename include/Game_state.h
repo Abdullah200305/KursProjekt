@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "bombRelated.h"
+#include "Sound.h"
 
 typedef struct AbilitySystem AbilitySystem;
 
@@ -23,6 +24,7 @@ typedef struct {
     
     int numPlayers;
     Bomb bomb;
+    SoundSystem sound;
 } Game;
 
 

@@ -120,6 +120,8 @@ void reset_game(Game *game)
 
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem);
+    
+    Sound_PlayGameMusic(&game->sound); 
 }
 
 
@@ -176,6 +178,7 @@ void game_loop(Game *game, Renderer *renderer)
                         if (event.key.keysym.sym == SDLK_m)
                         {
                             game->state = GAME_STATE_MENU;
+                            Sound_PlayMenuMusic(&game->sound);
                             printf("Back to menu pressed\n");
                         }
                     }
@@ -350,7 +353,7 @@ void game_update(Game *game, Renderer *renderer)
     for (int i = 0; i < currentPlayers; i++)
     {
 
-        AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers);
+        AbilitySystem_checkPickup(game->abilitySystem, game->players[i], game->players, currentPlayers, &game->sound);
 
         if (getPlayerSpeedTimer(game->players[i]) > 0)
         {
@@ -371,6 +374,7 @@ void game_update(Game *game, Renderer *renderer)
             if (getPlayerFreezeTimer(game->players[i]) == 0)
             {
                 setPlayerSpeedYX(game->players[i], 5, 5);
+                Sound_PlayIceBreak(&game->sound);
             }
         }
 
@@ -474,6 +478,18 @@ for (int i = 0; i < hudPlayerCount; i++)
     }
 
     Renderer_Present(renderer);
+
+    //LAUGH
+    static int RNGlaughTimer = 0;
+    RNGlaughTimer--;
+    if (RNGlaughTimer <= 0) {
+        RNGlaughTimer = 300 + rand() % 600;
+
+        if (rand() % 2 == 0)
+            Sound_PlayLaugh1(&game->sound);
+        else
+            Sound_PlayLaugh2(&game->sound);
+    }
 }
 
 
@@ -565,7 +581,7 @@ void movePlayer(Map map, Player player)
     {
         if (colx == 3) // I will update so here will move slow
         {
-            printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX / getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
+            //printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX / getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
             setPlayerPosition(player, newX,getPlayerY(player));
         }
         else
@@ -584,7 +600,7 @@ void movePlayer(Map map, Player player)
     {
         if (coly == 3) // I will update so here will move slow
         {
-            printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX /getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
+            //printf("Collision with tile type 3 at (%d, %d)\n", (int)(newX /getTileSize(map)), (int)(getPlayerY(player) / getTileSize(map)));
             setPlayerPosition(player, getPlayerX(player), newY);
         }
         else
@@ -596,6 +612,7 @@ void movePlayer(Map map, Player player)
 
 void game_cleanup(Game *game, Renderer *renderer)
 {
+    Sound_Destroy(&game->sound);
     Map_destroy(game->map);
     Renderer_Destroy(renderer);
     AbilitySystem_destroy(game->abilitySystem);
@@ -616,6 +633,8 @@ void game_init(Game *game, Renderer *renderer)
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem);
     
+    Sound_Init(&game->sound);
+    Sound_PlayMenuMusic(&game->sound);
 
     game->players[0] = initPlayer(230, 300);
     game->players[1] = initPlayer(270, 300);

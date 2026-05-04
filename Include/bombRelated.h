@@ -18,7 +18,7 @@ void destroyBomb(Bomb pBomb);
 
 void resetBomb(Bomb pBomb, Player players[]);
 void updateBomb(Bomb pBomb, Player players[]);
-void bombExplosion(Bomb pBomb, Player players[]);
+void bombExplosion(Bomb pBomb, Player players[], SoundSystem *sound);
 
 //---------Getters--------//
 float getBombX(Bomb pBomb);
