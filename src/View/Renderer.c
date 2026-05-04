@@ -39,7 +39,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     }
 
 
-    r->menuBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MENU_BACKGROUND.png");
+    r->menuBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Menu/MENU_BACKGROUND.png");
     if (!r->menuBackgroundTexture)
     {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
@@ -47,7 +47,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
     }
 
-    r->startButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/START_BUTTON.png");
+    r->startButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/Menu/START_BUTTON.png");
     if (!r->startButtonTexture)
     {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
@@ -55,7 +55,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
     }
 
-    r->optionsButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/OPTIONS_BUTTON.png");
+    r->optionsButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/Menu/OPTIONS_BUTTON.png");
     if (!r->optionsButtonTexture)
     {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
@@ -63,7 +63,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         return -1;
     }
 
-    r->quitButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/QUIT_BUTTON.png");
+    r->quitButtonTexture = IMG_LoadTexture(r->sdlRenderer, "link/Menu/QUIT_BUTTON.png");
     if (!r->quitButtonTexture)
     {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
@@ -108,12 +108,12 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 
     //ABILITY
     r->abilityTextures[0] = NULL;
-    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
-    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
-    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
-    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
-    
+    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SPEED.png");
+    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_FREEZE.png");
+    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SWAP.png");
+    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SIZEUP.png");
+    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/Ability/ABILITY_SHIELD.png");
+
     //Initialize SDL Cursor//
     r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
