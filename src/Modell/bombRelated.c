@@ -119,5 +119,5 @@ void setBombCarrier(Bomb pBomb, int index){
     if (pBomb->transferCooldown > 0) return;
 
     pBomb->bombCarrier = index;
-    pBomb->transferCooldown = 60;
+    pBomb->transferCooldown = 60; // 1s cooldown
 }

@@ -7,7 +7,7 @@
 
 #include <Player.h>
 
-#define BOMB_TIMER 100000
+#define BOMB_TIMER 2*60 // (X*60) där X = TID sekunder (just nu 2s)
 
 
 typedef struct Bomb_type *Bomb;
