@@ -7,7 +7,7 @@
 
 #include <Player.h>
 
-#define BOMB_TIMER 100
+#define BOMB_TIMER 100000
 
 
 typedef struct Bomb_type *Bomb;
