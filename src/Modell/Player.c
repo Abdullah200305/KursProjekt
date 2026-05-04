@@ -291,7 +291,7 @@ void setPlayerAnimation(Player player) {
             player->animationTimer++;
             if (player->animationTimer >= 6) {
                 player->animationTimer = 0;
-                player->animationFrame = (player->animationFrame == 11) ? 12 : 11;
+                player->animationFrame = (player->animationFrame = 17);
             }
         }
         return;

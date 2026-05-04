@@ -62,7 +62,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     int PLAYER_FRAME_WIDTH = 471;
     int PLAYER_FRAME_HEIGHT = 530;
 
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 18; i++) {
         r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
         r->playerFrames[i].y = 0;
         r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
@@ -536,7 +536,7 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
         SDL_RenderCopy(
             r->sdlRenderer,
             r->playerTexture[playerIndex],
-            &r->playerFrames[0],
+            &r->playerFrames[1],
             &portraitDst
         );
     }
