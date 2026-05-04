@@ -295,6 +295,10 @@ void setPlayerAnimation(Player player) {
 
     //WIN ANIMATION
     if (player->winner) {
+        if (player->animationFrame != 17 && player->animationFrame != 18) {
+            player->animationFrame = 17;
+            player->animationTimer = 0;
+        }
         player->animationTimer++;
         if (player->animationTimer >= 10) {
             player->animationTimer = 0;

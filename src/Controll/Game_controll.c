@@ -1,6 +1,7 @@
 #include "Game_controll.h"
 #include "bombRelated.h"
 #include "Ability.h"
+#include "Player.h"
 #define SHOW_DEBUG_GRID 0
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 //GAMLA GAME_LOOP-KODEN SPARAD HÄR FÖR SÄKERHET.
@@ -176,6 +177,14 @@ void game_loop(Game *game, Renderer *renderer)
         }
         else if (game->state == GAME_STATE_GAME_OVER)
         {
+            Background_Image_Render(renderer);
+            for (int i = 0; i < game->numPlayers; i++)
+            {
+                setPlayerAnimation(game->players[i]);
+                Render_Player(renderer, game->players[i], i);
+            }
+            Renderer_Present(renderer);
+
             if (!gameOverShown)
             {
                 const char *message = "Game over!";
@@ -300,8 +309,25 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
+    int aliveCount = 0;
     for (int i = 0; i < game->numPlayers; i++)
     {
+        if (isPlayerAlive(game->players[i]))
+            aliveCount++;
+    }
+    if (aliveCount <= 1)
+    {
+        for (int i = 0; i < game->numPlayers; i++)
+        {
+            if (isPlayerAlive(game->players[i]))
+                setPlayerWinner(game->players[i], 1);
+        }
+        game->state = GAME_STATE_GAME_OVER;
+    }
+
+    for (int i = 0; i < game->numPlayers; i++)
+    {
+        setPlayerAnimation(game->players[i]);
         Render_Player(renderer, game->players[i], i);
     }
     Render_Bomb(renderer, game->bomb);
@@ -359,29 +385,6 @@ for (int i = 0; i < hudPlayerCount; i++)
         Render_PlayerHUD(renderer, game->players[i], i, hudX, hudY, hasBomb);
     }
 }
-
-
-    int aliveCount = 0;
-
-    for (int i = 0; i < game->numPlayers; i++)
-    {
-        if (isPlayerAlive(game->players[i]))
-        {
-            aliveCount++;
-        }
-    }
-
-    if (aliveCount <= 1)
-    {
-        for (int i = 0; i < game->numPlayers; i++)
-        {
-            if (isPlayerAlive(game->players[i]))
-            {
-                setPlayerWinner(game->players[i], 1);
-            }
-        }
-        game->state = GAME_STATE_GAME_OVER;
-    }
 
     Renderer_Present(renderer);
 }
