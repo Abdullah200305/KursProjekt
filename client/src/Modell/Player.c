@@ -1,6 +1,4 @@
 #include "Player.h"
-
-// no need 
 #include <SDL2/SDL.h>
 
 struct  Player_type
@@ -30,6 +28,10 @@ struct  Player_type
 
     int hasShield;
 };
+
+
+
+
  
 Player initPlayer(float x, float y)
 {
@@ -61,7 +63,7 @@ Player initPlayer(float x, float y)
     return p;
 }
 
-void damagePlayer(Player player) 
+void damagePlayer(Player player, SoundSystem *sound) 
 {
     if (player->alive == 0) 
     {
@@ -69,6 +71,7 @@ void damagePlayer(Player player)
     }
 
     player->lives--;
+    Sound_PlayScream(sound);
 
     if (player->lives <= 0) 
     {
@@ -249,37 +252,54 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedX = speedX;
 }
 
-void setPlayerState(Player player, int lives, int alive) {
-    if (player == NULL) {
-        return;
-    }
-    if (lives < 0) {
-        lives = 0;
-    }
-    player->lives = lives;
-    player->alive = alive ? 1 : 0;
-    if (player->lives == 0) {
-        player->alive = 0;
-    }
-}
-
 //Timers
-
 void setPlayerSpeedTimer(Player player, float timer) 
 {
     player->speedTimer = timer;
 }
 
+void setPlayerFreezeTimer(Player player, float timer) 
+{
+    player->freezeTimer = timer;
+}
+
+void setPlayerSizeUpTimer(Player player, float timer) 
+{
+    player->sizeUpTimer = timer;
+}
+
+//Player movement and Animation
 int getPlayerAnimationFrame(Player player) {
     return player->animationFrame;
 }
 
 void setPlayerAnimation(Player player) {
+    int animationTransitionSpeed = (player->speedTimer > 0) ? 3 : 6;
+
+    //FREEZE ANIMATION
     if(player->freezeTimer > 0){
         player->animationFrame = 13;
         return;
     }
+
+    //SHIELD ANIMATION
+    if (player->shieldTimer > 0) {
+        if (player->vy > 0)      player->animationFrame = 14;
+        else if (player->vx > 0) player->animationFrame = 15;  
+        else if (player->vx < 0) player->animationFrame = 16; 
+        
+        else if (player->vy < 0) {    
+            player->animationTimer++;
+            if (player->animationTimer >= 6) {
+                player->animationTimer = 0;
+                player->animationFrame = (player->animationFrame = 17);
+            }
+        }
+        return;
+    }
     
+    
+    //NORMAL ANIMATION
     int isMoving = (player->vx != 0 || player->vy != 0);
 
     if (player->vy > 0)
@@ -293,19 +313,25 @@ void setPlayerAnimation(Player player) {
 
     if (!isMoving) {
         switch (player->lastDirection) {
-            case 0: player->animationFrame = 0;  break;
-            case 1: player->animationFrame = 4;  break;
-            case 2: player->animationFrame = 7;  break;
-            case 3: player->animationFrame = 10; break;
+            case 0: 
+                player->animationFrame = 0;  
+                break;
+            case 1: 
+                player->animationFrame = 4;  
+                break;
+            case 2: 
+                player->animationFrame = 7;  
+                break;
+            case 3: 
+                player->animationFrame = 10; 
+                break;
         }
         player->animationTimer = 0;
         return;
     }
 
-    int animationSpeed = (player->speedTimer > 0) ? 3 : 6;
-
     player->animationTimer++;
-    if (player->animationTimer >= animationSpeed) {
+    if (player->animationTimer >= animationTransitionSpeed) {
         player->animationTimer = 0;
         switch (player->lastDirection) {
             case 0: 
@@ -324,23 +350,9 @@ void setPlayerAnimation(Player player) {
     }
 }
 
-void setPlayerFreezeTimer(Player player, float timer) 
-{
-    player->freezeTimer = timer;
-}
+void playerMovement(Player player,
+    SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right) {
 
-void setPlayerSizeUpTimer(Player player, float timer) 
-{
-    player->sizeUpTimer = timer;
-}
-
-
-// this will remove 
-void playerMovement(
-    Player player,
-    SDL_Scancode up, SDL_Scancode down, SDL_Scancode left, SDL_Scancode right
-)
-{
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     float vx = 0;
@@ -366,3 +378,4 @@ void playerMovement(
     setPlayerVelocity(player, vx, vy);
     setPlayerAnimation(player);
 }
+

@@ -3,11 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
+#include "Sound.h"
 typedef struct Player_type *Player;
 
 
 Player initPlayer(float x, float y);
-void damagePlayer(Player player);
+void damagePlayer(Player player, SoundSystem *sound);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY);
