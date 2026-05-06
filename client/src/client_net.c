@@ -106,6 +106,38 @@ int ClientNet_SendJoinRequest(ClientNet client)
     return 0;
 }
 
+int ClientNet_SendStartGame(ClientNet client)
+{
+    HeaderPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL)
+    {
+        return -1;
+    }
+
+    packet.type = PACKET_START_GAME; 
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
+    {
+        printf("ClientNet_SendStartGame failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
 int ClientNet_SendDisconnect(ClientNet client)
 {
     DisconnectPacket packet;
@@ -343,6 +375,42 @@ void ClientNet_ClearGameState(ClientNet client)
     }
 
     client->hasGameState = 0;
+}
+
+void get_local_ip(char *buffer)
+{
+    char hostname[256];
+   
+    // get computer name
+    if (SDLNet_ResolveHost(NULL, hostname, 0) == -1)
+    {
+        strcpy(buffer, "Unknown");
+        return;
+    }
+
+    IPaddress ip;
+
+    // resolve hostname to IP
+    if (SDLNet_ResolveHost(&ip, hostname, 0) == -1)
+    {
+        strcpy(buffer, "Error");
+        return;
+    }
+
+    Uint32 addr = SDL_SwapBE32(ip.host);
+
+    sprintf(buffer, "%d.%d.%d.%d",
+        (addr >> 24) & 0xFF,
+        (addr >> 16) & 0xFF,
+        (addr >> 8) & 0xFF,
+        addr & 0xFF);
+
+
+    printf("Getting local IP address...%d.%d.%d.%d\n",
+        (addr >> 24) & 0xFF,
+        (addr >> 16) & 0xFF,
+        (addr >> 8) & 0xFF,
+        addr & 0xFF);
 }
 
 

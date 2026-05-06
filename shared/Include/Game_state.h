@@ -11,17 +11,34 @@ typedef enum {
     GAME_STATE_MENU,
     GAME_STATE_PLAYING,
     GAME_STATE_PAUSED,
-    GAME_STATE_GAME_OVER
+    GAME_STATE_GAME_OVER,
+    GAME_STATE_CHOOSE_HOST_JOIN,
+    GAME_STATE_HOST_SETUP,
+    GAME_STATE_CLIENT_SETUP
 } GameState;
 
 #define Max_Players 4
 
 typedef struct {
     GameState state;
+    int running;
     Map map;
     Player players[Max_Players];
     AbilitySystem *abilitySystem;
     int numPlayers;
     Bomb bomb;
+    SoundSystem sound;
 } Game;
 #endif // GAME_STATE_H
+
+
+
+
+
+
+
+
+
+
+
+

@@ -73,53 +73,57 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 
 
 
-    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
-    if (!r->mapBackgroundTexture)
-    {
-        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
-        Renderer_Destroy(r);
-        return -1;
-    }
+
+
+    /// this will will go some where else will change the place of it 
+
+    // r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    // if (!r->mapBackgroundTexture)
+    // {
+    //     fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+    //     Renderer_Destroy(r);
+    //     return -1;
+    // }
     
-    //SPELARE
-    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
-    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
-    //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
-    //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
-    for(int i = 0; i < 2; i++)
-    {
-        if (!r->playerTexture[i]) {
-        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
-        Renderer_Destroy(r);
-        return -1;
-        }
-    }
+    // //SPELARE
+    // r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
+    // r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
+    // //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
+    // //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
+    // for(int i = 0; i < 2; i++)
+    // {
+    //     if (!r->playerTexture[i]) {
+    //     fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
+    //     Renderer_Destroy(r);
+    //     return -1;
+    //     }
+    // }
     
-    //ANIMATION
-    int PLAYER_FRAME_WIDTH = 471;
-    int PLAYER_FRAME_HEIGHT = 530;
+    // //ANIMATION
+    // int PLAYER_FRAME_WIDTH = 471;
+    // int PLAYER_FRAME_HEIGHT = 530;
 
-    for (int i = 0; i < 18; i++) {
-        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
-        r->playerFrames[i].y = 0;
-        r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
-        r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
-    }
+    // for (int i = 0; i < 18; i++) {
+    //     r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+    //     r->playerFrames[i].y = 0;
+    //     r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
+    //     r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
+    // }
 
-    //ABILITY
-    r->abilityTextures[0] = NULL;
-    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
-    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
-    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
-    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
+    // //ABILITY
+    // r->abilityTextures[0] = NULL;
+    // r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
+    // r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
+    // r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
+    // r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
+    // r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
 
-    //Initialize SDL Cursor//
-    r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    // //Initialize SDL Cursor//
+    // r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    // r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
-    SDL_SetCursor(r->cursorArrow);
-    //---------------------//
+    // SDL_SetCursor(r->cursorArrow);
+    // //---------------------//
     
     return 0;
 }
@@ -175,7 +179,7 @@ void Renderer_Destroy(Renderer* r) {
 }
 
 //************RENDERS MENU AND OR MAP********************//
-void Background_Image_Render(Renderer* r, SDL_Texture* img) {
+void Background_Image_Render(Renderer* r) {
 
     int w, h;
     SDL_GetWindowSize(r->window, &w, &h);
@@ -183,7 +187,7 @@ void Background_Image_Render(Renderer* r, SDL_Texture* img) {
     SDL_Rect texr = {0, 0, w, h};
 
     SDL_RenderClear(r->sdlRenderer);
-    SDL_RenderCopy(r->sdlRenderer, img, NULL, &texr);
+    SDL_RenderCopy(r->sdlRenderer, r->mapBackgroundTexture, NULL, &texr);
 }
 //******************  Map stuff  *******************//
 
@@ -272,6 +276,43 @@ void Render_Player(Renderer* r, Player player, int playerIndex) {
 
   
 }
+
+
+
+
+
+
+void AbilitySystem_render(AbilitySystem *system, Renderer *r)
+{
+    float scaleX, scaleY;
+    getScale(r, &scaleX, &scaleY);
+
+    SDL_Rect rect;
+    for (int i = 0; i < MAX_ABILITIES; i++)
+    {
+        if (!AbilityItem_isActive(system, i))
+            continue;
+
+        rect.x = (int)(AbilityItem_getX(system, i) * scaleX);
+        rect.y = (int)(AbilityItem_getY(system, i) * scaleY);
+        rect.w = (int)(AbilityItem_getWidth(system, i)  * scaleX);
+        rect.h = (int)(AbilityItem_getHeight(system, i) * scaleY);
+
+        SDL_Texture *tex = r->abilityTextures[AbilityItem_getType(system, i)];
+        if (tex)
+            SDL_RenderCopy(r->sdlRenderer, tex, NULL, &rect);
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
 {
@@ -1598,4 +1639,56 @@ void Render_Menu(Renderer *r)
     SDL_RenderCopy(r->sdlRenderer, r->startButtonTexture, NULL, &startRect);
     SDL_RenderCopy(r->sdlRenderer, r->optionsButtonTexture, NULL, &optionsRect);
     SDL_RenderCopy(r->sdlRenderer, r->quitButtonTexture, NULL, &quitRect);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// need fix to look better 
+
+void Render_Text(Renderer *renderer, const char *text, int x, int y)
+{
+    SDL_Color white = {25, 25, 25, 255};
+
+    SDL_Surface *surface = TTF_RenderText_Solid(renderer->hudFont, text, white);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->sdlRenderer, surface);
+
+    SDL_Rect dest;
+    dest.x = x;
+    dest.y = y;
+    dest.w = surface->w;
+    dest.h = surface->h;
+
+    SDL_FreeSurface(surface);
+
+    SDL_RenderCopy(renderer->sdlRenderer, texture, NULL, &dest);
+    SDL_DestroyTexture(texture);
+}
+
+
+
+
+
+
+// need fix to look better
+
+void Render_Button(Renderer *renderer, SDL_Rect rect, const char *label)
+{
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 50, 50, 50, 255);
+    SDL_RenderFillRect(renderer->sdlRenderer, &rect);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &rect);
+
+    Render_Text(renderer, label,
+                rect.x + 20,
+                rect.y + 20);
 }

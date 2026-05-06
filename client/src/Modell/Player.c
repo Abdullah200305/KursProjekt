@@ -62,8 +62,7 @@ Player initPlayer(float x, float y)
 
     return p;
 }
-
-void damagePlayer(Player player, SoundSystem *sound) 
+void damagePlayer(Player player) 
 {
     if (player->alive == 0) 
     {
@@ -71,8 +70,7 @@ void damagePlayer(Player player, SoundSystem *sound)
     }
 
     player->lives--;
-    Sound_PlayScream(sound);
-
+   
     if (player->lives <= 0) 
     {
         player->lives = 0;
@@ -125,7 +123,22 @@ void clampPlayerToMap(Player player, float minX, float minY, float maxX, float m
     } 
 }
 
+void setPlayerState(Player player, int lives, int alive) {
+    if (player == NULL) {
+        return;
+    }
 
+    if (lives < 0) {
+        lives = 0;
+    }
+
+    player->lives = lives;
+    player->alive = alive ? 1 : 0;
+
+    if (player->lives == 0) {
+        player->alive = 0;
+    }
+}
 void stopPlayer(Player player) 
 {
     player->vx = 0;

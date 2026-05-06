@@ -7,8 +7,8 @@
 
 #include <Player.h>
 
-#define BOMB_TIMER 2*60 // (X*60) där X = TID sekunder (just nu 2s)
-
+// #define BOMB_TIMER 2*60 // (X*60) där X = TID sekunder (just nu 2s)
+#define BOMB_TIMER 5*60 // (X*60) där X = TID sekunder (just nu 2s)
 
 typedef struct Bomb_type *Bomb;
 
@@ -17,8 +17,10 @@ Bomb createBomb(Player players[]);
 void destroyBomb(Bomb pBomb);
 
 void resetBomb(Bomb pBomb, Player players[]);
+
+
 void updateBomb(Bomb pBomb, Player players[]);
-void bombExplosion(Bomb pBomb, Player players[], SoundSystem *sound);
+void bombExplosion(Bomb pBomb, Player players[]);
 
 //---------Getters--------//
 float getBombX(Bomb pBomb);
@@ -30,4 +32,5 @@ int getBombActive(Bomb pBomb);
 
 ///-------Setters------//
 void setBombCarrier(Bomb pBomb, int index);
+void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding);
 #endif 

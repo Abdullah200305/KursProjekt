@@ -8,7 +8,7 @@ typedef struct Player_type *Player;
 
 
 Player initPlayer(float x, float y);
-void damagePlayer(Player player, SoundSystem *sound);
+void damagePlayer(Player player);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY);

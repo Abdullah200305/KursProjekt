@@ -63,7 +63,6 @@ Player initPlayer(float x, float y)
 
     return p;
 }
-
 void damagePlayer(Player player) 
 {
     if (player->alive == 0) 
@@ -72,6 +71,7 @@ void damagePlayer(Player player)
     }
 
     player->lives--;
+    //Sound_PlayScream(sound);
 
     if (player->lives <= 0) 
     {

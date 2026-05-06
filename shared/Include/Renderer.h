@@ -6,6 +6,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#define WIDTH 1280
+#define HEIGHT 720
+
+
 typedef struct {
     SDL_Window* window;
     SDL_Renderer* sdlRenderer;
@@ -32,7 +36,7 @@ void Renderer_Destroy(Renderer* r);
 void getScale(Renderer* r, float* scaleX, float* scaleY);
 
 // Rendering to the map and background
-void Background_Image_Render(Renderer* r, SDL_Texture* img);
+void Background_Image_Render(Renderer* r);
 void Render_Map(Renderer* r, Map map);
 void Render_Menu(Renderer *r);
 void Render_ScreenFrame(Renderer* r);
@@ -46,5 +50,22 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
 //rendering bomb
 void Render_Bomb(Renderer* r, Bomb bomb);
 void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y);
+
+
+
+void AbilitySystem_render(AbilitySystem *system, Renderer *r);
+
+
+
+
+
+void Render_Text(Renderer *renderer, const char *text, int x, int y);
+
+
+
+
+
+
+void Render_Button(Renderer *renderer, SDL_Rect rect, const char *label);
 
 #endif // RENDERER_H

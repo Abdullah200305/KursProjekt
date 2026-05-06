@@ -89,7 +89,7 @@ void abilitySpawnRate(AbilitySystem *system, Map map, int miliseconds)
 
 
 
-void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player players[], int totalPlayers, SoundSystem *sound)
+void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player players[], int totalPlayers)
 {
     for (int i = 0; i < MAX_ABILITIES; i++)
     {
@@ -129,7 +129,6 @@ void AbilitySystem_checkPickup(AbilitySystem *system, Player player, Player play
                         setPlayerSpeedYX(players[i], 0, 0);
                     }
                 }
-                Sound_PlayIce(sound);
             }   
 
             // apply SWAP effect

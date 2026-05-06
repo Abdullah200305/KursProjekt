@@ -45,7 +45,7 @@ void resetBomb(Bomb pBomb, Player players[]){
     pBomb->y = getPlayerY(players[0]);
 }
 
-void bombExplosion(Bomb pBomb, Player players[], SoundSystem *sound){
+void bombExplosion(Bomb pBomb, Player players[]){
     if(pBomb == NULL) return;
     if(pBomb->exploding) return;
 
@@ -56,8 +56,8 @@ void bombExplosion(Bomb pBomb, Player players[], SoundSystem *sound){
     }
     else
     {
-        damagePlayer(players[pBomb->bombCarrier], sound);
-        Sound_PlayExplosion(sound);
+        damagePlayer(players[pBomb->bombCarrier]);
+       // Sound_PlayExplosion(sound);
     }
 
     pBomb->active = 0;
@@ -88,7 +88,7 @@ void updateBomb(Bomb pBomb, Player players[]){
     pBomb->timer--;
 
     if (pBomb->timer <= 0) {
-        bombExplosion(pBomb, players, NULL); 
+        bombExplosion(pBomb, players); 
     }
 }
 
@@ -120,4 +120,15 @@ void setBombCarrier(Bomb pBomb, int index){
 
     pBomb->bombCarrier = index;
     pBomb->transferCooldown = 60; // 1s cooldown
+}
+
+void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding){
+    if (pBomb == NULL) return;
+
+    pBomb->x = x;
+    pBomb->y = y;
+    pBomb->timer = timer;
+    pBomb->bombCarrier = bombCarrier;
+    pBomb->active = active ? 1 : 0;
+    pBomb->exploding = exploding ? 1 : 0;
 }
