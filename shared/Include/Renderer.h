@@ -30,6 +30,11 @@ typedef struct {
 
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
+int game_init_renderer(Renderer* r);
+
+
+
+
 void Renderer_Clear(Renderer* r);
 void Renderer_Present(Renderer* r);
 void Renderer_Destroy(Renderer* r);

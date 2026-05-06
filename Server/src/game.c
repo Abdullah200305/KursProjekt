@@ -14,19 +14,19 @@ void run(Server server, Game game)
             Server_handlePackets(server);
           
             // player size will change
-            // if (getGameStart(server) && !gameInitialized &&
-            //     getClientCount(server) <= MAX_CLIENTS)
-            // {
-            //     Game_Init(server, &game);
-            //     Game_InitSendToClients(server, &game);
+            if (getGameStart(server) && !gameInitialized &&
+                getClientCount(server) <= MAX_CLIENTS)
+            {
+                Game_Init(server, &game);
+                Game_InitSendToClients(server, &game);
 
-            //     gameInitialized = 1;
-            // }
+                gameInitialized = 1;
+            }
 
-            // if (gameInitialized)
-            // {
-            //     Game_Update(server, &game);
-            // }
+            if (gameInitialized)
+            {
+                Game_Update(server, &game);
+            }
 
 
             lastTick = now;
@@ -53,6 +53,7 @@ void Game_Init(Server server, Game *game)
     {
         // game->players[i] = initPlayer(230+i*40, 300,getClientId(getClient(server,i)));
         game->players[i] = initPlayer(230 + i * 40, 300);
+      
     }
 
     // BombManager_Init() in server
@@ -62,7 +63,7 @@ void Game_Init(Server server, Game *game)
 
 /*********Game_start********/
 void Game_Update(Server server, Game *game)
-{
+{ 
     for (int i = 0; i < getClientCount(server); i++)
     {
         InputPacket in = getInputPlayer(server, i);
@@ -73,6 +74,8 @@ void Game_Update(Server server, Game *game)
 
         float speedX = getPlayerSpeedX(game->players[i]);
         float speedY = getPlayerSpeedY(game->players[i]);
+
+       
 
         if (in.up)
             vy = -speedY;
@@ -204,6 +207,9 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
     }
 }
 
+
+
+
 // uppdate player position based on collision with the map and uppdate player position.
 void movePlayer(Map map, Player player)
 {
@@ -227,7 +233,7 @@ void movePlayer(Map map, Player player)
         else // walk in grass
         {
             setPlayerPosition(player, newX, getPlayerY(player));
-            setPlayerSpeedYX(player, 5, 5);
+            setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));  
         }
     }
 
@@ -252,10 +258,29 @@ void movePlayer(Map map, Player player)
         else
         {
             setPlayerPosition(player, getPlayerX(player), newY);
-            setPlayerSpeedYX(player, 5, 5);
+             setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));
+           
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Game_InitSendToClients(Server server, Game *game)
 {

@@ -14,6 +14,8 @@ struct  Player_type
 
     float speedY;
     float speedX;
+    float baseSpeedX; 
+    float baseSpeedY;    
 
     //animation
     int animationFrame;
@@ -46,8 +48,10 @@ Player initPlayer(float x, float y)
     p->alive = 1;
     p->id=0;
 
-    p->speedY = 5;
-    p->speedX = 5;
+    p->speedY = 10;
+    p->speedX = 10;
+    p->baseSpeedX = 10;
+    p->baseSpeedY = 10;    
 
     p->speedTimer = 0;
 
@@ -187,6 +191,14 @@ float getPlayerSpeedX(Player p)
     return p->speedX;
 }
 float getPlayerSpeedY(Player p)
+{
+    return p->speedY;
+}
+float getBaseSpeedX(Player p)
+{
+    return p->speedX;
+}
+float getBaseSpeedY(Player p)
 {
     return p->speedY;
 }

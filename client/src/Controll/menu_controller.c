@@ -1,16 +1,11 @@
 #include "menu_controller.h"
 
-
-
- void menu_init(Game* game,Renderer* renderer){
+void menu_init(Game *game, Renderer *renderer)
+{
     Sound_Init(&game->sound);
     game->state = GAME_STATE_MENU;
-    Renderer_Init(renderer, "TIC TAC BOMB", WIDTH, HEIGHT);    
- }
-
-
-
-
+    Renderer_Init(renderer, "TIC TAC BOMB", WIDTH, HEIGHT);
+}
 
 void menu_loop(Game *game, Renderer *renderer)
 {
@@ -30,14 +25,14 @@ void menu_loop(Game *game, Renderer *renderer)
         getScale(renderer, &scaleX, &scaleY);
         SDL_GetWindowSize(renderer->window, &w, &h);
 
-        float buttonWidth  = 750 * 0.5f * scaleX;
+        float buttonWidth = 750 * 0.5f * scaleX;
         float buttonHeight = 170 * 0.5f * scaleY;
 
         int centerX = w / 2 - buttonWidth / 2;
 
-        SDL_Rect startRect   = { centerX, (int)(300 * scaleY), buttonWidth, buttonHeight };
-        SDL_Rect optionsRect = { centerX, (int)(420 * scaleY), buttonWidth, buttonHeight };
-        SDL_Rect quitRect    = { centerX, (int)(540 * scaleY), buttonWidth, buttonHeight };
+        SDL_Rect startRect = {centerX, (int)(300 * scaleY), buttonWidth, buttonHeight};
+        SDL_Rect optionsRect = {centerX, (int)(420 * scaleY), buttonWidth, buttonHeight};
+        SDL_Rect quitRect = {centerX, (int)(540 * scaleY), buttonWidth, buttonHeight};
 
         // ---------------- EVENTS ----------------
         while (SDL_PollEvent(&event))
@@ -54,7 +49,6 @@ void menu_loop(Game *game, Renderer *renderer)
                 {
                     printf("START CLICKED\n");
                     game->state = GAME_STATE_CHOOSE_HOST_JOIN;
-                    
                 }
 
                 if (SDL_PointInRect(&mousePoint, &optionsRect))
@@ -68,9 +62,6 @@ void menu_loop(Game *game, Renderer *renderer)
                 }
             }
         }
-
-
-
 
         // ---------------- HOVER ----------------
         if (SDL_PointInRect(&mousePoint, &startRect) ||
@@ -93,18 +84,10 @@ void menu_loop(Game *game, Renderer *renderer)
     }
 }
 
-
-
-
-
-
-
-
-
-
 void choose_host_join_loop(Game *game, Renderer *renderer)
 {
-    if(game->state != GAME_STATE_CHOOSE_HOST_JOIN){
+    if (game->state != GAME_STATE_CHOOSE_HOST_JOIN)
+    {
         return;
     }
     SDL_Event event;
@@ -121,7 +104,7 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
         {
             if (event.type == SDL_QUIT)
             {
-                game->state = GAME_STATE_GAME_OVER;
+                game->running = 0;
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN &&
@@ -138,7 +121,7 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
                 }
             }
         }
-        // this will make it better in render 
+        // this will make it better in render
         SDL_RenderClear(renderer->sdlRenderer);
 
         Render_Text(renderer, "HOST or JOIN?", 350, 200);
@@ -159,7 +142,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     SDL_Event event;
 
-    // ---------------- INIT HOST ONCE ----------------
+    // ---------------- INIT HOST ONCE ----------------//
     if (!initialized)
     {
         printf("[HOST] Starting server...\n");
@@ -173,7 +156,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
         if (*clientNet)
         {
-            ClientNet_SendStartGame(*clientNet);
+            ClientNet_SendJoinRequest(*clientNet);
             connectedAsHost = 1;
             printf("[HOST] JOIN sent\n");
         }
@@ -190,25 +173,27 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     {
         if (event.type == SDL_QUIT)
         {
-            game->state = GAME_STATE_GAME_OVER;
+            game->running = 0;
         }
 
-        
-        // CLICK = START GAME REQUEST
         if (event.type == SDL_MOUSEBUTTONDOWN)
         {
-           
-
             if (*clientNet)
             {
-                 printf("[HOST] Start game request sent\n");
+                printf("[HOST] Start game request sent\n");
                 ClientNet_SendStartGame(*clientNet);
             }
         }
     }
 
+  
+    ClientNet_TryReceive(*clientNet);
+    if (ClientNet_HasGameInit(*clientNet))
+    {
+        printf("Game starting\n");
+        game->state = GAME_STATE_PLAYING;
+    }
 
-   
     // ---------------- RENDER ----------------
     SDL_RenderClear(renderer->sdlRenderer);
 
@@ -228,45 +213,44 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
 
 
-
-void client_setup_loop(Game *game, Renderer *renderer, ClientNet clientNet)
+void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 {
     if (game->state != GAME_STATE_CLIENT_SETUP)
         return;
 
+    static int initialized = 0;  
+
     SDL_Event event;
 
-    clientNet = ClientNet_Init("127.0.0.1", 2000);
-
-    if (!clientNet)
+    if (!initialized)  
     {
-        printf("Client init failed\n");
-        return;
+        *clientNet = ClientNet_Init("127.0.0.1", 2000);
+        if (!*clientNet)
+        {
+            printf("Client init failed\n");
+            return;
+        }
+        ClientNet_SendJoinRequest(*clientNet);
+        initialized = 1;
     }
 
-    ClientNet_SendJoinRequest(clientNet);
-
-    while (game->state == GAME_STATE_CLIENT_SETUP)
+    // ---------------- INPUT ----------------
+    while (SDL_PollEvent(&event))
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-                game->state = GAME_STATE_GAME_OVER;
-        }
-
-        // Receive packets and check for game init
-        ClientNet_TryReceive(clientNet);
-        if (ClientNet_HasGameInit(clientNet))
-        {
-          
-            printf("Game starting\n");
-            game->state = GAME_STATE_PLAYING;
-        }
-
-        SDL_RenderClear(renderer->sdlRenderer);
-
-        Render_Text(renderer, "WAITING FOR HOST...", 300, 300);
-
-        SDL_RenderPresent(renderer->sdlRenderer);
+        if (event.type == SDL_QUIT)
+            game->running = 0;
     }
+
+    // ---------------- RECEIVE ----------------
+    ClientNet_TryReceive(*clientNet);
+    if (ClientNet_HasGameInit(*clientNet))
+    {
+        printf("Game starting\n");
+        game->state = GAME_STATE_PLAYING;
+    }
+
+    // ---------------- RENDER ----------------
+    SDL_RenderClear(renderer->sdlRenderer);
+    Render_Text(renderer, "WAITING FOR HOST...", 300, 300);
+    SDL_RenderPresent(renderer->sdlRenderer);
 }

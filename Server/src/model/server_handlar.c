@@ -9,13 +9,13 @@ void Server_handlePackets(Server server){
     {
      
         int type = ((HeaderPacket *)packet)->type;  // packet will have this to know which typ is it 
-        printf("Packet received of type: %d\n", type);
+        //printf("Packet received of type: %d\n", type);
         switch (type)
         {
             case PACKET_JOIN_REQUEST:
+            printf("[server] join\n");
                 Handle_join(server,(JoinRequestPacket *) packet, ip);
                 break;
-
             case PACKET_INPUT:
                 Handle_Input(server,(InputPacket *) packet);
                 break;
@@ -40,6 +40,7 @@ void Server_handlePackets(Server server){
 
 void Handle_gameStart(Server server,StartGamePacket * packet){
 setGameStart(server, 1);
+printf("Game started!\n");
 }
 
 

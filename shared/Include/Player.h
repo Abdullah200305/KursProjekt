@@ -34,7 +34,8 @@ int getPlayerId(Player player);
 float getPlayerSpeedX(Player p);
 float getPlayerSpeedY(Player p);
 int getPlayerAnimationFrame(Player player);
-
+float getBaseSpeedX(Player p);
+float getBaseSpeedY(Player p);
 
 
 void setPlayerState(Player player, int lives, int alive);

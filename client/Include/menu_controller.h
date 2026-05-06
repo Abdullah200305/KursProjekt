@@ -18,6 +18,6 @@ void menu_cleanup(Game* game, Renderer* renderer);
 
 void choose_host_join_loop(Game *game, Renderer *renderer);
 void host_setup_loop(Game *game, Renderer *renderer,ClientNet *clientNet);
-void client_setup_loop(Game *game, Renderer *renderer,ClientNet clientNet);
+void client_setup_loop(Game *game, Renderer *renderer,ClientNet *clientNet);
 
 #endif // MENU_CONTROLLER_H

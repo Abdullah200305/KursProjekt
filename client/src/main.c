@@ -19,22 +19,27 @@ while (game.running)
     switch (game.state)
     {
         case GAME_STATE_MENU:
+            //printf("Client is in menu state\n");
             menu_loop(&game, &renderer);
             break;
 
         case GAME_STATE_PLAYING:
-            game_init(&game, &renderer, clientNet);
+           // printf("Client is in menu playing state\n");
+            game_loop(&game, &renderer, clientNet);
             break;
 
         case GAME_STATE_CHOOSE_HOST_JOIN:
+           // printf("Client is in menu select state\n");
             choose_host_join_loop(&game, &renderer);
             break;
 
         case GAME_STATE_CLIENT_SETUP:
-            client_setup_loop(&game, &renderer, clientNet);
+           // printf("Client is in menu join state\n");
+            client_setup_loop(&game, &renderer, &clientNet);
             break;
 
         case GAME_STATE_HOST_SETUP:
+           // printf("Client is in menu host state\n");
             host_setup_loop(&game, &renderer, &clientNet);
             break;
 

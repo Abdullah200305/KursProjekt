@@ -1,55 +1,27 @@
 #include "Game_controll.h"
 
 
-// void reset_game(Game *game)
-// {
-//     game->state = GAME_STATE_PLAYING;
-//     game->numPlayers = 2;
-
-//     game->players[0] = initPlayer(230, 300);
-//     game->players[1] = initPlayer(270, 300);
-
-//     game->bomb = createBomb(game->players);
-
-//     if (game->abilitySystem != NULL)
-//     {
-//         AbilitySystem_destroy(game->abilitySystem);
-//     }
-
-//     game->abilitySystem = AbilitySystem_create();
-//     AbilitySystem_init(game->abilitySystem);
-    
-//     Sound_PlayGameMusic(&game->sound); 
-// }
-
-
-
-
-
-
-
-
-
-
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
+
+// this will move maybe to function called wait and init stuff before game start     
+game_init_renderer(renderer);
+game_init(game, renderer, clientNet); 
+Sound_PlayGameMusic(&game->sound);
+
+
 Uint32 lastSend = 0;
 const int SEND_RATE = 16;
 SDL_Event event;
 
-  int mouseX, mouseY;
-
-    SDL_Point mousePoint = {
-        mouseX,
-        mouseY 
-    };
 
 
 
-while (game->state != GAME_STATE_GAME_OVER)
+
+while (game->state == GAME_STATE_PLAYING)
 {
-
+   
     // this will moved to input.c file
     while (SDL_PollEvent(&event))
         {   
@@ -57,189 +29,76 @@ while (game->state != GAME_STATE_GAME_OVER)
             switch (event.type)
             {
                 case SDL_QUIT:
+                    game->state = GAME_STATE_GAME_OVER;
+                    game->running = 0;
                     break;
 
-                case SDL_KEYDOWN:
+                // case SDL_KEYDOWN:
 
-                    if (game->state == GAME_STATE_MENU)
-                    {
-                        // if (event.key.keysym.sym == SDLK_h)
-                        // {
-                        //   //  reset_game(game);
-                        //     printf("hello!");
-                        // }  
-                    }
+                //     if (game->state == GAME_STATE_MENU)
+                //     {
+                //         // if (event.key.keysym.sym == SDLK_h)
+                //         // {
+                //         //   //  reset_game(game);
+                //         //     printf("hello!");
+                //         // }  
+                //     }
 
-                    if (game->state == GAME_STATE_GAME_OVER)
-                    {
-                        // if (event.key.keysym.sym == SDLK_r)
-                        // {
-                        //    // reset_game(game);
-                        //     gameOverShown = 0;
-                        //}
+                    // if (game->state == GAME_STATE_GAME_OVER)
+                    // {
+                    //     // if (event.key.keysym.sym == SDLK_r)
+                    //     // {
+                    //     //    // reset_game(game);
+                    //     //     gameOverShown = 0;
+                    //     //}
 
-                        if (event.key.keysym.sym == SDLK_m)
-                        {
-                            game->state = GAME_STATE_MENU;
-                            Sound_PlayMenuMusic(&game->sound);
-                            printf("Back to menu pressed\n");
-                        }
-                    }
+                    //     if (event.key.keysym.sym == SDLK_m)
+                    //     {
+                    //         game->state = GAME_STATE_MENU;
+                    //         Sound_PlayMenuMusic(&game->sound);
+                    //         printf("Back to menu pressed\n");
+                    //     }
+                    // }
                     break;
             }
         }
 
 
+    // this for recive uppdate logic from server only 
+    if (clientNet)
+    {
+        ClientNet_TryReceive(clientNet);
+        if (ClientNet_HasGameState(clientNet))
+        {
+            game_apply_network_state(game, clientNet);  
+        }
+    }
+
+
+    // this will update after to put it in input files insteade for here && moved to input.c file
+    // send input at fixed rate
+    Uint32 now = SDL_GetTicks();
+    if (clientNet && ClientNet_GetClientId(clientNet) >= 0)
+    {
+        if (now - lastSend >= SEND_RATE)
+        {
+            InputPacket input = {0};
+            const Uint8 *state = SDL_GetKeyboardState(NULL);
+            input.type = PACKET_INPUT;
+            input.clientId = ClientNet_GetClientId(clientNet);
+            input.up    = state[SDL_SCANCODE_W];
+            input.down  = state[SDL_SCANCODE_S];
+            input.left  = state[SDL_SCANCODE_A];
+            input.right = state[SDL_SCANCODE_D];
+            ClientNet_SendInput(clientNet, &input);
+            lastSend = now;
+        }
+    };
+
+
+    game_update(game, renderer);    
 
 
-// will remove 
-// // this will change place it in another file in controll  like in input.c
-// if (game->state == GAME_STATE_MENU)
-// {
-//     // ---------------- INPUT ----------------
-//     SDL_GetMouseState(&mousePoint.x, &mousePoint.y);
-
-//     float scaleX, scaleY;
-//     getScale(renderer, &scaleX, &scaleY);
-
-//     int w, h;
-//     SDL_GetWindowSize(renderer->window, &w, &h);
-
-//     float buttonWidth = 750 * 0.5f * scaleX;
-//     float buttonHeight = 170 * 0.5f * scaleY;
-
-//     int centerX = w / 2 - buttonWidth / 2;
-
-//     SDL_Rect startRect   = { centerX, (int)(300 * scaleY), buttonWidth, buttonHeight };
-//     SDL_Rect optionsRect = { centerX, (int)(420 * scaleY), buttonWidth, buttonHeight };
-//     SDL_Rect quitRect    = { centerX, (int)(540 * scaleY), buttonWidth, buttonHeight };
-
-//     if (SDL_PointInRect(&mousePoint, &startRect) ||
-//         SDL_PointInRect(&mousePoint, &optionsRect) ||
-//         SDL_PointInRect(&mousePoint, &quitRect))
-//     {
-//         SDL_SetCursor(renderer->cursorHand);
-//     }
-//     else
-//     {
-//         SDL_SetCursor(renderer->cursorArrow);
-//     }
-
-//     if (event.type == SDL_MOUSEBUTTONDOWN &&
-//         event.button.button == SDL_BUTTON_LEFT)
-//     {
-//         if (SDL_PointInRect(&mousePoint, &startRect))
-//         {
-//             SDL_SetCursor(renderer->cursorArrow);
-//             game->state = GAME_STATE_GAME_OVER; // EXEMPEL FIX
-//         }
-
-//         if (SDL_PointInRect(&mousePoint, &optionsRect))
-//         {
-//             // options state
-//         }
-
-//         if (SDL_PointInRect(&mousePoint, &quitRect))
-//         {
-//             game->state = game->state = GAME_STATE_GAME_OVER;
-//         }
-//     }
-
-//     // ---------------- RENDER ----------------
-//     SDL_RenderClear(renderer->sdlRenderer);
-
-//     Render_Menu(renderer);
-
-//     SDL_RenderPresent(renderer->sdlRenderer);
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-   
-    // // this for recive uppdate logic from server only 
-    // if (clientNet)
-    // {
-    //     ClientNet_TryReceive(clientNet);
-    //     if (ClientNet_HasGameState(clientNet))
-    //         game_apply_network_state(game, clientNet);  
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // // this will update after to put it in input files insteade for here && moved to input.c file
-    // // send input at fixed rate
-    // Uint32 now = SDL_GetTicks();
-    // if (clientNet && ClientNet_GetClientId(clientNet) >= 0)
-    // {
-    //     if (now - lastSend >= SEND_RATE)
-    //     {
-    //         InputPacket input = {0};
-    //         const Uint8 *state = SDL_GetKeyboardState(NULL);
-    //         input.type = PACKET_INPUT;
-    //         input.clientId = ClientNet_GetClientId(clientNet);
-    //         input.up    = state[SDL_SCANCODE_W];
-    //         input.down  = state[SDL_SCANCODE_S];
-    //         input.left  = state[SDL_SCANCODE_A];
-    //         input.right = state[SDL_SCANCODE_D];
-    //         ClientNet_SendInput(clientNet, &input);
-    //         lastSend = now;
-    //     }
-    // };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //  if (game->state == GAME_STATE_PLAYING)
-    //     {
-    //         game_update(game, renderer);
-    //     }
 
     //        else if (game->state == GAME_STATE_GAME_OVER)
     //     {
@@ -298,7 +157,7 @@ void game_update(Game *game, Renderer *renderer)
   
    
 
-    AbilitySystem_render(game->abilitySystem, renderer);
+   AbilitySystem_render(game->abilitySystem, renderer);
    for (int i = 0; i < game->numPlayers; i++)
     {
         setPlayerAnimation(game->players[i]);
@@ -333,7 +192,6 @@ int windowH = 0;
 SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
 Render_BombHUD(renderer, game->bomb, (windowW / 2) - 130, 20);
-
 const int hudPanelW = 250;
 const int hudPanelH = 74;
 const int hudMargin = 20;
@@ -406,11 +264,20 @@ for (int i = 0; i < hudPlayerCount; i++)
 
     Renderer_Present(renderer);
 
-     //LAUGH
+
+
+
+
+ // here will be the miusic and sound effect logic
+if(getBombExploding(game->bomb)){
+    Sound_PlayExplosion(&game->sound);
+}
+
+    // Laugh sound effect timer 
     static int RNGlaughTimer = 0;
     RNGlaughTimer--;
     if (RNGlaughTimer <= 0) {
-        RNGlaughTimer = 300 + rand() % 600;
+        RNGlaughTimer = 300 + rand() % 6000;
 
         if (rand() % 2 == 0)
             Sound_PlayLaugh1(&game->sound);
@@ -418,6 +285,10 @@ for (int i = 0; i < hudPlayerCount; i++)
             Sound_PlayLaugh2(&game->sound);
     }
 }
+
+
+
+
 
 
 // init stuff before game start like map, bomb and players
@@ -525,16 +396,10 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].lives,
             packet.data.players[i].alive
         );
-
-
-        setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer); 
-
-
-        
-        //printf("%d livesss %d\n",i,getPlayerLives(game->players[i]));
-       
+        setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer);  
+        //  printf("x: %d y: %d\n", packet.data.players[i].x, packet.data.players[i].y);
     }
-    
+   
     setBombState(
         game->bomb,
         packet.data.bomb.x,
@@ -544,6 +409,7 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
         packet.data.bomb.active,
         packet.data.bomb.exploding
     );
+    
    
     for (int i = 0; i < packet.data.abilities.numAbilities; i++)
     {  
@@ -589,7 +455,6 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     //game->state = GAME_STATE_PLAYING; // this will be change
 
 
-    game->state = GAME_STATE_MENU;
 
     game->numPlayers = packet.data.numPlayers;
     for (int i = 0; i < game->numPlayers; i++)

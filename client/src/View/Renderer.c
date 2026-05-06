@@ -70,63 +70,123 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
         Renderer_Destroy(r);
         return -1;
     }
+    return 0;
+}
 
 
 
+int game_init_renderer(Renderer* r) {
+     
+
+    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    if (!r->mapBackgroundTexture)
+    {
+        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+    }
+    
+
+    // player will change 
+    //SPELARE
+    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
+    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
+    //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
+    //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
+    for(int i = 0; i < 2; i++)
+    {
+        if (!r->playerTexture[i]) {
+        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
+        Renderer_Destroy(r);
+        return -1;
+        }
+    }
+    
+    //ANIMATION
+    int PLAYER_FRAME_WIDTH = 471;
+    int PLAYER_FRAME_HEIGHT = 530;
+
+    for (int i = 0; i < 18; i++) {
+        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = 0;
+        r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
+    }
+
+    //ABILITY
+    r->abilityTextures[0] = NULL;
+    r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
+    r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
+    r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
+    r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
+    r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
+
+    //Initialize SDL Cursor//
+    r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+
+    SDL_SetCursor(r->cursorArrow);
+    // //---------------------//
+    
 
 
-    /// this will will go some where else will change the place of it 
-
-    // r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    // r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MAP_BACKGROUND.png");
     // if (!r->mapBackgroundTexture)
     // {
     //     fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
     //     Renderer_Destroy(r);
     //     return -1;
     // }
-    
-    // //SPELARE
-    // r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
-    // r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
-    // //r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
-    // //r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
-    // for(int i = 0; i < 2; i++)
+
+    // r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/PLAYER1.png");
+    // if (!r->playerTexture[0])
     // {
-    //     if (!r->playerTexture[i]) {
-    //     fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
+    //     fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
     //     Renderer_Destroy(r);
     //     return -1;
-    //     }
-    // }
-    
-    // //ANIMATION
-    // int PLAYER_FRAME_WIDTH = 471;
-    // int PLAYER_FRAME_HEIGHT = 530;
-
-    // for (int i = 0; i < 18; i++) {
-    //     r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
-    //     r->playerFrames[i].y = 0;
-    //     r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
-    //     r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     // }
 
-    // //ABILITY
-    // r->abilityTextures[0] = NULL;
-    // r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
-    // r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
-    // r->abilityTextures[3] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SWAP.png");
-    // r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
-    // r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
+    // r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/PLAYER2.png");
+    // if (!r->playerTexture[1])
+    // {
+    //     fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+    //     Renderer_Destroy(r);
+    //     return -1;
+    // }
 
-    // //Initialize SDL Cursor//
-    // r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    // r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    // r->abilityTextures[0] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_BOMB.png");
+    // if (!r->abilityTextures[0])
+    // {
+    //     fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+    //     Renderer_Destroy(r);
+    //     return -1;
+    // }
 
-    // SDL_SetCursor(r->cursorArrow);
-    // //---------------------//
-    
+    // // Load other ability textures similarly...
+
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void getScale(Renderer* r, float* scaleX, float* scaleY) {
     int w, h;

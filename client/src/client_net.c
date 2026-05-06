@@ -108,22 +108,18 @@ int ClientNet_SendJoinRequest(ClientNet client)
 
 int ClientNet_SendStartGame(ClientNet client)
 {
-    HeaderPacket packet;
-
-    if (client == NULL || client->socket == NULL || client->sendPacket == NULL)
-    {
+   StartGamePacket packet;
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL) {
         return -1;
     }
-
-    packet.type = PACKET_START_GAME; 
+    packet.type = PACKET_START_GAME;
 
     client->sendPacket->address = client->serverAddress;
     memcpy(client->sendPacket->data, &packet, sizeof(packet));
     client->sendPacket->len = sizeof(packet);
 
-    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
-    {
-        printf("ClientNet_SendStartGame failed: %s\n", SDLNet_GetError());
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0) {
+        printf("ClientNet_SendJoinRequest failed: %s\n", SDLNet_GetError());
         return -1;
     }
 
@@ -182,7 +178,8 @@ int ClientNet_SendInput(ClientNet client, const InputPacket *packet)
 
 int ClientNet_TryReceive(ClientNet client)
 {
-    int packetType;
+    // abody make change here
+    Uint8 packetType;
 
     if (client == NULL || client->socket == NULL || client->recvPacket == NULL) {
         return -1;
@@ -197,8 +194,10 @@ int ClientNet_TryReceive(ClientNet client)
         return 1;
     }
 
-    memcpy(&packetType, client->recvPacket->data, sizeof(int));
+    memcpy(&packetType, client->recvPacket->data, sizeof(Uint8));
 
+
+  
     if (packetType == PACKET_JOIN_ACCEPT) {
         JoinAcceptPacket packet;
 
@@ -246,6 +245,7 @@ int ClientNet_TryReceive(ClientNet client)
     }
    
     if (packetType == PACKET_GAME_STATE) {
+       
         GameStatePacket packet;
        
         if (client->recvPacket->len < (int)sizeof(GameStatePacket)) {
