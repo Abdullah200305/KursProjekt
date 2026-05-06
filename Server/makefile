@@ -1,7 +1,7 @@
 CC = gcc
 
 CFLAGS = -g -Iinclude -I../shared/include
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_ttf -lSDL2_mixer
 
 SRC = src
 EXE = exe

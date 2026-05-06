@@ -25,4 +25,8 @@ void ClientNet_ClearGameState(ClientNet client);
 int ClientNet_GetClientId(ClientNet client);
 void ClientNet_SetClientId(ClientNet client, int clientId);
 
+
+void get_local_ip(char *buffer);
+int ClientNet_SendStartGame(ClientNet client);
+
 #endif

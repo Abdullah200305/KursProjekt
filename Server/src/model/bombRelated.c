@@ -20,8 +20,8 @@ Bomb createBomb(Player players[]){
 
     if (pBomb == NULL) return NULL;
     
-    pBomb->bombCarrier = rand() % 4;   // demo: vi har 2 spelare
-    pBomb->timer = 1000;
+    pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
+    pBomb->timer = BOMB_TIMER;      // ändra tid för bomb i bombRelated.h
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -35,8 +35,8 @@ Bomb createBomb(Player players[]){
 void resetBomb(Bomb pBomb, Player players[]){
     if(pBomb==NULL) return;
 
-    pBomb->bombCarrier = rand() % 4;   // demo: vi har 2 spelare
-    pBomb->timer = 1000;
+    pBomb->bombCarrier = rand() % 2;   // demo: vi har 2 spelare
+    pBomb->timer = BOMB_TIMER;
     pBomb->active = 1;
     pBomb->exploding = 0;
     pBomb->explosionTimer = 0;
@@ -57,6 +57,7 @@ void bombExplosion(Bomb pBomb, Player players[]){
     else
     {
         damagePlayer(players[pBomb->bombCarrier]);
+       // Sound_PlayExplosion(sound);
     }
 
     pBomb->active = 0;
@@ -87,7 +88,7 @@ void updateBomb(Bomb pBomb, Player players[]){
     pBomb->timer--;
 
     if (pBomb->timer <= 0) {
-        bombExplosion(pBomb, players);
+        bombExplosion(pBomb, players); 
     }
 }
 
@@ -118,7 +119,7 @@ void setBombCarrier(Bomb pBomb, int index){
     if (pBomb->transferCooldown > 0) return;
 
     pBomb->bombCarrier = index;
-    pBomb->transferCooldown = 60;
+    pBomb->transferCooldown = 60; // 1s cooldown
 }
 
 void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int active, int exploding){

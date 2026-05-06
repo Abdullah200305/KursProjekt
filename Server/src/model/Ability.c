@@ -1,4 +1,5 @@
 #include "ability.h"
+#include "Sound.h"
 
 // Intern struct
 typedef struct {
@@ -58,7 +59,6 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             } while (!(tile == 0 || tile == 3));
 
             int tileSize = getTileSize(map);
-
             system->items[i].active = true;
             system->items[i].type = rand() % 5 + 1; // initalized to always spawn the speed boost  + freeze for now, when more abilties created do rand() % 6 
 

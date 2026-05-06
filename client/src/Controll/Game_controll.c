@@ -1,29 +1,77 @@
 #include "Game_controll.h"
 
+
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
+
+// this will move maybe to function called wait and init stuff before game start     
+game_init_renderer(renderer);
+game_init(game, renderer, clientNet); 
+Sound_PlayGameMusic(&game->sound);
+
+
 Uint32 lastSend = 0;
 const int SEND_RATE = 16;
+SDL_Event event;
 
-while (game->state != GAME_STATE_GAME_OVER)
+
+
+
+
+while (game->state == GAME_STATE_PLAYING)
 {
-
-    // this will moved to input.c file
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        if (event.type == SDL_QUIT)
-            game->state = GAME_STATE_GAME_OVER;
-    }
-
    
+    // this will moved to input.c file
+    while (SDL_PollEvent(&event))
+        {   
+
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                    game->state = GAME_STATE_GAME_OVER;
+                    game->running = 0;
+                    break;
+
+                // case SDL_KEYDOWN:
+
+                //     if (game->state == GAME_STATE_MENU)
+                //     {
+                //         // if (event.key.keysym.sym == SDLK_h)
+                //         // {
+                //         //   //  reset_game(game);
+                //         //     printf("hello!");
+                //         // }  
+                //     }
+
+                    // if (game->state == GAME_STATE_GAME_OVER)
+                    // {
+                    //     // if (event.key.keysym.sym == SDLK_r)
+                    //     // {
+                    //     //    // reset_game(game);
+                    //     //     gameOverShown = 0;
+                    //     //}
+
+                    //     if (event.key.keysym.sym == SDLK_m)
+                    //     {
+                    //         game->state = GAME_STATE_MENU;
+                    //         Sound_PlayMenuMusic(&game->sound);
+                    //         printf("Back to menu pressed\n");
+                    //     }
+                    // }
+                    break;
+            }
+        }
+
+
     // this for recive uppdate logic from server only 
     if (clientNet)
     {
         ClientNet_TryReceive(clientNet);
         if (ClientNet_HasGameState(clientNet))
+        {
             game_apply_network_state(game, clientNet);  
+        }
     }
 
 
@@ -47,34 +95,51 @@ while (game->state != GAME_STATE_GAME_OVER)
         }
     };
 
-    game_update(game, renderer); // it will make only render
+
+    game_update(game, renderer);    
+
+
+
+    //        else if (game->state == GAME_STATE_GAME_OVER)
+    //     {
+    //             const char *message = "Game over!";
+
+    //             if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    //             {
+    //                 message = "Game over!\nPlayer 1 wins.\n\nPress R to play again.\nPress M to return to menu.";
+    //             }
+    //             else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+    //             {
+    //                 message = "Game over!\nPlayer 2 wins.\n\nPress R to play again.\nPress M to return to menu.";
+    //             }
+    //             else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+    //             {
+    //                 message = "Game over!\nBoth players died.\n\nPress R to play again.\nPress M to return to menu.";
+    //             }
+
+    //             SDL_ShowSimpleMessageBox(
+    //                 SDL_MESSAGEBOX_INFORMATION,
+    //                 "Game Over",
+    //                 message,
+    //                 renderer->window
+    //             );
+
+    //             // gameOverShown = 1;   
+    //     }
     SDL_Delay(1); 
 }
+}
 
-    
 
-//will updte
-const char *message = "Game over! Click OK to close.";
-if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-{
-    message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
-}
-else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
-{
-    message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
-}
-else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-{
-    message = "Game over!\nBoth players died.\nClick OK to close.";
-}
-SDL_ShowSimpleMessageBox(
-    SDL_MESSAGEBOX_INFORMATION,
-    "Game Over",
-    message,
-    renderer->window
-);
 
-}
+
+
+
+
+
+
+
+
 
 
 
@@ -88,11 +153,11 @@ void game_update(Game *game, Renderer *renderer)
 
     // this for test 
     //Render_Map(renderer, game->map);
-    UI_playerState(game->players,renderer);
+ 
   
    
 
-    AbilitySystem_render(game->abilitySystem, renderer);
+   AbilitySystem_render(game->abilitySystem, renderer);
    for (int i = 0; i < game->numPlayers; i++)
     {
         setPlayerAnimation(game->players[i]);
@@ -109,7 +174,7 @@ void game_update(Game *game, Renderer *renderer)
 
     Render_Bomb(renderer, game->bomb);
 
-
+    Render_ScreenFrame(renderer);
     
 
 
@@ -121,17 +186,58 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
-    // this will uppdate
-    // if (isPlayerAlive(game->players[0]))
-    // {
-    //     Render_PlayerLives(renderer, game->players[0], 20, 20);
-    // }
+    // will uppdate
+int windowW = 0;
+int windowH = 0;
+SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
-    
-    // if (isPlayerAlive(game->players[1]))
-    // {
-    //     Render_PlayerLives(renderer, game->players[1], 20, 50);
-    // }
+Render_BombHUD(renderer, game->bomb, (windowW / 2) - 130, 20);
+const int hudPanelW = 250;
+const int hudPanelH = 74;
+const int hudMargin = 20;
+
+
+int hudPlayerCount = game->numPlayers;
+
+if (hudPlayerCount > 4)
+{
+    hudPlayerCount = 4;
+}
+
+for (int i = 0; i < hudPlayerCount; i++)
+{
+    int hudX = 20;
+    int hudY = 20;
+
+    if (i == 0)
+    {
+        hudX = hudMargin;
+        hudY = hudMargin;
+    }
+    else if (i == 1)
+    {
+        hudX = windowW - hudPanelW - hudMargin;
+        hudY = hudMargin;
+    }
+    else if (i == 2)
+    {
+        hudX = hudMargin;
+        hudY = windowH - hudPanelH - hudMargin;
+    }
+    else if (i == 3)
+    {
+        hudX = windowW - hudPanelW - hudMargin;
+        hudY = windowH - hudPanelH - hudMargin;
+    }
+
+    if (game->players[i] != NULL && isPlayerAlive(game->players[i]))
+    {
+        int hasBomb = (i == getBombCarrier(game->bomb));
+
+        Render_PlayerHUD(renderer, game->players[i], i, hudX, hudY, hasBomb);
+    }
+}
+
 
     int aliveCount = 0;
 
@@ -152,14 +258,44 @@ void game_update(Game *game, Renderer *renderer)
 
 
 
+
+
+
+
     Renderer_Present(renderer);
+
+
+
+
+
+ // here will be the miusic and sound effect logic
+if(getBombExploding(game->bomb)){
+    Sound_PlayExplosion(&game->sound);
 }
+
+    // Laugh sound effect timer 
+    static int RNGlaughTimer = 0;
+    RNGlaughTimer--;
+    if (RNGlaughTimer <= 0) {
+        RNGlaughTimer = 300 + rand() % 6000;
+
+        if (rand() % 2 == 0)
+            Sound_PlayLaugh1(&game->sound);
+        else
+            Sound_PlayLaugh2(&game->sound);
+    }
+}
+
+
+
+
 
 
 // init stuff before game start like map, bomb and players
 void game_init(Game *game, Renderer *renderer,ClientNet clientNet)
 {
-// 10_000ms  mean 10 sec  will run game init otherwise re-join to server
+//10_000ms  mean 10 sec  will run game init otherwise re-join to server
+
 const Uint32 timeout = SDL_GetTicks() + 10000; 
 int game_init = -1;
 while (!SDL_TICKS_PASSED(SDL_GetTicks(), timeout)) {
@@ -181,7 +317,6 @@ if(game_init<0){
 printf("failed to make game_init try again!!\n");
 return;
 }
-Renderer_Init(renderer, "Hello, World!", getWidth(game->map), getHeight(game->map));
 }
 
 
@@ -193,6 +328,22 @@ void game_cleanup(Game *game, Renderer *renderer)
     Map_destroy(game->map);
     Renderer_Destroy(renderer);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -245,11 +396,10 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
             packet.data.players[i].lives,
             packet.data.players[i].alive
         );
-
-
-        setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer); 
+        setPlayerFreezeTimer( game->players[i],packet.data.players[i].freezeTimer);  
+        //  printf("x: %d y: %d\n", packet.data.players[i].x, packet.data.players[i].y);
     }
-    
+   
     setBombState(
         game->bomb,
         packet.data.bomb.x,
@@ -259,6 +409,7 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
         packet.data.bomb.active,
         packet.data.bomb.exploding
     );
+    
    
     for (int i = 0; i < packet.data.abilities.numAbilities; i++)
     {  
@@ -275,6 +426,7 @@ void game_apply_network_state(Game *game, ClientNet clientNet)
         packet.data.abilities.items[i].active
     );
     }
+   // printf("[CLIENT] Applied GAME_STATE positions locally\n");
     ClientNet_ClearGameState(clientNet);
 }
 
@@ -300,7 +452,9 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
    
 
     game->map = Map_create(packet.data.map.width, packet.data.map.height);
-    game->state = GAME_STATE_PLAYING; // this will be change
+    //game->state = GAME_STATE_PLAYING; // this will be change
+
+
 
     game->numPlayers = packet.data.numPlayers;
     for (int i = 0; i < game->numPlayers; i++)
@@ -314,6 +468,8 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     game->abilitySystem = AbilitySystem_create();
     AbilitySystem_init(game->abilitySystem); 
 
+
+   
     
 
 

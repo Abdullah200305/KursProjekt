@@ -122,6 +122,7 @@ int ServerNet_Receive(Server server,void** packet,IPaddress *Ip){
         switch (type) {
             case PACKET_JOIN_REQUEST: expectedSize = sizeof(JoinRequestPacket); break;
             case PACKET_INPUT:        expectedSize = sizeof(InputPacket);        break;
+             case PACKET_START_GAME:  expectedSize = sizeof(StartGamePacket);   break;
             case PACKET_DISCONNECT:   expectedSize = sizeof(DisconnectPacket);   break;
             default: return 0;  
         }
