@@ -45,20 +45,20 @@ void Input_HandleEvents(InputState *input)
         {
             switch (event.key.keysym.sym)
             {
-                case SDLK_w: input->up = true; break;
-                case SDLK_s: input->down = true; break;
-                case SDLK_a: input->left = true; break;
-                case SDLK_d: input->right = true; break;
+                case SDLK_PAGEUP: input->up = true; break;
+                case SDLK_PAGEDOWN: input->down = true; break;
+                case SDLK_HOME: input->left = true; break;
+                case SDLK_END: input->right = true; break;
             }
         }
         else if (event.type == SDL_KEYUP)
         {
             switch (event.key.keysym.sym)
             {
-                case SDLK_w: input->up = false; break;
-                case SDLK_s: input->down = false; break;
-                case SDLK_a: input->left = false; break;
-                case SDLK_d: input->right = false; break;
+                case SDLK_PAGEUP: input->up = false; break;
+                case SDLK_PAGEDOWN: input->down = false; break;
+                case SDLK_HOME: input->left = false; break;
+                case SDLK_END: input->right = false; break;
             }
         }
     }
