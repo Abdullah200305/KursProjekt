@@ -4,13 +4,7 @@
 /// This function will handle the main game loop, including event handling, updating game state, and rendering
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-
-// this will move maybe to function called wait and init stuff before game start     
-game_init_renderer(renderer);
-game_init(game, renderer, clientNet); 
 Sound_PlayGameMusic(&game->sound);
-
-
 Uint32 lastSend = 0;
 const int SEND_RATE = 16;
 SDL_Event event;

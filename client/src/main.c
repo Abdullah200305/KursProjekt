@@ -22,6 +22,12 @@ while (game.running)
             //printf("Client is in menu state\n");
             menu_loop(&game, &renderer);
             break;
+        case GAME_STATE_COUNTDOWN:
+           printf("run\n");
+            countdown_loop(&game, &renderer, clientNet);
+            break;
+            
+            
         case GAME_STATE_PLAYING:
            // printf("Client is in menu playing state\n");
             game_loop(&game, &renderer, clientNet);
@@ -48,7 +54,7 @@ while (game.running)
     }
       
    
-        SDL_Delay(16); // Delay to cap the frame rate at ~60 FPS    
+    SDL_Delay(16); // Delay to cap the frame rate at ~60 FPS    
 }
 
  
@@ -100,6 +106,8 @@ while (game.running)
    if (clientNet != NULL) {
        ClientNet_Destroy(clientNet);
    }
-   game_cleanup(&game, &renderer);
+
+  // issue here that make the game exit closer 
+   // game_cleanup(&game, &renderer);
    return 0;
 }

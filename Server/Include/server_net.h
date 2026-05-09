@@ -6,6 +6,12 @@
 
 #include "Player_manager.h"
 
+typedef enum {
+    SERVER_LOBBY,
+    SERVER_GAME_INIT,
+    SERVER_COUNTDOWN,
+    SERVER_RUNNING
+} ServerState;
 
 
 // invalied in clienat info such as ipaddress and id and active or not
@@ -25,13 +31,19 @@ int getServerRunning(Server server);
 
 
 //Packet getPacket(Server server);
+
+
+Uint32 getlastTick(Server server);
+int getCountdown(Server server);
+
 int getGameStart(Server server);
 int getClientCount(Server server);
-
+ServerState getServerState(Server server);
 Client Server_GetClient(Server server, int index);
 
-
-
+void setCountdown(Server server,int value);
+void setlastTick(Server server,Uint32 tick);
+void setServerState(Server server, ServerState state);
 void setNewClient(Server server,int index,Client client);
 void setGameStart(Server server,int gameStart);
 void setClientCount(Server server);

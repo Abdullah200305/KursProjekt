@@ -22,6 +22,14 @@ int ClientNet_HasGameState(ClientNet client);
 GameStatePacket ClientNet_GetGameStatePacket(ClientNet client);
 void ClientNet_ClearGameState(ClientNet client);
 
+
+int ClientNet_HasGameStart(ClientNet client);
+int ClientNet_hasCountdown(ClientNet client);
+
+
+
+int ClientNet_getConutDown(ClientNet client);
+
 int ClientNet_GetClientId(ClientNet client);
 void ClientNet_SetClientId(ClientNet client, int clientId);
 

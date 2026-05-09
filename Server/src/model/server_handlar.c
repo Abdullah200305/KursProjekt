@@ -37,11 +37,15 @@ void Server_handlePackets(Server server){
    
 }
 
-
-void Handle_gameStart(Server server,StartGamePacket * packet){
-setGameStart(server, 1);
-printf("Game started!\n");
+void Handle_gameStart(Server server, StartGamePacket *packet)
+{
+setServerState(server, SERVER_GAME_INIT);    
+setGameStart(server, 1);    
+setCountdown(server, 5); // Start countdown at 5 seconds
+setlastTick(server, SDL_GetTicks());
+printf("Countdown started!\n");
 }
+
 
 
 void Handle_Input(Server server,InputPacket * packet){

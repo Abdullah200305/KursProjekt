@@ -23,6 +23,7 @@ typedef struct {
 
 typedef struct {
     Uint8 type;
+    Uint8 countDown;
 } StartGamePacket;
 
 typedef struct {

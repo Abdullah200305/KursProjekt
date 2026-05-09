@@ -19,4 +19,7 @@ void Packet_BuildDisconnect(int Server_id,DisconnectPacket *packet);
 
 
 void  Packet_BuildGameState(GameStatePacket *packet,Game *game);
+
+
+void Packet_BuildStartGame(int value, StartGamePacket *packet);
 #endif //PACKET_BUILDER_H
