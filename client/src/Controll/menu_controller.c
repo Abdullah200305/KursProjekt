@@ -40,6 +40,8 @@ void menu_loop(Game *game, Renderer *renderer)
             if (event.type == SDL_QUIT)
             {
                 game->state = GAME_STATE_GAME_OVER;
+                game->running = 0;
+                return;
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN &&
@@ -58,7 +60,9 @@ void menu_loop(Game *game, Renderer *renderer)
 
                 if (SDL_PointInRect(&mousePoint, &quitRect))
                 {
-                    game->state = GAME_STATE_GAME_OVER;
+                      game->state = GAME_STATE_GAME_OVER;
+                      game->running = 0;
+                      return;
                 }
             }
         }

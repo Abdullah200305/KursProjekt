@@ -22,7 +22,6 @@ while (game.running)
             //printf("Client is in menu state\n");
             menu_loop(&game, &renderer);
             break;
-
         case GAME_STATE_PLAYING:
            // printf("Client is in menu playing state\n");
             game_loop(&game, &renderer, clientNet);
@@ -48,11 +47,16 @@ while (game.running)
             break;
     }
       
-
-    SDL_Delay(16); // ~60 FPS cap
+   
+        SDL_Delay(16); // Delay to cap the frame rate at ~60 FPS    
 }
 
  
+
+
+
+
+
 
    // steop chossing host or join and then if join will write the ip and port_numer and then click on connect button and wait for game to start
    // choose_host_join_loop(&game, &renderer);
