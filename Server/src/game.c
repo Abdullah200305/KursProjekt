@@ -285,54 +285,48 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 // uppdate player position based on collision with the map and uppdate player position.
 void movePlayer(Map map, Player player)
 {
-    float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX,
-                             getPlayerY(player),
-                             getPlayerWidth(player),
-                             getPlayerHeight(player));
-    if (colx == 1 || colx == 2) // if player outside of map will make somthing
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
+    float moveX = getPlayerVelocityX(player);
+    float moveY = getPlayerVelocityY(player);
 
-        if (colx == 3) // walk in sand
-        {
-            setPlayerPosition(player, newX, getPlayerY(player));
-            setPlayerSpeedYX(player, 3, 3);
-        }
-        else // walk in grass
-        {
-            setPlayerPosition(player, newX, getPlayerY(player));
-            setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));  
-        }
+    TileType currentTile = Collision_Map(map,
+                                         getPlayerX(player),
+                                         getPlayerY(player),
+                                         getPlayerWidth(player),
+                                         getPlayerHeight(player));
+
+    // Slow on sand
+    if (currentTile == TILE_SAND)
+    {
+        moveX *= 0.6f;
+        moveY *= 0.6f;
     }
 
-    float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map,
-                             getPlayerX(player),
-                             newY,
-                             getPlayerWidth(player),
-                             getPlayerHeight(player));
+    float newX = getPlayerX(player) + moveX;
 
-    if (coly == 1 || coly == 2)
+    TileType colX = Collision_Map(map,
+                                  newX,
+                                  getPlayerY(player),
+                                  getPlayerWidth(player),
+                                  getPlayerHeight(player));
+
+    if (colX != TILE_WALL &&
+        colX != TILE_OUTSIDE_WALL)
     {
-        /// collision with tile type 1 or 2, stop player movement
+        setPlayerPosition(player, newX, getPlayerY(player));
     }
-    else
+
+    float newY = getPlayerY(player) + moveY;
+
+    TileType colY = Collision_Map(map,
+                                  getPlayerX(player),
+                                  newY,
+                                  getPlayerWidth(player),
+                                  getPlayerHeight(player));
+
+    if (colY != TILE_WALL &&
+        colY != TILE_OUTSIDE_WALL)
     {
-        if (coly == 3)
-        {
-            setPlayerPosition(player, getPlayerX(player), newY);
-            setPlayerSpeedYX(player, 3, 3);
-        }
-        else
-        {
-            setPlayerPosition(player, getPlayerX(player), newY);
-             setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));
-           
-        }
+        setPlayerPosition(player, getPlayerX(player), newY);
     }
 }
 

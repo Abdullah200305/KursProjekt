@@ -48,10 +48,10 @@ Player initPlayer(float x, float y)
     p->alive = 1;
     p->id=0;
 
-    p->speedY = 10;
-    p->speedX = 10;
-    p->baseSpeedX = 10;
-    p->baseSpeedY = 10;    
+    p->speedY = 5;
+    p->speedX = 5;
+    p->baseSpeedX = 5;
+    p->baseSpeedY = 5;    
 
     p->speedTimer = 0;
 

@@ -225,55 +225,63 @@ int Player_collisionWithOtherPlayer(float x1, float y1, float w1, float h1, floa
     );
 }
 
-int Collision_Map(Map map, float x, float y, float width, float height)
+TileType Collision_Map(Map map, float x, float y, float width, float height)
 {
-    float left   = x;
-    float right  = x + width - 1; // update
-    float top    = y;
-    float bottom = y + height - 1; // updatw
+    float padding = 2.0f;
 
-    int tileLeft   = (int)(left / map->tileSize);
-    int tileRight  = (int)(right / map->tileSize);
-    int tileTop    = (int)(top / map->tileSize);
+    float left   = x + padding;
+    float right  = x + width  - 1 - padding;
+
+    float top    = y + padding;
+    float bottom = y + height - 1 - padding;
+
+    int tileLeft   = (int)(left   / map->tileSize);
+    int tileRight  = (int)(right  / map->tileSize);
+
+    int tileTop    = (int)(top    / map->tileSize);
     int tileBottom = (int)(bottom / map->tileSize);
-    
-    int A1 = checkCollision(map, tileLeft, tileTop);
-    int A2 = checkCollision(map, tileRight, tileTop);
-    int B3 = checkCollision(map, tileLeft, tileBottom);
-    int B4 = checkCollision(map, tileRight, tileBottom);
 
-    // Priority: STOP > SLOW > NONE
-    if (A1 == 1 || A2 == 1 || B3 == 1 || B4 == 1)
-        return 1;
+    TileType A1 = checkCollision(map, tileLeft,  tileTop);
+    TileType A2 = checkCollision(map, tileRight, tileTop);
 
-    if (A1 == 3 || A2 == 3 || B3 == 3 || B4 == 3)
-        return 3;
+    TileType B1 = checkCollision(map, tileLeft,  tileBottom);
+    TileType B2 = checkCollision(map, tileRight, tileBottom);
 
-    return 0;
+    // Walls have highest priority
+    if (A1 == TILE_WALL || A1 == TILE_OUTSIDE_WALL ||
+        A2 == TILE_WALL || A2 == TILE_OUTSIDE_WALL ||
+        B1 == TILE_WALL || B1 == TILE_OUTSIDE_WALL ||
+        B2 == TILE_WALL || B2 == TILE_OUTSIDE_WALL)
+    {
+        return TILE_WALL;
+    }
+
+    // Sand
+    if (A1 == TILE_SAND ||
+        A2 == TILE_SAND ||
+        B1 == TILE_SAND ||
+        B2 == TILE_SAND)
+    {
+        return TILE_SAND;
+    }
+
+    return TILE_NORMAL;
 }
 
-int checkCollision(Map map, int x, int y) {
+TileType checkCollision(Map map, int x, int y) {
+
     switch (map->mapBuffer[y][x])
     {
-    case 1:    
+    case 1:
+        return TILE_OUTSIDE_WALL;    
     case 2:
-        return 1;
+        return TILE_WALL;
     case 3:
-        return 3;
+        return TILE_SAND;
     default:
-        return 0;
+        return TILE_NORMAL;
     }
    
-    // if (map->mapBuffer[y][x] == 2) {
-    //     printf("Collision with tile type 2 at (%d, %d)\n", x, y);
-    //     return 2; 
-    // }
-
-    // if (map->mapBuffer[y][x] == 3) {
-    //     printf("Collision with tile type 3 at (%d, %d)\n", x, y);
-    //     return 1; 
-    // }
-    // return 0;
 }
 
 

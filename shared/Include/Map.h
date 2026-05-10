@@ -11,7 +11,14 @@
 #define TILE_COUNT_Y (HEIGHT / TILE_SIZE)
 
 
+typedef enum
+{
+    TILE_NORMAL       = 0,
+    TILE_OUTSIDE_WALL = 1,
+    TILE_WALL         = 2,
+    TILE_SAND         = 3
 
+} TileType;
 
 typedef struct Map_type *Map;
 // geter and setter
@@ -27,8 +34,8 @@ void Map_destroy(Map map);
 
 int Player_collisionWithOtherPlayer( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2);
 
-int Collision_Map(Map map, float x, float y, float width, float height);
-int checkCollision(Map map, int x, int y);
+TileType Collision_Map(Map map, float x, float y, float width, float height);
+TileType checkCollision(Map map, int x, int y);
 void resolveCollision(Map map, Player player);
 void resolveCollisionRate(Map map, Player player, int miliseconds);
 
