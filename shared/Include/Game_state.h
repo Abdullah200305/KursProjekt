@@ -28,6 +28,7 @@ typedef struct {
     Player players[Max_Players];
     AbilitySystem *abilitySystem;
     int numPlayers;
+    int playerActive[Max_Players];
     Bomb bomb;
     SoundSystem sound;
 } Game;

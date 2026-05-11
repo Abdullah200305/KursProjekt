@@ -14,6 +14,7 @@ struct ClientNet_type
     int hasGameInit;
     int hasGameState;
     int hasGameStart;
+    int disconnectedPlayerId;
     GameInitPacket gameInitPacket;
     GameStatePacket gameStatePacket;
     UDPsocket socket;
@@ -35,6 +36,7 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
     client->hasGameInit = 0;
     client->hasGameStart = 0;
     client->hasGameState = 0;
+    client->disconnectedPlayerId = -1;
     memset(&client->gameInitPacket, 0, sizeof(GameInitPacket));
     memset(&client->gameStatePacket, 0, sizeof(GameStatePacket));
     client->socket = NULL;
@@ -303,6 +305,25 @@ int ClientNet_TryReceive(ClientNet client)
         return 1;
     }
 
+    // Lagra ID på den bortkopplade spelaren så att game_loop kan sluta rendera den
+    if (packetType == PACKET_DISCONNECT)
+    {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket))
+        {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        printf("[CLIENT] Client %d disconnected\n", packet.clientId);
+        client->disconnectedPlayerId = packet.clientId;
+
+        return 1;
+    }
+
     printf("[CLIENT] Received unknown packet type: %d\n", packetType);
     return 1;
 }
@@ -446,6 +467,26 @@ void ClientNet_ClearGameState(ClientNet client)
     }
 
     client->hasGameState = 0;
+}
+
+int ClientNet_GetDisconnectedPlayerId(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return -1;
+    }
+
+    return client->disconnectedPlayerId;
+}
+
+void ClientNet_ClearDisconnectedPlayerId(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    client->disconnectedPlayerId = -1;
 }
 
 void get_local_ip(char *buffer)

@@ -58,13 +58,22 @@ while (game->state == GAME_STATE_PLAYING)
         }
 
 
-    // this for recive uppdate logic from server only 
+    // this for recive uppdate logic from server only
     if (clientNet)
     {
         ClientNet_TryReceive(clientNet);
+
+        // Markera bortkopplad spelare som inaktiv så den slutar renderas
+        int disconnectedId = ClientNet_GetDisconnectedPlayerId(clientNet);
+        if (disconnectedId >= 0 && disconnectedId < game->numPlayers)
+        {
+            game->playerActive[disconnectedId] = 0;
+            ClientNet_ClearDisconnectedPlayerId(clientNet);
+        }
+
         if (ClientNet_HasGameState(clientNet))
         {
-            game_apply_network_state(game, clientNet);  
+            game_apply_network_state(game, clientNet);
         }
     }
 
@@ -154,12 +163,13 @@ void game_update(Game *game, Renderer *renderer)
    AbilitySystem_render(game->abilitySystem, renderer);
    for (int i = 0; i < game->numPlayers; i++)
     {
-        setPlayerAnimation(game->players[i]);
+        if (game->playerActive[i])
+            setPlayerAnimation(game->players[i]);
     }
 
     for (int i = 0; i < game->numPlayers; i++)
     {
-        if (isPlayerAlive(game->players[i]))
+        if (game->playerActive[i] && isPlayerAlive(game->players[i]))
         {
             Render_Player(renderer, game->players[i],i);
         }
@@ -224,7 +234,7 @@ for (int i = 0; i < hudPlayerCount; i++)
         hudY = windowH - hudPanelH - hudMargin;
     }
 
-    if (game->players[i] != NULL && isPlayerAlive(game->players[i]))
+    if (game->players[i] != NULL && game->playerActive[i] && isPlayerAlive(game->players[i]))
     {
         int hasBomb = (i == getBombCarrier(game->bomb));
 
@@ -453,8 +463,9 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     game->numPlayers = packet.data.numPlayers;
     for (int i = 0; i < game->numPlayers; i++)
     {
-        //  player init will update after 
+        //  player init will update after
         game->players[i] = initPlayer(packet.data.players[i].x,packet.data.players[i].y);
+        game->playerActive[i] = 1;
     }
     game->bomb = createBomb(game->players);
 
