@@ -1,131 +1,110 @@
 #include "Game_controll.h"
 
 
-/// This function will handle the main game loop, including event handling, updating game state, and rendering
+
+
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-//Sound_PlayGameMusic(&game->sound);
-Uint32 lastSend = 0;
-const int SEND_RATE = 16;
-SDL_Event event;
+    Sound_PlayGameMusic(&game->sound);
+    Uint32 lastSend = 0;
+    const int SEND_RATE = 8;   // faster input sending
 
+    const int FPS = 120;       // higher update frequency
+    const int FRAME_DELAY = 1000 / FPS;
 
+    SDL_Event event;
 
+    while (game->state == GAME_STATE_PLAYING)
+    {
+        Uint32 frameStart = SDL_GetTicks();
 
-
-while (game->state == GAME_STATE_PLAYING)
-{
-   
-    // this will moved to input.c file
-    while (SDL_PollEvent(&event))
-        {   
-
-            switch (event.type)
+        // Handle events
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
             {
-                case SDL_QUIT:
-                    game->state = GAME_STATE_GAME_OVER;
-                    game->running = 0;
-                    break;
+                game->state = GAME_STATE_GAME_OVER;
+                game->running = 0;
+            }
+        }
 
-                // case SDL_KEYDOWN:
+        // Receive ALL server updates
+        if (clientNet)
+        {
+            while (ClientNet_TryReceive(clientNet))
+            {
+                if (ClientNet_HasGameState(clientNet))
+                {
+                    game_apply_network_state(game, clientNet);
+                }
+            }
+        }
 
-                //     if (game->state == GAME_STATE_MENU)
-                //     {
-                //         // if (event.key.keysym.sym == SDLK_h)
-                //         // {
-                //         //   //  reset_game(game);
-                //         //     printf("hello!");
-                //         // }  
-                //     }
+        // Send input faster
+        Uint32 now = SDL_GetTicks();
 
-                    // if (game->state == GAME_STATE_GAME_OVER)
-                    // {
-                    //     // if (event.key.keysym.sym == SDLK_r)
-                    //     // {
-                    //     //    // reset_game(game);
-                    //     //     gameOverShown = 0;
-                    //     //}
+        if (clientNet && ClientNet_GetClientId(clientNet) >= 0)
+        {
+            if (now - lastSend >= SEND_RATE)
+            {
+                InputPacket input = {0};
+                const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-                    //     if (event.key.keysym.sym == SDLK_m)
-                    //     {
-                    //         game->state = GAME_STATE_MENU;
-                    //         Sound_PlayMenuMusic(&game->sound);
-                    //         printf("Back to menu pressed\n");
-                    //     }
-                    // }
-                    break;
+                input.type = PACKET_INPUT;
+                input.clientId = ClientNet_GetClientId(clientNet);
+                input.up    = state[SDL_SCANCODE_W];
+                input.down  = state[SDL_SCANCODE_S];
+                input.left  = state[SDL_SCANCODE_A];
+                input.right = state[SDL_SCANCODE_D];
+
+                ClientNet_SendInput(clientNet, &input);
+                lastSend = now;
             }
         }
 
 
-    // this for recive uppdate logic from server only 
-    if (clientNet)
-    {
-        ClientNet_TryReceive(clientNet);
-        if (ClientNet_HasGameState(clientNet))
+        if (game->state == GAME_STATE_GAME_OVER)
         {
-            game_apply_network_state(game, clientNet);  
+                const char *message = "Game over!";
+
+                if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+                {
+                    message = "Game over!\nPlayer 1 wins.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+                else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+                {
+                    message = "Game over!\nPlayer 2 wins.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+                else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+                {
+                    message = "Game over!\nBoth players died.\n\nPress R to play again.\nPress M to return to menu.";
+                }
+                SDL_ShowSimpleMessageBox(
+                    SDL_MESSAGEBOX_INFORMATION,
+                    "Game Over",
+                    message,
+                    renderer->window
+                ); 
+        }
+
+
+
+
+
+
+
+
+        game_update(game, renderer);
+
+        // Stable frame timing
+        Uint32 frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameTime < FRAME_DELAY)
+        {
+            SDL_Delay(FRAME_DELAY - frameTime);
         }
     }
-
-
-    // this will update after to put it in input files insteade for here && moved to input.c file
-    // send input at fixed rate
-    Uint32 now = SDL_GetTicks();
-    if (clientNet && ClientNet_GetClientId(clientNet) >= 0)
-    {
-        if (now - lastSend >= SEND_RATE)
-        {
-            InputPacket input = {0};
-            const Uint8 *state = SDL_GetKeyboardState(NULL);
-            input.type = PACKET_INPUT;
-            input.clientId = ClientNet_GetClientId(clientNet);
-            input.up    = state[SDL_SCANCODE_W];
-            input.down  = state[SDL_SCANCODE_S];
-            input.left  = state[SDL_SCANCODE_A];
-            input.right = state[SDL_SCANCODE_D];
-            ClientNet_SendInput(clientNet, &input);
-            lastSend = now;
-        }
-    };
-
-
-    game_update(game, renderer);    
-
-
-
-    //        else if (game->state == GAME_STATE_GAME_OVER)
-    //     {
-    //             const char *message = "Game over!";
-
-    //             if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    //             {
-    //                 message = "Game over!\nPlayer 1 wins.\n\nPress R to play again.\nPress M to return to menu.";
-    //             }
-    //             else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
-    //             {
-    //                 message = "Game over!\nPlayer 2 wins.\n\nPress R to play again.\nPress M to return to menu.";
-    //             }
-    //             else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
-    //             {
-    //                 message = "Game over!\nBoth players died.\n\nPress R to play again.\nPress M to return to menu.";
-    //             }
-
-    //             SDL_ShowSimpleMessageBox(
-    //                 SDL_MESSAGEBOX_INFORMATION,
-    //                 "Game Over",
-    //                 message,
-    //                 renderer->window
-    //             );
-
-    //             // gameOverShown = 1;   
-    //     }
-    SDL_Delay(1); 
 }
-}
-
-
-
 
 
 
@@ -468,11 +447,11 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
 
 
     // will remove
-    printf("%d server \n",packet.data.yourClientId);
+    //printf("%d server \n",packet.data.yourClientId);
     // this is id for server not any player
     //ClientNet_SetClientId(clientNet, packet.data.yourClientId);
     ClientNet_ClearGameInit(clientNet);
-    printf("[CLIENT] Applied GAME_INIT locally\n");
+   // printf("[CLIENT] Applied GAME_INIT locally\n");
     return 0;
 }
 

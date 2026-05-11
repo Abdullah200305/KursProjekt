@@ -23,7 +23,7 @@ while (game.running)
             menu_loop(&game, &renderer);
             break;
         case GAME_STATE_COUNTDOWN:
-           printf("run\n");
+           //printf("run\n");
             countdown_loop(&game, &renderer, clientNet);
             break;
             
