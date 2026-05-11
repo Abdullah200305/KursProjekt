@@ -218,9 +218,12 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
         SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
         SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
 
-        Render_Text(renderer, "HOST or JOIN?", titlePlate.x + 130, titlePlate.y + 22);
+        SDL_Color darkText = {15, 15, 20, 255};
+        SDL_Color lightText = {245, 245, 255, 255};
 
-        Render_Text(renderer, "Choose multiplayer mode", windowW / 2 - 145, 295);
+        Render_MenuTextCentered(renderer, "HOST or JOIN?", titlePlate, darkText);
+
+        Render_MenuText(renderer, "Choose multiplayer mode", windowW / 2 - 145, 295, lightText);
 
         /* Button shadows */
         SDL_Rect hostShadow = {hostRect.x + 6, hostRect.y + 6, hostRect.w, hostRect.h};
@@ -260,8 +263,8 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
         SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 220, 120, 255);
         SDL_RenderDrawRect(renderer->sdlRenderer, &joinRect);
 
-        Render_Text(renderer, "HOST GAME", hostRect.x + 125, hostRect.y + 27);
-        Render_Text(renderer, "JOIN GAME", joinRect.x + 125, joinRect.y + 27);
+        Render_MenuTextCentered(renderer, "HOST GAME", hostRect, darkText);
+        Render_MenuTextCentered(renderer, "JOIN GAME", joinRect, lightText);
 
         SDL_RenderPresent(renderer->sdlRenderer);
     }
@@ -331,17 +334,96 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         game->state = GAME_STATE_COUNTDOWN;
     }
 
+
     // ---------------- RENDER ----------------
+    int windowW = 0;
+    int windowH = 0;
+    SDL_GetWindowSize(renderer->window, &windowW, &windowH);
+
+    SDL_Rect bg = {0, 0, windowW, windowH};
+
     SDL_RenderClear(renderer->sdlRenderer);
 
-    Render_Text(renderer, "HOST MODE", 400, 150);
+    if (renderer->menuBackgroundTexture)
+    {
+        SDL_RenderCopy(renderer->sdlRenderer, renderer->menuBackgroundTexture, NULL, &bg);
+    }
+
+    SDL_SetRenderDrawBlendMode(renderer->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+    /* mörk overlay */
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 150);
+    SDL_RenderFillRect(renderer->sdlRenderer, &bg);
+
+    /* huvudpanel */
+    SDL_Rect panelShadow = {windowW / 2 - 310 + 8, 175 + 8, 620, 410};
+    SDL_Rect panel       = {windowW / 2 - 310,     175,     620, 410};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 170);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panelShadow);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 18, 22, 38, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panel);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 180, 40, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &panel);
+
+    SDL_Rect innerPanel = {panel.x + 8, panel.y + 8, panel.w - 16, panel.h - 16};
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 230, 150, 180);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &innerPanel);
+
+    /* title plate */
+    SDL_Rect titlePlate = {windowW / 2 - 220, 215, 440, 70};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &titlePlate);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
+
+    Render_Text(renderer, "HOST MODE", titlePlate.x + 160, titlePlate.y + 22);
+
+    /* status box */
+    SDL_Rect statusBox = {windowW / 2 - 230, 330, 460, 80};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 190, 45, 245);
+    SDL_RenderFillRect(renderer->sdlRenderer, &statusBox);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 245, 190, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &statusBox);
 
     if (connectedAsHost)
-        Render_Text(renderer, "WAITING FOR PLAYERS...", 300, 300);
+    {
+        Render_Text(renderer, "WAITING FOR PLAYERS...", statusBox.x + 95, statusBox.y + 27);
+    }
     else
-        Render_Text(renderer, "CONNECTING...", 300, 300);
+    {
+        Render_Text(renderer, "CONNECTING...", statusBox.x + 155, statusBox.y + 27);
+    }
 
-    Render_Text(renderer, "SERVER: 127.0.0.1:2000", 200, 400);
+    /* server info box */
+    SDL_Rect infoBox = {windowW / 2 - 190, 445, 380, 75};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 35, 40, 60, 230);
+    SDL_RenderFillRect(renderer->sdlRenderer, &infoBox);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 210, 90, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &infoBox);
+
+    Render_Text(renderer, "SERVER: 127.0.0.1:2000", infoBox.x + 55, infoBox.y + 25);
+
+    /* instruction */
+    SDL_Rect instructionBox = {windowW / 2 - 250, 540, 500, 45};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 230);
+    SDL_RenderFillRect(renderer->sdlRenderer, &instructionBox);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &instructionBox);
+
+    Render_Text(renderer, "Click anywhere when players are ready",
+                instructionBox.x + 75,
+                instructionBox.y + 12);
 
     SDL_RenderPresent(renderer->sdlRenderer);
 }
