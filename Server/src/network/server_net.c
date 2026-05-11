@@ -1,8 +1,14 @@
 #include "Server_net.h"
 
+
+
+
 struct Server_type
 {
-  int running; 
+  int running;
+  int countdown;
+  int state;
+  Uint32 lastTick; 
   int gameStarted; 
   UDPsocket socket;
   UDPpacket *sendPacket;
@@ -15,7 +21,10 @@ struct Server_type
 
 Server server_net_init(){
 Server server = malloc(sizeof(struct Server_type));
+    server->state = SERVER_LOBBY;
     server->running = 1;
+    server->countdown = 0;
+    server->lastTick = 0;
     server->socket = NULL;
     server->sendPacket = NULL;
     server->recvPacket = NULL;
@@ -53,12 +62,16 @@ int ServerConnection(Server server, int port) {
 int getServerRunning(Server server){
     return server->running;
 }
+int getCountdown(Server server){
+    return server->countdown;
+}
+Uint32 getlastTick(Server server){
+    return server->lastTick;
+}
 
-
-
-// size_t getPacket(Server server){
-//  return server->packet;
-// }
+ServerState getServerState(Server server){
+    return server->state;
+}
 
 
 int getGameStart(Server server){
@@ -76,7 +89,15 @@ InputPacket getInputPlayer(Server server,int id){
 }
 
 
-
+void setServerState(Server server, ServerState state){
+    server->state = state;
+}
+void setCountdown(Server server,int value){
+    server->countdown = value;
+}
+void setlastTick(Server server,Uint32 tick){
+    server->lastTick = tick;
+}
 
 void setInputPlayer(Server server,InputPacket *input,int id){
     server->inputs[id] = *input;

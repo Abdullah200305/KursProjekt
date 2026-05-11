@@ -5,6 +5,7 @@ void run(Server server, Game game)
     Uint32 lastTick = SDL_GetTicks();
     const int TICK_RATE = 16; // ~60 FPS
     int gameInitialized = 0;
+
     while (getServerRunning(server))
     {
         Uint32 now = SDL_GetTicks();
@@ -12,30 +13,97 @@ void run(Server server, Game game)
         if (now - lastTick >= TICK_RATE)
         {
             Server_handlePackets(server);
-          
-            // player size will change
-            if (getGameStart(server) && !gameInitialized &&
+
+           switch (getServerState(server))
+           {
+           case SERVER_GAME_INIT:
+             // game start logic
+            if (getGameStart(server)&&
                 getClientCount(server) <= MAX_CLIENTS)
             {
                 Game_Init(server, &game);
                 Game_InitSendToClients(server, &game);
-
-                gameInitialized = 1;
+                setServerState(server, SERVER_COUNTDOWN);
             }
+            break;
 
-            if (gameInitialized)
-            {
-                Game_Update(server, &game);
-            }
+            case SERVER_COUNTDOWN:
+            UpdateCountdown(server);
+            break;
 
 
+            case SERVER_RUNNING:
+            Game_Update(server, &game);
+            break;
+           
+           default:
+            break;
+           }
             lastTick = now;
-        }
+       }
+        SDL_Delay(1); // Small delay to prevent CPU overuse
     }
+
     server_disconnet(server);
     Map_destroy(game.map);
     Destroy_Server(server);
-};
+}
+
+
+
+
+
+
+
+int UpdateCountdown(Server server)
+{
+    if (getCountdown(server) <= 0)
+    {
+        setServerState(server, SERVER_RUNNING);
+        printf("Game is now running!\n");
+        return 0;
+    }
+        
+
+    Uint32 now = SDL_GetTicks();
+
+    if (now - getlastTick(server) >= 1000)
+    {
+        setlastTick(server, now);
+
+        int value = getCountdown(server) - 1;
+        setCountdown(server, value);
+
+        printf("Countdown: %d\n", value);
+
+        if (value <= 0)
+        {
+            setGameStart(server, 1);
+            printf("GAME STARTED!\n");
+        }
+        // send to all clients
+        StartGamePacket send;
+        Packet_BuildStartGame(value,&send);
+        Server_Broadcast(server, &send, sizeof(StartGamePacket));
+    }
+    return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*********Game_init********/
 void Game_Init(Server server, Game *game)
@@ -64,6 +132,10 @@ void Game_Init(Server server, Game *game)
 /*********Game_start********/
 void Game_Update(Server server, Game *game)
 { 
+
+
+
+
     for (int i = 0; i < getClientCount(server); i++)
     {
         InputPacket in = getInputPlayer(server, i);
@@ -213,54 +285,48 @@ void movePlayerWithOther(Player player, int p_index, Player players[], int count
 // uppdate player position based on collision with the map and uppdate player position.
 void movePlayer(Map map, Player player)
 {
-    float newX = getPlayerX(player) + getPlayerVelocityX(player);
-    int colx = Collision_Map(map, newX,
-                             getPlayerY(player),
-                             getPlayerWidth(player),
-                             getPlayerHeight(player));
-    if (colx == 1 || colx == 2) // if player outside of map will make somthing
-    {
-        /// collision with tile type 1 or 2, stop player movement
-    }
-    else
-    {
+    float moveX = getPlayerVelocityX(player);
+    float moveY = getPlayerVelocityY(player);
 
-        if (colx == 3) // walk in sand
-        {
-            setPlayerPosition(player, newX, getPlayerY(player));
-            setPlayerSpeedYX(player, 3, 3);
-        }
-        else // walk in grass
-        {
-            setPlayerPosition(player, newX, getPlayerY(player));
-            setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));  
-        }
+    TileType currentTile = Collision_Map(map,
+                                         getPlayerX(player),
+                                         getPlayerY(player),
+                                         getPlayerWidth(player),
+                                         getPlayerHeight(player));
+
+    // Slow on sand
+    if (currentTile == TILE_SAND)
+    {
+        moveX *= 0.6f;
+        moveY *= 0.6f;
     }
 
-    float newY = getPlayerY(player) + getPlayerVelocityY(player);
-    int coly = Collision_Map(map,
-                             getPlayerX(player),
-                             newY,
-                             getPlayerWidth(player),
-                             getPlayerHeight(player));
+    float newX = getPlayerX(player) + moveX;
 
-    if (coly == 1 || coly == 2)
+    TileType colX = Collision_Map(map,
+                                  newX,
+                                  getPlayerY(player),
+                                  getPlayerWidth(player),
+                                  getPlayerHeight(player));
+
+    if (colX != TILE_WALL &&
+        colX != TILE_OUTSIDE_WALL)
     {
-        /// collision with tile type 1 or 2, stop player movement
+        setPlayerPosition(player, newX, getPlayerY(player));
     }
-    else
+
+    float newY = getPlayerY(player) + moveY;
+
+    TileType colY = Collision_Map(map,
+                                  getPlayerX(player),
+                                  newY,
+                                  getPlayerWidth(player),
+                                  getPlayerHeight(player));
+
+    if (colY != TILE_WALL &&
+        colY != TILE_OUTSIDE_WALL)
     {
-        if (coly == 3)
-        {
-            setPlayerPosition(player, getPlayerX(player), newY);
-            setPlayerSpeedYX(player, 3, 3);
-        }
-        else
-        {
-            setPlayerPosition(player, getPlayerX(player), newY);
-             setPlayerSpeedYX(player, getBaseSpeedX(player), getBaseSpeedY(player));
-           
-        }
+        setPlayerPosition(player, getPlayerX(player), newY);
     }
 }
 

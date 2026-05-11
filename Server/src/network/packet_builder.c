@@ -97,3 +97,10 @@ void Packet_BuildGameState(GameStatePacket *packet, Game *game)
 }
 
 
+void Packet_BuildStartGame(int value, StartGamePacket *packet){
+    StartGamePacket response = {
+        .type = PACKET_START_GAME, .countDown = value};
+    memcpy(packet, &response, sizeof(StartGamePacket));
+}
+
+

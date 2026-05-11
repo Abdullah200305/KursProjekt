@@ -9,7 +9,7 @@ void menu_init(Game *game, Renderer *renderer)
 
 void menu_loop(Game *game, Renderer *renderer)
 {
-    Sound_PlayMenuMusic(&game->sound);
+   // Sound_PlayMenuMusic(&game->sound);
 
     SDL_Event event;
     SDL_Point mousePoint;
@@ -39,6 +39,7 @@ void menu_loop(Game *game, Renderer *renderer)
         {
             if (event.type == SDL_QUIT)
             {
+                game->running = 0;
                 game->state = GAME_STATE_GAME_OVER;
             }
 
@@ -59,6 +60,7 @@ void menu_loop(Game *game, Renderer *renderer)
                 if (SDL_PointInRect(&mousePoint, &quitRect))
                 {
                     game->state = GAME_STATE_GAME_OVER;
+                    game->running = 0;
                 }
             }
         }
@@ -105,6 +107,7 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
             if (event.type == SDL_QUIT)
             {
                 game->running = 0;
+                game->state = GAME_STATE_GAME_OVER;
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN &&
@@ -148,7 +151,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         printf("[HOST] Starting server...\n");
         system("start ..\\server\\server.exe");
 
-        SDL_Delay(500); // allow server to boot
+        SDL_Delay(10000); // allow server to boot
 
         printf("[HOST] Connecting as player 1...\n");
 
@@ -174,6 +177,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         if (event.type == SDL_QUIT)
         {
             game->running = 0;
+            game->state = GAME_STATE_GAME_OVER;
         }
 
         if (event.type == SDL_MOUSEBUTTONDOWN)
@@ -186,12 +190,13 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         }
     }
 
-  
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
+        game_init_renderer(renderer);
+        game_init(game, renderer, *clientNet); 
         printf("Game starting\n");
-        game->state = GAME_STATE_PLAYING;
+        game->state = GAME_STATE_COUNTDOWN;
     }
 
     // ---------------- RENDER ----------------
@@ -209,20 +214,16 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     SDL_RenderPresent(renderer->sdlRenderer);
 }
 
-
-
-
-
 void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 {
     if (game->state != GAME_STATE_CLIENT_SETUP)
         return;
 
-    static int initialized = 0;  
+    static int initialized = 0;
 
     SDL_Event event;
 
-    if (!initialized)  
+    if (!initialized)
     {
         *clientNet = ClientNet_Init("127.0.0.1", 2000);
         if (!*clientNet)
@@ -238,19 +239,57 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT)
+        {
             game->running = 0;
+            game->state = GAME_STATE_GAME_OVER;
+        }
     }
 
     // ---------------- RECEIVE ----------------
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
+        game_init_renderer(renderer);
+        game_init(game, renderer, *clientNet); 
         printf("Game starting\n");
-        game->state = GAME_STATE_PLAYING;
+        game->state = GAME_STATE_COUNTDOWN;
     }
 
     // ---------------- RENDER ----------------
     SDL_RenderClear(renderer->sdlRenderer);
     Render_Text(renderer, "WAITING FOR HOST...", 300, 300);
+    SDL_RenderPresent(renderer->sdlRenderer);
+}
+
+
+
+void countdown_loop(Game *game, Renderer *renderer, ClientNet clientNet)
+{
+    
+    
+    if (game->state != GAME_STATE_COUNTDOWN)
+        return;
+
+    ClientNet_TryReceive(clientNet);
+     int countdown = ClientNet_getConutDown(clientNet);
+    if(ClientNet_HasGameStart(clientNet))
+    {
+    printf("Countdown: %d\n", countdown);
+  
+
+    SDL_RenderClear(renderer->sdlRenderer);
+
+    if (countdown <= 0)
+    {
+        game->state = GAME_STATE_PLAYING;
+        return;
+    } 
+    }
+   
+
+    char countdownStr[16];
+    snprintf(countdownStr, sizeof(countdownStr), "%d", countdown);
+
+    Render_Text(renderer, countdownStr, 400, 300);
     SDL_RenderPresent(renderer->sdlRenderer);
 }

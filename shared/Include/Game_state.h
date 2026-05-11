@@ -14,7 +14,8 @@ typedef enum {
     GAME_STATE_GAME_OVER,
     GAME_STATE_CHOOSE_HOST_JOIN,
     GAME_STATE_HOST_SETUP,
-    GAME_STATE_CLIENT_SETUP
+    GAME_STATE_CLIENT_SETUP,
+    GAME_STATE_COUNTDOWN
 } GameState;
 
 #define Max_Players 4
@@ -22,6 +23,7 @@ typedef enum {
 typedef struct {
     GameState state;
     int running;
+    int countdownValue;
     Map map;
     Player players[Max_Players];
     AbilitySystem *abilitySystem;

@@ -62,6 +62,7 @@ Player initPlayer(float x, float y)
 
     return p;
 }
+
 void damagePlayer(Player player) 
 {
     if (player->alive == 0) 
