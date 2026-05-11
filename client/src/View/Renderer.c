@@ -251,25 +251,6 @@ void Render_MenuTextCentered(Renderer *renderer, const char *text, SDL_Rect rect
                     color);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void getScale(Renderer* r, float* scaleX, float* scaleY) {
     int w, h;
     SDL_GetWindowSize(r->window, &w, &h);
