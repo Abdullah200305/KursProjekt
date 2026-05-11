@@ -351,7 +351,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     SDL_SetRenderDrawBlendMode(renderer->sdlRenderer, SDL_BLENDMODE_BLEND);
 
-    /* mörk overlay */
+    /* mörk overlay över bakgrunden */
     SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 150);
     SDL_RenderFillRect(renderer->sdlRenderer, &bg);
 
@@ -365,6 +365,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     SDL_SetRenderDrawColor(renderer->sdlRenderer, 18, 22, 38, 235);
     SDL_RenderFillRect(renderer->sdlRenderer, &panel);
 
+    /* borders */
     SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 180, 40, 255);
     SDL_RenderDrawRect(renderer->sdlRenderer, &panel);
 
@@ -381,7 +382,11 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
     SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
 
-    Render_Text(renderer, "HOST MODE", titlePlate.x + 160, titlePlate.y + 22);
+    SDL_Color darkText = {15, 15, 20, 255};
+    SDL_Color lightText = {245, 245, 255, 255};
+    SDL_Color yellowText = {255, 220, 90, 255};
+
+    Render_MenuTextCentered(renderer, "HOST MODE", titlePlate, darkText);
 
     /* status box */
     SDL_Rect statusBox = {windowW / 2 - 230, 330, 460, 80};
@@ -394,36 +399,23 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     if (connectedAsHost)
     {
-        Render_Text(renderer, "WAITING FOR PLAYERS...", statusBox.x + 95, statusBox.y + 27);
+        Render_MenuTextCentered(renderer, "WAITING FOR PLAYERS...", statusBox, darkText);
     }
     else
     {
-        Render_Text(renderer, "CONNECTING...", statusBox.x + 155, statusBox.y + 27);
+        Render_MenuTextCentered(renderer, "CONNECTING...", statusBox, darkText);
     }
 
-    /* server info box */
-    SDL_Rect infoBox = {windowW / 2 - 190, 445, 380, 75};
-
-    SDL_SetRenderDrawColor(renderer->sdlRenderer, 35, 40, 60, 230);
-    SDL_RenderFillRect(renderer->sdlRenderer, &infoBox);
-
-    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 210, 90, 255);
-    SDL_RenderDrawRect(renderer->sdlRenderer, &infoBox);
-
-    Render_Text(renderer, "SERVER: 127.0.0.1:2000", infoBox.x + 55, infoBox.y + 25);
+    /* server info */
+    Render_MenuText(renderer, "SERVER ADDRESS", windowW / 2 - 95, 445, yellowText);
+    Render_MenuText(renderer, "127.0.0.1:2000", windowW / 2 - 80, 480, lightText);
 
     /* instruction */
-    SDL_Rect instructionBox = {windowW / 2 - 250, 540, 500, 45};
-
-    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 230);
-    SDL_RenderFillRect(renderer->sdlRenderer, &instructionBox);
-
-    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
-    SDL_RenderDrawRect(renderer->sdlRenderer, &instructionBox);
-
-    Render_Text(renderer, "Click anywhere when players are ready",
-                instructionBox.x + 75,
-                instructionBox.y + 12);
+    Render_MenuText(renderer,
+                    "Click anywhere when players are ready",
+                    windowW / 2 - 190,
+                    530,
+                    lightText);
 
     SDL_RenderPresent(renderer->sdlRenderer);
 }
