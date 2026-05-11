@@ -20,7 +20,7 @@ typedef struct {
     SDL_Texture* mapBackgroundTexture;
     SDL_Texture* playerTexture[4];
     SDL_Texture *abilityTextures[6];
-    SDL_Rect playerFrames[18];
+    SDL_Rect playerFrames[21];
     TTF_Font* hudFont;
 
     SDL_Cursor *cursorArrow;

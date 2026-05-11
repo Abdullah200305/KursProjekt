@@ -9,10 +9,12 @@
 #include <stdio.h>
 #include <string.h>
 
-void game_loop(Game *game, Renderer *renderer, ClientNet clientNet);
+void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet);
 void game_init(Game* game,Renderer* renderer,ClientNet clientNet);
 void game_update(Game* game, Renderer* renderer);
 void game_cleanup(Game* game, Renderer* renderer);
+void game_reset_network_data(Game *game);
+void game_handle_server_disconnect(Game *game, ClientNet *clientNet);
 
 
 

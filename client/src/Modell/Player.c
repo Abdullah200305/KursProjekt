@@ -156,6 +156,11 @@ void killPlayer(Player player)
     player->alive = 0;
 }
 
+void PlayerDestroy(Player player)
+{
+    free(player);
+}
+
 //Implementation av getters metoder
 
 float getPlayerX(Player player) 

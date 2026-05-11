@@ -3,7 +3,19 @@
 void menu_init(Game *game, Renderer *renderer)
 {
     Sound_Init(&game->sound);
+    
     game->state = GAME_STATE_MENU;
+    game->countdownValue = 0;
+    game->map = NULL;
+    game->bomb = NULL;
+    game->abilitySystem = NULL;
+    game->numPlayers = 0;
+
+    for (int i = 0; i < Max_Players; i++)
+    {
+        game->players[i] = NULL;
+    }
+
     Renderer_Init(renderer, "TIC TAC BOMB", WIDTH, HEIGHT);
 }
 
@@ -278,6 +290,12 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     static int initialized = 0;
     static int connectedAsHost = 0;
 
+    if (clientNet != NULL && *clientNet == NULL)
+    {
+        initialized = 0;
+        connectedAsHost = 0;
+    }
+
     SDL_Event event;
 
     // ---------------- INIT HOST ONCE ----------------//
@@ -427,6 +445,11 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     static int initialized = 0;
 
+    if (clientNet != NULL && *clientNet == NULL)
+    {
+        initialized = 0;
+    }
+
     SDL_Event event;
 
     if (!initialized)
@@ -552,7 +575,7 @@ void countdown_loop(Game *game, Renderer *renderer, ClientNet clientNet)
      int countdown = ClientNet_getConutDown(clientNet);
     if(ClientNet_HasGameStart(clientNet))
     {
-    printf("Countdown: %d\n", countdown);
+    //printf("Countdown: %d\n", countdown);
   
 
     SDL_RenderClear(renderer->sdlRenderer);

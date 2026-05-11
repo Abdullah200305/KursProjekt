@@ -105,10 +105,16 @@ int game_init_renderer(Renderer* r) {
     //ANIMATION
     int PLAYER_FRAME_WIDTH = 471;
     int PLAYER_FRAME_HEIGHT = 530;
+    int framesPerRow = 11;
+    
+    for(int i = 0; i < 21; i++){
+        int row = i / framesPerRow;
+        int col = i % framesPerRow;
+    }
 
-    for (int i = 0; i < 18; i++) {
-        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
-        r->playerFrames[i].y = 0;
+    for (int i = 0; i < 21; i++) {
+        r->playerFrames[i].x = col * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = row;
         r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
         r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     }

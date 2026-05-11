@@ -9,7 +9,7 @@
 
 
 
-// varje clinet kommer innehåller state och player 
+// varje client kommer innehåller state och player 
 typedef struct Client_type *Client;
 
 Client Client_net_init(IPaddress ip, int id,int active);

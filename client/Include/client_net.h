@@ -34,6 +34,9 @@ int ClientNet_GetClientId(ClientNet client);
 void ClientNet_SetClientId(ClientNet client, int clientId);
 
 
+int ClientNet_IsConnected(ClientNet client);
+int ClientNet_HasTimedOut(ClientNet client, Uint32 timeoutMs);
+
 void get_local_ip(char *buffer);
 int ClientNet_SendStartGame(ClientNet client);
 

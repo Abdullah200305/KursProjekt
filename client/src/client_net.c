@@ -1,5 +1,6 @@
 #include "client_net.h"
 #include <SDL2/SDL_net.h>
+#include <SDL2/SDL_timer.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +21,7 @@ struct ClientNet_type
     IPaddress serverAddress;
     UDPpacket *sendPacket;
     UDPpacket *recvPacket;
+    Uint32 lastReceiveTick; 
 };
 
 ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
@@ -40,6 +42,7 @@ ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
     client->socket = NULL;
     client->sendPacket = NULL;
     client->recvPacket = NULL;
+    client->lastReceiveTick = SDL_GetTicks();
 
     if (SDLNet_Init() < 0)
     {
@@ -202,14 +205,39 @@ int ClientNet_TryReceive(ClientNet client)
         return 0;
     }
 
-    // if (client->recvPacket->len < (int)sizeof(int))
-    // {
-    //     printf("[CLIENT] Received packet too small\n");
-    //     return 1;
-    // }
+    client->lastReceiveTick = SDL_GetTicks();
+
+    if (client->recvPacket->len < (int)sizeof(Uint8))
+    {
+        printf("[CLIENT] Received packet too small, len=%d\n", client->recvPacket->len);
+        return 1;
+    }
 
     memcpy(&packetType, client->recvPacket->data, sizeof(Uint8));
 
+    if (packetType == PACKET_DISCONNECT)
+    {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket))
+        {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        if (packet.clientId == 7777)
+        {
+            printf("[CLIENT] Server disconnected\n");
+            client->connected = 0;
+            return -1;
+        }
+
+        printf("[CLIENT] Player %d disconnected\n", packet.clientId);
+        return 1;
+    }
+    
     if (packetType == PACKET_JOIN_ACCEPT)
     {
         JoinAcceptPacket packet;
@@ -336,6 +364,26 @@ void ClientNet_Destroy(ClientNet client)
     client->clientId = -1;
     SDLNet_Quit();
     free(client);
+}
+
+int ClientNet_IsConnected(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->connected;
+}
+
+int ClientNet_HasTimedOut(ClientNet client, Uint32 timeoutMs)
+{
+    if (client == NULL || !client->connected)
+    {
+        return 0;
+    }
+
+    return SDL_TICKS_PASSED(SDL_GetTicks(), client->lastReceiveTick + timeoutMs);
 }
 
 int ClientNet_HasGameInit(ClientNet client)

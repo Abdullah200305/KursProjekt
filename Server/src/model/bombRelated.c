@@ -132,3 +132,8 @@ void setBombState(Bomb pBomb, float x, float y, int timer, int bombCarrier, int 
     pBomb->active = active ? 1 : 0;
     pBomb->exploding = exploding ? 1 : 0;
 }
+
+void destroyBomb(Bomb pBomb)
+{
+    free(pBomb);
+}

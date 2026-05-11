@@ -123,7 +123,7 @@ Client Server_GetClient(Server server, int index)
 
 void setNewClient(Server server,int index,Client client){
     server->clients[index]=client;
-    printf("clinet joinded %d\n",server->clientCount);
+    printf("client joinded %d\n",server->clientCount);
     server->clientCount++;
 }
 void setClientCount(Server server){

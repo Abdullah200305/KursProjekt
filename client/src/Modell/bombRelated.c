@@ -89,6 +89,11 @@ void updateBomb(Bomb pBomb, Player players[]){
     }
 }
 
+void destroyBomb(Bomb pBomb)
+{
+    free(pBomb);
+}
+
 float getBombX(Bomb pBomb) {
     return pBomb->x;
 }

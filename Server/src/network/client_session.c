@@ -36,7 +36,7 @@ int getActive(Client client){
 }
 
 void ClientClean(Client client){    
-printf("clinet is delete now %d\n",client->id);    
+printf("client is delete now %d\n",client->id);    
 PlayerDestroy(client->player);
 client->player = NULL;
 client->active = 0;
