@@ -131,10 +131,25 @@ void Game_Init(Server server, Game *game)
 
 /*********Game_start********/
 void Game_Update(Server server, Game *game)
-{ 
-
-
-
+{
+    // Om bombbäraren kopplat bort, flytta bomben till första aktiva spelare
+    int carrier = getBombCarrier(game->bomb);
+    if (carrier >= 0 && carrier < MAX_CLIENTS)
+    {
+        Client carrierClient = Server_GetClient(server, carrier);
+        if (carrierClient == NULL || !getActive(carrierClient))
+        {
+            for (int i = 0; i < MAX_CLIENTS; i++)
+            {
+                Client c = Server_GetClient(server, i);
+                if (c != NULL && getActive(c))
+                {
+                    setBombCarrier(game->bomb, i);
+                    break;
+                }
+            }
+        }
+    }
 
     for (int i = 0; i < getClientCount(server); i++)
     {
@@ -372,10 +387,10 @@ void server_disconnet(Server server)
 
 void Server_Broadcast(Server server, void *packet, size_t packetSize)
 {
-    for (int i = 0; i < getClientCount(server); i++)
+    for (int i = 0; i < MAX_CLIENTS; i++)
     {
         Client c = getClient(server, i);
-        if (getActive(c))
+        if (c != NULL && getActive(c))
         {
             // printf("Broadcasting to client %d\n", getClientId(c));
             Server_Send(server, Client_GetAddress(c), packet, packetSize);

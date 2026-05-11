@@ -30,6 +30,8 @@ Server server = malloc(sizeof(struct Server_type));
     server->recvPacket = NULL;
     server->clientCount = 0;
     server->gameStarted = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        server->clients[i] = NULL;
 
     // will see if I will change it 
   //  server->playerManager=PlayerManager_init();
