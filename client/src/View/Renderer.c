@@ -167,7 +167,89 @@ int game_init_renderer(Renderer* r) {
     return 0;
 }
 
+void Render_MenuText(Renderer *renderer, const char *text, int x, int y, SDL_Color color)
+{
+    if (renderer == NULL || renderer->hudFont == NULL || text == NULL)
+    {
+        return;
+    }
 
+    SDL_Color shadowColor = {0, 0, 0, 255};
+    SDL_Color glowColor = {255, 210, 60, 180};
+
+    /* Shadow */
+    SDL_Surface *shadowSurface = TTF_RenderText_Blended(renderer->hudFont, text, shadowColor);
+    if (shadowSurface != NULL)
+    {
+        SDL_Texture *shadowTexture = SDL_CreateTextureFromSurface(renderer->sdlRenderer, shadowSurface);
+        if (shadowTexture != NULL)
+        {
+            SDL_Rect shadowDest = {x + 3, y + 3, shadowSurface->w, shadowSurface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, shadowTexture, NULL, &shadowDest);
+            SDL_DestroyTexture(shadowTexture);
+        }
+        SDL_FreeSurface(shadowSurface);
+    }
+
+    /* Small glow around text */
+    SDL_Surface *glowSurface = TTF_RenderText_Blended(renderer->hudFont, text, glowColor);
+    if (glowSurface != NULL)
+    {
+        SDL_Texture *glowTexture = SDL_CreateTextureFromSurface(renderer->sdlRenderer, glowSurface);
+        if (glowTexture != NULL)
+        {
+            SDL_Rect glowDest;
+
+            glowDest = (SDL_Rect){x - 1, y, glowSurface->w, glowSurface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, glowTexture, NULL, &glowDest);
+
+            glowDest = (SDL_Rect){x + 1, y, glowSurface->w, glowSurface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, glowTexture, NULL, &glowDest);
+
+            glowDest = (SDL_Rect){x, y - 1, glowSurface->w, glowSurface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, glowTexture, NULL, &glowDest);
+
+            glowDest = (SDL_Rect){x, y + 1, glowSurface->w, glowSurface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, glowTexture, NULL, &glowDest);
+
+            SDL_DestroyTexture(glowTexture);
+        }
+        SDL_FreeSurface(glowSurface);
+    }
+
+    /* Main text */
+    SDL_Surface *surface = TTF_RenderText_Blended(renderer->hudFont, text, color);
+    if (surface != NULL)
+    {
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->sdlRenderer, surface);
+        if (texture != NULL)
+        {
+            SDL_Rect dest = {x, y, surface->w, surface->h};
+            SDL_RenderCopy(renderer->sdlRenderer, texture, NULL, &dest);
+            SDL_DestroyTexture(texture);
+        }
+        SDL_FreeSurface(surface);
+    }
+}
+
+void Render_MenuTextCentered(Renderer *renderer, const char *text, SDL_Rect rect, SDL_Color color)
+{
+    if (renderer == NULL || renderer->hudFont == NULL || text == NULL)
+    {
+        return;
+    }
+
+    int textW = 0;
+    int textH = 0;
+
+    TTF_SizeText(renderer->hudFont, text, &textW, &textH);
+
+    Render_MenuText(renderer,
+                    text,
+                    rect.x + (rect.w - textW) / 2,
+                    rect.y + (rect.h - textH) / 2,
+                    color);
+}
 
 
 

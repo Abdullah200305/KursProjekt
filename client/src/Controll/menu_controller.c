@@ -121,15 +121,100 @@ void choose_host_join_loop(Game *game, Renderer *renderer)
                 }
             }
         }
-        // this will make it better in render
-        SDL_RenderClear(renderer->sdlRenderer);
+        // ---------------- RENDER ----------------
+int windowW = 0;
+int windowH = 0;
+SDL_GetWindowSize(renderer->window, &windowW, &windowH);
 
-        Render_Text(renderer, "HOST or JOIN?", 350, 200);
+SDL_Rect bg = {0, 0, windowW, windowH};
 
-        Render_Button(renderer, hostRect, "HOST");
-        Render_Button(renderer, joinRect, "JOIN");
+SDL_RenderClear(renderer->sdlRenderer);
 
-        SDL_RenderPresent(renderer->sdlRenderer);
+if (renderer->menuBackgroundTexture)
+{
+    SDL_RenderCopy(renderer->sdlRenderer, renderer->menuBackgroundTexture, NULL, &bg);
+}
+
+SDL_SetRenderDrawBlendMode(renderer->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+/* mörk overlay över bakgrunden */
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 145);
+SDL_RenderFillRect(renderer->sdlRenderer, &bg);
+
+/* centrerad huvudpanel */
+SDL_Rect panelShadow = {windowW / 2 - 300 + 8, 170 + 8, 600, 430};
+SDL_Rect panel       = {windowW / 2 - 300,     170,     600, 430};
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 160);
+SDL_RenderFillRect(renderer->sdlRenderer, &panelShadow);
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 18, 22, 38, 235);
+SDL_RenderFillRect(renderer->sdlRenderer, &panel);
+
+/* yttre guld-border */
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 180, 40, 255);
+SDL_RenderDrawRect(renderer->sdlRenderer, &panel);
+
+/* inre border */
+SDL_Rect innerPanel = {panel.x + 8, panel.y + 8, panel.w - 16, panel.h - 16};
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 230, 150, 180);
+SDL_RenderDrawRect(renderer->sdlRenderer, &innerPanel);
+
+/* title plate */
+SDL_Rect titlePlate = {windowW / 2 - 220, 205, 440, 70};
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 235);
+SDL_RenderFillRect(renderer->sdlRenderer, &titlePlate);
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
+SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
+
+SDL_Color darkText = {15, 15, 20, 255};
+SDL_Color lightText = {245, 245, 255, 255};
+
+Render_MenuTextCentered(renderer, "HOST or JOIN?", titlePlate, darkText);
+
+/* liten beskrivning */
+Render_MenuText(renderer, "Choose multiplayer mode", windowW / 2 - 150, 295, lightText);
+
+/* nya knapp-positioner */
+hostRect.x = windowW / 2 - 190;
+hostRect.y = 350;
+hostRect.w = 380;
+hostRect.h = 80;
+
+joinRect.x = windowW / 2 - 190;
+joinRect.y = 460;
+joinRect.w = 380;
+joinRect.h = 80;
+
+/* shadows */
+SDL_Rect hostShadow = {hostRect.x + 6, hostRect.y + 6, hostRect.w, hostRect.h};
+SDL_Rect joinShadow = {joinRect.x + 6, joinRect.y + 6, joinRect.w, joinRect.h};
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 150);
+SDL_RenderFillRect(renderer->sdlRenderer, &hostShadow);
+SDL_RenderFillRect(renderer->sdlRenderer, &joinShadow);
+
+/* host button */
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 190, 45, 245);
+SDL_RenderFillRect(renderer->sdlRenderer, &hostRect);
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 245, 190, 255);
+SDL_RenderDrawRect(renderer->sdlRenderer, &hostRect);
+
+/* join button */
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 105, 25, 245);
+SDL_RenderFillRect(renderer->sdlRenderer, &joinRect);
+
+SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 220, 120, 255);
+SDL_RenderDrawRect(renderer->sdlRenderer, &joinRect);
+
+/* button text */
+Render_MenuTextCentered(renderer, "HOST GAME", hostRect, darkText);
+Render_MenuTextCentered(renderer, "JOIN GAME", joinRect, lightText);
+
+SDL_RenderPresent(renderer->sdlRenderer);
     }
 }
 void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)

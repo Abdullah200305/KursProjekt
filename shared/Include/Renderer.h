@@ -65,8 +65,8 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r);
 
 
 void Render_Text(Renderer *renderer, const char *text, int x, int y);
-
-
+void Render_MenuText(Renderer *renderer, const char *text, int x, int y, SDL_Color color);
+void Render_MenuTextCentered(Renderer *renderer, const char *text, SDL_Rect rect, SDL_Color color);
 
 
 
