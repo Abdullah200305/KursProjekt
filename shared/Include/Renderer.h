@@ -56,20 +56,11 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
 void Render_Bomb(Renderer* r, Bomb bomb);
 void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y);
 
-
-
 void AbilitySystem_render(AbilitySystem *system, Renderer *r);
-
-
-
-
 
 void Render_Text(Renderer *renderer, const char *text, int x, int y);
 void Render_MenuText(Renderer *renderer, const char *text, int x, int y, SDL_Color color);
 void Render_MenuTextCentered(Renderer *renderer, const char *text, SDL_Rect rect, SDL_Color color);
-
-
-
 
 void Render_Button(Renderer *renderer, SDL_Rect rect, const char *label);
 
