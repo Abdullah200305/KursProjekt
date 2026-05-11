@@ -401,7 +401,75 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     }
 
     // ---------------- RENDER ----------------
+    int windowW = 0;
+    int windowH = 0;
+    SDL_GetWindowSize(renderer->window, &windowW, &windowH);
+
+    SDL_Rect bg = {0, 0, windowW, windowH};
+
     SDL_RenderClear(renderer->sdlRenderer);
-    Render_Text(renderer, "WAITING FOR HOST...", 300, 300);
+
+    if (renderer->menuBackgroundTexture)
+    {
+        SDL_RenderCopy(renderer->sdlRenderer, renderer->menuBackgroundTexture, NULL, &bg);
+    }
+
+    SDL_SetRenderDrawBlendMode(renderer->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+    /* mörk overlay över bakgrunden */
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 150);
+    SDL_RenderFillRect(renderer->sdlRenderer, &bg);
+
+    /* huvudpanel */
+    SDL_Rect panelShadow = {windowW / 2 - 310 + 8, 175 + 8, 620, 410};
+    SDL_Rect panel       = {windowW / 2 - 310,     175,     620, 410};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 170);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panelShadow);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 18, 22, 38, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panel);
+
+    /* borders */
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 180, 40, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &panel);
+
+    SDL_Rect innerPanel = {panel.x + 8, panel.y + 8, panel.w - 16, panel.h - 16};
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 230, 150, 180);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &innerPanel);
+
+    /* title plate */
+    SDL_Rect titlePlate = {windowW / 2 - 220, 215, 440, 70};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &titlePlate);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
+
+    SDL_Color darkText = {15, 15, 20, 255};
+    SDL_Color lightText = {245, 245, 255, 255};
+    SDL_Color yellowText = {255, 220, 90, 255};
+
+    Render_MenuTextCentered(renderer, "JOIN MODE", titlePlate, darkText);
+
+    /* status box */
+    SDL_Rect statusBox = {windowW / 2 - 230, 335, 460, 80};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 105, 25, 245);
+    SDL_RenderFillRect(renderer->sdlRenderer, &statusBox);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 220, 120, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &statusBox);
+
+    Render_MenuTextCentered(renderer, "WAITING FOR HOST...", statusBox, lightText);
+
+    /* server info */
+    Render_MenuText(renderer, "CONNECTING TO SERVER", windowW / 2 - 135, 455, yellowText);
+    Render_MenuText(renderer, "127.0.0.1:2000", windowW / 2 - 80, 490, lightText);
+
+    /* instruction */
+    Render_MenuText(renderer, "The game starts when the host begins the match", windowW / 2 - 245, 540, lightText);
+
     SDL_RenderPresent(renderer->sdlRenderer);
 }
