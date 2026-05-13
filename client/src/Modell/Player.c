@@ -11,6 +11,8 @@ struct  Player_type
     float height;
     int lives;  //nr of lives
     int alive;  //alive = 1 => alive or alive = 0 => dead
+    int winner; // 1 if this player won
+
 
     float speedY;
     float speedX;
@@ -44,6 +46,8 @@ Player initPlayer(float x, float y)
     p->height = 32;
     p->lives = 3;
     p->alive = 1;
+    p->winner = 0;
+
 
     p->speedY = 5;
     p->speedX = 5;
@@ -100,6 +104,12 @@ int isPlayerAlive(Player player)
 {
     return player->alive;
 }
+
+int isPlayerWinner(Player player)
+{
+    return player->winner;
+}
+
 
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY)
 {
@@ -271,6 +281,13 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedX = speedX;
 }
 
+void setPlayerWinner(Player player, int value)
+{
+    player->winner = value;
+}
+
+
+
 //Timers
 void setPlayerSpeedTimer(Player player, float timer) 
 {
@@ -311,7 +328,7 @@ void setPlayerAnimation(Player player) {
             player->animationTimer++;
             if (player->animationTimer >= 6) {
                 player->animationTimer = 0;
-                player->animationFrame = (player->animationFrame = 17);
+                player->animationFrame = (player->animationFrame == 17) ? 18 : 17;            
             }
         }
         return;

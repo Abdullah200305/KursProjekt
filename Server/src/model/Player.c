@@ -10,6 +10,8 @@ struct  Player_type
     float height;
     int lives;  //nr of lives
     int alive;  //alive = 1 => alive or alive = 0 => dead
+    int winner; // 1 if this player won
+
     int id;
 
     float speedY;
@@ -46,6 +48,7 @@ Player initPlayer(float x, float y)
     p->height = 32;
     p->lives = 3;
     p->alive = 1;
+    p->winner = 0;
     p->id=0;
 
     p->speedY = 5;
@@ -104,6 +107,12 @@ int isPlayerAlive(Player player)
 {
     return player->alive;
 }
+
+int isPlayerWinner(Player player)
+{
+    return player->winner;
+}
+
 
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY)
 {
@@ -290,6 +299,11 @@ void setPlayerState(Player player, int lives, int alive) {
     if (player->lives == 0) {
         player->alive = 0;
     }
+}
+
+void setPlayerWinner(Player player, int value)
+{
+    player->winner = value;
 }
 
 

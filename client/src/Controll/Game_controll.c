@@ -230,8 +230,13 @@ for (int i = 0; i < hudPlayerCount; i++)
         }
     }
 
-if (game->state == GAME_STATE_PLAYING && game->numPlayers > 1 && aliveCount <= 1)
+    if (game->state == GAME_STATE_PLAYING && game->numPlayers > 1 && aliveCount <= 1)
     {
+        for (int i = 0; i < game->numPlayers; i++)
+        {
+            if (isPlayerAlive(game->players[i]))
+                setPlayerWinner(game->players[i], 1);
+        }
         game->state = GAME_STATE_GAME_OVER;
     }
 
