@@ -57,7 +57,6 @@ void bombExplosion(Bomb pBomb, Player players[]){
     else
     {
         damagePlayer(players[pBomb->bombCarrier]);
-       // Sound_PlayExplosion(sound);
     }
 
     pBomb->active = 0;

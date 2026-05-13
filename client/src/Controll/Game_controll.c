@@ -71,6 +71,16 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         game_update(game, renderer);
 
         SDL_Delay(1);
+
+
+        //MUSIK NÄR SPELET KÖRS
+        static GameState lastState = -1;
+
+        if (game->state != lastState) {
+            if (game->state == GAME_STATE_PLAYING) Sound_PlayGameMusic(&game->sound);
+            else if (game->state == GAME_STATE_GAME_OVER) Sound_StopMusic();
+            lastState = game->state;
+        }
     }
 }
 
@@ -240,15 +250,31 @@ if (game->state == GAME_STATE_PLAYING && game->numPlayers > 1 && aliveCount <= 1
 
 
  // here will be the miusic and sound effect logic
-if(getBombExploding(game->bomb)){
-    Sound_PlayExplosion(&game->sound);
-}
+    // BOMB EXPLOSION SFX
+    static int explosionPlayed = 0;
 
-    // Laugh sound effect timer 
-    static int RNGlaughTimer = 0;
-    RNGlaughTimer--;
-    if (RNGlaughTimer <= 0) {
-        RNGlaughTimer = 300 + rand() % 6000;
+    if (getBombExploding(game->bomb)) {
+        if (!explosionPlayed) {
+            Sound_PlayExplosion(&game->sound);
+            Sound_PlayScream(&game->sound);
+            explosionPlayed = 1;
+        }
+    } else {
+        explosionPlayed = 0;  // nollställ när explosion är klar
+    }
+
+    //FREEZE ABILITY SFX
+    for (int i = 0; i < game->numPlayers; i++) {
+        if (getPlayerFreezeTimer(game->players[i]) == 80) Sound_PlayIce(&game->sound);
+
+        if (getPlayerFreezeTimer(game->players[i]) == 1) Sound_PlayIceBreak(&game->sound);
+    }
+
+    // RNG LAUGH SFX 
+    static int RNG_laughTimer = 300;
+    RNG_laughTimer--;
+    if (RNG_laughTimer <= 0) {
+        RNG_laughTimer = 300 + rand() % 600;
 
         if (rand() % 2 == 0)
             Sound_PlayLaugh1(&game->sound);

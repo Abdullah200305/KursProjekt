@@ -75,7 +75,6 @@ void damagePlayer(Player player)
     }
 
     player->lives--;
-    //Sound_PlayScream(sound);
 
     if (player->lives <= 0) 
     {
