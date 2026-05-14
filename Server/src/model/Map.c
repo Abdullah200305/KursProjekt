@@ -37,7 +37,7 @@ Map Map_create(int width, int height)
     map->height = height;
      
     map->tileSize = 16;
-    ReadMap = fopen("link/Test.txt", "r");
+    ReadMap = fopen("link/Test2.txt", "r");
     if (ReadMap)
     {
         int item;
