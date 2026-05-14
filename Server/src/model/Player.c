@@ -323,11 +323,52 @@ int getPlayerAnimationFrame(Player player) {
 }
 
 void setPlayerAnimation(Player player) {
+    int animationTransitionSpeed = (player->speedTimer > 0) ? 3 : 6;
+
+    //DEATH ANIMATION
+    if (player->alive == 0) {
+        player->animationFrame = 20;
+        return;
+    }
+
+    //WIN ANIMATION
+    if (player->winner) {
+        if (player->animationFrame != 18 && player->animationFrame != 19) {
+            player->animationFrame = 18;
+            player->animationTimer = 0;
+        }
+        player->animationTimer++;
+        if (player->animationTimer >= 10) {
+            player->animationTimer = 0;
+            player->animationFrame = (player->animationFrame == 18) ? 19 : 18;
+        }
+        return;
+    }
+
+    //FREEZE ANIMATION
     if(player->freezeTimer > 0){
         player->animationFrame = 13;
         return;
     }
+
+    //SHIELD ANIMATION
+    if (player->shieldTimer > 0) {
+        if (player->vy > 0)      player->animationFrame = 14;
+        else if (player->vx > 0) player->animationFrame = 15;  
+        else if (player->vx < 0) player->animationFrame = 16; 
+        
+        else if (player->vy < 0) {    
+            player->animationTimer++;
+            if (player->animationTimer >= 6) {
+                player->animationTimer = 0;
+                player->animationFrame = (player->animationFrame == 17) ? 18 : 17;            
+            }
+        }
+        return;
+    }
     
+    
+    //NORMAL ANIMATION
     int isMoving = (player->vx != 0 || player->vy != 0);
 
     if (player->vy > 0)
@@ -341,19 +382,25 @@ void setPlayerAnimation(Player player) {
 
     if (!isMoving) {
         switch (player->lastDirection) {
-            case 0: player->animationFrame = 0;  break;
-            case 1: player->animationFrame = 4;  break;
-            case 2: player->animationFrame = 7;  break;
-            case 3: player->animationFrame = 10; break;
+            case 0: 
+                player->animationFrame = 0;  
+                break;
+            case 1: 
+                player->animationFrame = 4;  
+                break;
+            case 2: 
+                player->animationFrame = 7;  
+                break;
+            case 3: 
+                player->animationFrame = 10; 
+                break;
         }
         player->animationTimer = 0;
         return;
     }
 
-    int animationSpeed = (player->speedTimer > 0) ? 3 : 6;
-
     player->animationTimer++;
-    if (player->animationTimer >= animationSpeed) {
+    if (player->animationTimer >= animationTransitionSpeed) {
         player->animationTimer = 0;
         switch (player->lastDirection) {
             case 0: 
