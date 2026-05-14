@@ -89,10 +89,10 @@ int game_init_renderer(Renderer* r) {
 
     // player will change 
     //SPELARE
-    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_SheetCop.png");
-    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_SheetCop.png");
-    r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player3_SheetCop.png");
-    r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player4_SheetCop.png");
+    r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
+    r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
+    r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player3_Sheet.png");
+    r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player4_Sheet.png");
     for(int i = 0; i < 2; i++)
     {
         if (!r->playerTexture[i]) {
