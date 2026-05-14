@@ -125,7 +125,7 @@ void game_update(Game *game, Renderer *renderer)
     Background_Image_Render(renderer);
 
     // this for test 
-    //Render_Map(renderer, game->map);
+    Render_Map(renderer, game->map);
  
   
    

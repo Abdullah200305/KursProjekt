@@ -78,7 +78,7 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 int game_init_renderer(Renderer* r) {
      
 
-    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Map/Forest.png");
     if (!r->mapBackgroundTexture)
     {
         fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
