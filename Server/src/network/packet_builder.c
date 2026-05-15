@@ -8,8 +8,7 @@ void Packet_BuildGameStart(Game *game, int id, GameInitPacket *packet)
         .data.yourClientId = id,
         .data.map = {.height = getHeight(game->map),
                      .width = getWidth(game->map),
-                     //.mapId = 1},
-                     .mapId = game->mapId},
+                     .mapId = 1},
         .data.bomb = {.active = getBombActive(game->bomb),
                       .bombCarrier = getBombCarrier(game->bomb),
                       .exploding = getBombExploding(game->bomb),
@@ -17,7 +16,7 @@ void Packet_BuildGameStart(Game *game, int id, GameInitPacket *packet)
                       .x = getBombX(game->bomb),
                       .y = getBombY(game->bomb)}};
 
-    printf("Map packet ready to sent! mapId = %d\n", Newpacket.data.map.mapId);
+    printf("Map packet ready to sent!\n");
     for (int i = 0; i < game->numPlayers; i++)
     {
         Newpacket.data.players[i].x = getPlayerX(game->players[i]);

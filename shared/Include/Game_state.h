@@ -24,7 +24,6 @@ typedef struct {
     GameState state;
     int running;
     int countdownValue;
-    int mapId;
     Map map;
     Player players[Max_Players];
     AbilitySystem *abilitySystem;
