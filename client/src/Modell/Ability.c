@@ -50,7 +50,7 @@ void AbilitySystem_spawn(AbilitySystem *system, Map map)
             int tile;
 
             do {
-                x = rand() % TIlE_COUNT_X;
+                x = rand() % TILE_COUNT_X;
                 y = rand() % TILE_COUNT_Y;
 
                 tile = getMapBufferItems(map, x, y);
