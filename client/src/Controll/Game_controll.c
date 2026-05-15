@@ -5,7 +5,7 @@
 
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-    Sound_PlayGameMusic(&game->sound);
+   // Sound_PlayGameMusic(&game->sound);
     Uint32 lastSend = 0;
     const int SEND_RATE = 8;   // faster input sending
 
@@ -292,33 +292,12 @@ return;
 }
 }
 
-
-
-
 // will clean all objects  
 void game_cleanup(Game *game, Renderer *renderer)
 {
     Map_destroy(game->map);
     Renderer_Destroy(renderer);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ////////////////////////// these functions will handle the depacket and init and game_init /////////////////////////////
 
@@ -414,16 +393,8 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
         return -1;
     }
     packet = ClientNet_GetGameInitPacket(clientNet);
-
-
-    // this will be change
-    if (packet.data.map.mapId != MAP_ID_ISLAND) {
-        printf("[CLIENT] Unknown mapId: %d\n", packet.data.map.mapId);
-        ClientNet_ClearGameInit(clientNet);
-        return -1;
-    }
    
-
+    game->mapId = packet.data.map.mapId;
     game->map = Map_create(packet.data.map.width, packet.data.map.height);
     //game->state = GAME_STATE_PLAYING; // this will be change
 

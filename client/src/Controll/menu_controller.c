@@ -329,8 +329,9 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
-        game_init_renderer(renderer);
+       
         game_init(game, renderer, *clientNet); 
+        game_init_renderer(renderer,game->mapId);
         //printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }
@@ -457,8 +458,9 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
-        game_init_renderer(renderer);
+        
         game_init(game, renderer, *clientNet); 
+        game_init_renderer(renderer,game->mapId);
         // printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }

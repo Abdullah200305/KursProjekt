@@ -6,7 +6,7 @@ struct Map_type{
     int width;
     int height;
     int tileSize;
-    int mapBuffer[TILE_COUNT_Y][TIlE_COUNT_X];
+    int mapBuffer[TILE_COUNT_Y][TILE_COUNT_X];
 
     Uint32 ticker;
 };
@@ -43,7 +43,7 @@ Map Map_create(int width, int height)
         int item;
         for (int y = 0; y < TILE_COUNT_Y; y++)
         {
-            for (int x = 0; x < TIlE_COUNT_X; x++)
+            for (int x = 0; x < TILE_COUNT_X; x++)
             {
                 if (fscanf(ReadMap, "%d%*c", &item) == 1)
                 {
@@ -207,4 +207,36 @@ void resolveCollisionRate(Map map, Player player, int miliseconds)
 
     // set cooldown 
     map->ticker = now + miliseconds;
+}
+
+
+MapId getRandomMapId(void)
+{
+    return (MapId)((rand() % 6) + 1);
+}
+const char *getMapImagePath(MapId mapId)
+{
+    switch (mapId)
+    {
+    case MAP_DESERT:
+        return "link/Maps/Desert.png";
+
+    case MAP_FOREST:
+        return "link/Maps/Forest.png";
+
+    case MAP_ICELAND:
+        return "link/Maps/Iceland.png";
+
+    case MAP_GRAVEYARD:
+        return "link/Maps/Graveyard.png";
+
+    case MAP_LAVA:
+        return "link/Maps/Lava.png";
+
+    case MAP_PIRATE:
+        return "link/Maps/Pirate.png";
+
+    default:
+        return "link/Maps/Island.png";
+    }
 }
