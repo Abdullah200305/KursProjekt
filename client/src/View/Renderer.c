@@ -1,43 +1,49 @@
 #include "Renderer.h"
+#include "Map.h"
 
-
-int Renderer_Init(Renderer* r, const char* title, int width, int height) {
+int Renderer_Init(Renderer *r, const char *title, int width, int height)
+{
     r->hudFont = NULL;
 
     printf("Initializing SDL...\n");
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return -1;
     }
-    if (TTF_Init() != 0) {
+    if (TTF_Init() != 0)
+    {
         fprintf(stderr, "TTF_Init Error: %s\n", TTF_GetError());
         SDL_Quit();
         return -1;
     }
     r->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    if (!r->window) {
+    if (!r->window)
+    {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
 
     r->sdlRenderer = SDL_CreateRenderer(r->window, -1, 0);
-    if (!r->sdlRenderer) {
+    if (!r->sdlRenderer)
+    {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         Renderer_Destroy(r);
         return -1;
     }
-    
+
     r->hudFont = TTF_OpenFont("C:/Windows/Fonts/arialbd.ttf", 20);
 
-    if (r->hudFont == NULL) {
+    if (r->hudFont == NULL)
+    {
         r->hudFont = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
     }
 
-    if (r->hudFont == NULL) {
+    if (r->hudFont == NULL)
+    {
         fprintf(stderr, "TTF_OpenFont Error: %s\n", TTF_GetError());
     }
-
 
     r->menuBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MENU_BACKGROUND.png");
     if (!r->menuBackgroundTexture)
@@ -73,47 +79,51 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
     return 0;
 }
 
+int game_init_renderer(Renderer *r, int mapId)
+{
+    const char *mapPath = getMapImagePath((MapId)mapId);
 
+    printf("[CLIENT] Loading mapId %d: %s\n", mapId, mapPath);
 
-int game_init_renderer(Renderer* r) {
-     
-
-    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Island.png");
+    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, mapPath);
+   
+   
     if (!r->mapBackgroundTexture)
     {
-        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        fprintf(stderr, "IMG_LoadTexture Error loading map %s: %s\n", mapPath, IMG_GetError());
         Renderer_Destroy(r);
         return -1;
     }
-    
 
-    // player will change 
-    //SPELARE
+    // player will change
+    // SPELARE
     r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
     r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
     r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
     r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
-    for(int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++)
     {
-        if (!r->playerTexture[i]) {
-        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
-        Renderer_Destroy(r);
-        return -1;
+        if (!r->playerTexture[i])
+        {
+            fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i + 1, IMG_GetError());
+            Renderer_Destroy(r);
+            return -1;
         }
     }
-    
-    //ANIMATION
+
+    // ANIMATION
     int PLAYER_FRAME_WIDTH = 471;
     int PLAYER_FRAME_HEIGHT = 530;
 
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 18; i++)
+    {
         r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
         r->playerFrames[i].y = 0;
         r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
         r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     }
 
-    //ABILITY
+    // ABILITY
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
@@ -121,14 +131,12 @@ int game_init_renderer(Renderer* r) {
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
 
-    //Initialize SDL Cursor//
+    // Initialize SDL Cursor//
     r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    r->cursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
     SDL_SetCursor(r->cursorArrow);
     // //---------------------//
-    
-
 
     // r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MAP_BACKGROUND.png");
     // if (!r->mapBackgroundTexture)
@@ -167,28 +175,8 @@ int game_init_renderer(Renderer* r) {
     return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void getScale(Renderer* r, float* scaleX, float* scaleY) {
+void getScale(Renderer *r, float *scaleX, float *scaleY)
+{
     int w, h;
     SDL_GetWindowSize(r->window, &w, &h);
 
@@ -197,29 +185,31 @@ void getScale(Renderer* r, float* scaleX, float* scaleY) {
 }
 
 // test to see if the renderer work.
-void Renderer_Clear(Renderer* r) {
+void Renderer_Clear(Renderer *r)
+{
     SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
     SDL_RenderClear(r->sdlRenderer);
 }
 
-void Renderer_Present(Renderer* r) {
+void Renderer_Present(Renderer *r)
+{
     SDL_RenderPresent(r->sdlRenderer);
 }
 
-void Renderer_Destroy(Renderer* r) {
+void Renderer_Destroy(Renderer *r)
+{
     if (r->hudFont)
     {
         TTF_CloseFont(r->hudFont);
         r->hudFont = NULL;
     }
-    
+
     SDL_DestroyRenderer(r->sdlRenderer);
     SDL_DestroyWindow(r->window);
     SDL_DestroyTexture(r->mapBackgroundTexture);
     SDL_DestroyTexture(r->menuBackgroundTexture);
 
-
-    for (int i = 0; i < 2; i++) 
+    for (int i = 0; i < 2; i++)
     {
         if (r->playerTexture[i])
         {
@@ -227,7 +217,7 @@ void Renderer_Destroy(Renderer* r) {
         }
     }
 
-    for (int i = 0; i < 6; i++) 
+    for (int i = 0; i < 6; i++)
     {
         if (r->abilityTextures[i])
         {
@@ -239,7 +229,8 @@ void Renderer_Destroy(Renderer* r) {
 }
 
 //************RENDERS MENU AND OR MAP********************//
-void Background_Image_Render(Renderer* r) {
+void Background_Image_Render(Renderer *r)
+{
 
     int w, h;
     SDL_GetWindowSize(r->window, &w, &h);
@@ -251,96 +242,84 @@ void Background_Image_Render(Renderer* r) {
 }
 //******************  Map stuff  *******************//
 
-
-
 // Render the map based on the map buffer to make collision
-void Render_Map(Renderer* r, Map map) {
-    for (int y = 0; y < TILE_COUNT_Y; y++) {
-        for (int x = 0; x < TIlE_COUNT_X; x++)
+void Render_Map(Renderer *r, Map map)
+{
+    for (int y = 0; y < TILE_COUNT_Y; y++)
+    {
+        for (int x = 0; x < TILE_COUNT_X; x++)
         {
-            int tileType = getMapBufferItems(map,x,y);
+            int tileType = getMapBufferItems(map, x, y);
 
             float scaleX, scaleY;
             getScale(r, &scaleX, &scaleY);
 
             SDL_Rect tileRect = {x * getTileSize(map) * scaleX, y * getTileSize(map) * scaleY, getTileSize(map) * scaleX, getTileSize(map) * scaleY};
 
-            switch (tileType) {
-                case 0: 
-                    // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
-                  
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255,0, 125); // Transparent
-                    break;
-                case 1:
-                    // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 0); // Black
-                    break;
-                case 2:
-                
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);    
-                    break; 
-                case 3:
-                
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 255, 255);   
-                    break;      
-                default:
-                    SDL_SetRenderDrawColor(r->sdlRenderer, 0, 125, 255, 255); 
-                 
-                    break;
+            switch (tileType)
+            {
+            case 0:
+                // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+                SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 125); // Transparent
+                break;
+            case 1:
+                // SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
+                SDL_SetRenderDrawColor(r->sdlRenderer, 0, 255, 0, 0); // Black
+                break;
+            case 2:
+
+                SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+                break;
+            case 3:
+
+                SDL_SetRenderDrawColor(r->sdlRenderer, 0, 0, 255, 255);
+                break;
+            default:
+                SDL_SetRenderDrawColor(r->sdlRenderer, 0, 125, 255, 255);
+
+                break;
             }
             SDL_RenderDrawRect(r->sdlRenderer, &tileRect);
         }
     }
 }
 
-
-
-
 //******************  Player stuff  *******************//
-void Render_Player(Renderer* r, Player player, int playerIndex) {
+void Render_Player(Renderer *r, Player player, int playerIndex)
+{
     SDL_Texture *img = r->playerTexture[playerIndex];
-    int frame = getPlayerAnimationFrame(player); 
+    int frame = getPlayerAnimationFrame(player);
 
     float scaleX, scaleY;
     getScale(r, &scaleX, &scaleY);
 
-    SDL_Rect playerRect = 
-    {
-        getPlayerX(player) * scaleX,
-        getPlayerY(player) * scaleY,
-        getPlayerHeight(player) * scaleX,
-        getPlayerWidth(player) * scaleY
-    };
-      
+    SDL_Rect playerRect =
+        {
+            getPlayerX(player) * scaleX,
+            getPlayerY(player) * scaleY,
+            getPlayerHeight(player) * scaleX,
+            getPlayerWidth(player) * scaleY};
+
     SDL_RenderCopy(r->sdlRenderer, img, &r->playerFrames[frame], &playerRect);
 
-
-   
-  // sencor four /// for testing 
+    // sencor four /// for testing
     // SDL_Rect top = { (int)player->x+64/2, (int)player->y, 1, 1 };
-    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
-    // SDL_RenderFillRect(r->sdlRenderer, &top); 
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    // SDL_RenderFillRect(r->sdlRenderer, &top);
 
     // SDL_Rect left = { (int)player->x, (int)player->y+64/2, 1, 1 };
-    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
-    // SDL_RenderFillRect(r->sdlRenderer, &left); 
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    // SDL_RenderFillRect(r->sdlRenderer, &left);
 
     // SDL_Rect right = { (int)player->x+64-1, (int)player->y+64/2, 1, 1 };
-    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
-    // SDL_RenderFillRect(r->sdlRenderer, &right); 
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    // SDL_RenderFillRect(r->sdlRenderer, &right);
 
     // SDL_Rect bottom = { (int)player->x+64/2, (int)player->y+64-1, 1, 1 };
-    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255); 
-    // SDL_RenderFillRect(r->sdlRenderer, &bottom); 
-
-
-  
+    // SDL_SetRenderDrawColor(r->sdlRenderer, 255, 0, 0, 255);
+    // SDL_RenderFillRect(r->sdlRenderer, &bottom);
 }
-
-
-
-
-
 
 void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 {
@@ -355,7 +334,7 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r)
 
         rect.x = (int)(AbilityItem_getX(system, i) * scaleX);
         rect.y = (int)(AbilityItem_getY(system, i) * scaleY);
-        rect.w = (int)(AbilityItem_getWidth(system, i)  * scaleX);
+        rect.w = (int)(AbilityItem_getWidth(system, i) * scaleX);
         rect.h = (int)(AbilityItem_getHeight(system, i) * scaleY);
 
         SDL_Texture *tex = r->abilityTextures[AbilityItem_getType(system, i)];
@@ -364,17 +343,7 @@ void AbilitySystem_render(AbilitySystem *system, Renderer *r)
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
+void Render_PlayerLives(Renderer *r, Player player, int startX, int startY)
 {
     if (r == NULL || player == NULL)
     {
@@ -405,31 +374,30 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
         int isFilled = (heartIndex < lives);
 
         SDL_Rect blocks[20] = {
-            {x + size,     y,             size, size},
-            {x + 2 * size, y,             size, size},
-            {x + 4 * size, y,             size, size},
-            {x + 5 * size, y,             size, size},
+            {x + size, y, size, size},
+            {x + 2 * size, y, size, size},
+            {x + 4 * size, y, size, size},
+            {x + 5 * size, y, size, size},
 
-            {x,            y + size,      size, size},
-            {x + size,     y + size,      size, size},
-            {x + 2 * size, y + size,      size, size},
-            {x + 3 * size, y + size,      size, size},
-            {x + 4 * size, y + size,      size, size},
-            {x + 5 * size, y + size,      size, size},
-            {x + 6 * size, y + size,      size, size},
+            {x, y + size, size, size},
+            {x + size, y + size, size, size},
+            {x + 2 * size, y + size, size, size},
+            {x + 3 * size, y + size, size, size},
+            {x + 4 * size, y + size, size, size},
+            {x + 5 * size, y + size, size, size},
+            {x + 6 * size, y + size, size, size},
 
-            {x + size,     y + 2 * size,  size, size},
-            {x + 2 * size, y + 2 * size,  size, size},
-            {x + 3 * size, y + 2 * size,  size, size},
-            {x + 4 * size, y + 2 * size,  size, size},
-            {x + 5 * size, y + 2 * size,  size, size},
+            {x + size, y + 2 * size, size, size},
+            {x + 2 * size, y + 2 * size, size, size},
+            {x + 3 * size, y + 2 * size, size, size},
+            {x + 4 * size, y + 2 * size, size, size},
+            {x + 5 * size, y + 2 * size, size, size},
 
-            {x + 2 * size, y + 3 * size,  size, size},
-            {x + 3 * size, y + 3 * size,  size, size},
-            {x + 4 * size, y + 3 * size,  size, size},
+            {x + 2 * size, y + 3 * size, size, size},
+            {x + 3 * size, y + 3 * size, size, size},
+            {x + 4 * size, y + 3 * size, size, size},
 
-            {x + 3 * size, y + 4 * size,  size, size}
-        };
+            {x + 3 * size, y + 4 * size, size, size}};
 
         /* ===== Shadow ===== */
         SDL_SetRenderDrawColor(r->sdlRenderer, 45, 0, 0, 130);
@@ -440,8 +408,7 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
                 blocks[i].x + 2,
                 blocks[i].y + 2,
                 blocks[i].w,
-                blocks[i].h
-            };
+                blocks[i].h};
 
             SDL_RenderFillRect(r->sdlRenderer, &shadow);
         }
@@ -477,8 +444,7 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
                 blocks[i].x + 1,
                 blocks[i].y + 1,
                 blocks[i].w - 1,
-                blocks[i].h - 1
-            };
+                blocks[i].h - 1};
 
             if (inner.w > 0 && inner.h > 0)
             {
@@ -491,9 +457,9 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
         {
             SDL_SetRenderDrawColor(r->sdlRenderer, 255, 145, 160, 240);
 
-            SDL_Rect shine1 = {x + size + 1,     y + 1,        size - 1, size - 1};
-            SDL_Rect shine2 = {x + 2 * size + 1, y + 1,        size - 1, size - 1};
-            SDL_Rect shine3 = {x + 1,            y + size + 1, size - 1, size - 1};
+            SDL_Rect shine1 = {x + size + 1, y + 1, size - 1, size - 1};
+            SDL_Rect shine2 = {x + 2 * size + 1, y + 1, size - 1, size - 1};
+            SDL_Rect shine3 = {x + 1, y + size + 1, size - 1, size - 1};
 
             SDL_RenderFillRect(r->sdlRenderer, &shine1);
             SDL_RenderFillRect(r->sdlRenderer, &shine2);
@@ -507,14 +473,14 @@ void Render_PlayerLives(Renderer* r, Player player, int startX, int startY)
     }
 }
 
-static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Color color)
+static void Render_HUDText(Renderer *r, const char *text, int x, int y, SDL_Color color)
 {
     if (r == NULL || r->hudFont == NULL || text == NULL)
     {
         return;
     }
 
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(r->hudFont, text, color);
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(r->hudFont, text, color);
 
     if (surface == NULL)
     {
@@ -522,7 +488,7 @@ static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Colo
         return;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(r->sdlRenderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(r->sdlRenderer, surface);
 
     if (texture == NULL)
     {
@@ -539,8 +505,7 @@ static void Render_HUDText(Renderer* r, const char* text, int x, int y, SDL_Colo
     SDL_DestroyTexture(texture);
 }
 
-
-void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y, int hasBomb)
+void Render_PlayerHUD(Renderer *r, Player player, int playerIndex, int x, int y, int hasBomb)
 {
     if (r == NULL || player == NULL)
     {
@@ -683,8 +648,7 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
             r->sdlRenderer,
             r->playerTexture[playerIndex],
             &r->playerFrames[1],
-            &portraitDst
-        );
+            &portraitDst);
     }
     else
     {
@@ -783,7 +747,7 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
     SDL_Color shadowText = {120, 70, 25, 180};
     SDL_Color lightText = {255, 235, 170, 255};
 
-    const char* playerName = "Player";
+    const char *playerName = "Player";
 
     if (playerIndex == 0)
     {
@@ -849,8 +813,7 @@ void Render_PlayerHUD(Renderer* r, Player player, int playerIndex, int x, int y,
     SDL_RenderFillRect(r->sdlRenderer, &accentShine);
 }
 
-
-void Render_ScreenFrame(Renderer* r)
+void Render_ScreenFrame(Renderer *r)
 {
     if (r == NULL)
     {
@@ -1022,9 +985,7 @@ void Render_ScreenFrame(Renderer* r)
     SDL_RenderDrawRect(r->sdlRenderer, &fullFrame);
 }
 
-
-
-void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
+void Render_BombHUD(Renderer *r, Bomb bomb, int x, int y)
 {
     if (r == NULL || bomb == NULL)
     {
@@ -1308,8 +1269,7 @@ void Render_BombHUD(Renderer* r, Bomb bomb, int x, int y)
     }
 }
 
-
-void Render_Bomb(Renderer* r, Bomb bomb)
+void Render_Bomb(Renderer *r, Bomb bomb)
 {
     if (r == NULL || bomb == NULL)
     {
@@ -1330,9 +1290,12 @@ void Render_Bomb(Renderer* r, Bomb bomb)
         int middleRadius = (int)(32 * scaleX);
         int innerRadius = (int)(18 * scaleX);
 
-        if (outerRadius < 1) outerRadius = 1;
-        if (middleRadius < 1) middleRadius = 1;
-        if (innerRadius < 1) innerRadius = 1;
+        if (outerRadius < 1)
+            outerRadius = 1;
+        if (middleRadius < 1)
+            middleRadius = 1;
+        if (innerRadius < 1)
+            innerRadius = 1;
 
         SDL_SetRenderDrawBlendMode(r->sdlRenderer, SDL_BLENDMODE_BLEND);
 
@@ -1599,16 +1562,14 @@ void Render_Bomb(Renderer* r, Bomb bomb)
         cx + 10,
         cy - radius - 5,
         cx + 18,
-        cy - radius - 14
-    );
+        cy - radius - 14);
 
     SDL_RenderDrawLine(
         r->sdlRenderer,
         cx + 18,
         cy - radius - 14,
         cx + 24,
-        cy - radius - 10
-    );
+        cy - radius - 10);
 
     /* ===== Spark ===== */
 
@@ -1669,7 +1630,6 @@ void Render_Bomb(Renderer* r, Bomb bomb)
 
 //*******************Renders the menu and buttons position and size***********************//
 
-
 void Render_Menu(Renderer *r)
 {
 
@@ -1691,9 +1651,9 @@ void Render_Menu(Renderer *r)
     int centerX = w / 2 - buttonWidth / 2;
 
     // --- Vertical layout ---
-    SDL_Rect startRect   = { centerX, 300 * scaleY, buttonWidth, buttonHeight };
-    SDL_Rect optionsRect = { centerX, 420 * scaleY,  buttonWidth, buttonHeight };
-    SDL_Rect quitRect    = { centerX, 540 * scaleY,  buttonWidth, buttonHeight };
+    SDL_Rect startRect = {centerX, 300 * scaleY, buttonWidth, buttonHeight};
+    SDL_Rect optionsRect = {centerX, 420 * scaleY, buttonWidth, buttonHeight};
+    SDL_Rect quitRect = {centerX, 540 * scaleY, buttonWidth, buttonHeight};
 
     // --- Draw buttons (on top of background) ---
     SDL_RenderCopy(r->sdlRenderer, r->startButtonTexture, NULL, &startRect);
@@ -1701,18 +1661,7 @@ void Render_Menu(Renderer *r)
     SDL_RenderCopy(r->sdlRenderer, r->quitButtonTexture, NULL, &quitRect);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-// need fix to look better 
+// need fix to look better
 
 void Render_Text(Renderer *renderer, const char *text, int x, int y)
 {
@@ -1732,11 +1681,6 @@ void Render_Text(Renderer *renderer, const char *text, int x, int y)
     SDL_RenderCopy(renderer->sdlRenderer, texture, NULL, &dest);
     SDL_DestroyTexture(texture);
 }
-
-
-
-
-
 
 // need fix to look better
 

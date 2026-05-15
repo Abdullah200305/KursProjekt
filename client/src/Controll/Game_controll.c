@@ -5,11 +5,10 @@
 void game_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
 
-//Sound_PlayGameMusic(&game->sound);
-Uint32 lastSend = 0;
-const int SEND_RATE = 16;
-SDL_Event event;
-
+    // Sound_PlayGameMusic(&game->sound);
+    Uint32 lastSend = 0;
+    const int SEND_RATE = 16;
+    SDL_Event event;
 
     InputState *inputState = Input_Init();
 
@@ -394,15 +393,27 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     }
     packet = ClientNet_GetGameInitPacket(clientNet);
 
+    game->mapId = packet.data.map.mapId;
+
+    printf("[CLIENT] Applied mapId locally: %d\n", game->mapId);
+
+    if (game->mapId < MAP_DESERT || game->mapId > MAP_PIRATE)
+    {
+        printf("[CLIENT] Unknown mapId: %d\n", game->mapId);
+        ClientNet_ClearGameInit(clientNet);
+        return -1;
+    }
+
+    game->map = Map_create(packet.data.map.width, packet.data.map.height);
     // this will be change
-    if (packet.data.map.mapId != MAP_ID_ISLAND)
+    /*if (packet.data.map.mapId != MAP_ID_ISLAND)
     {
         printf("[CLIENT] Unknown mapId: %d\n", packet.data.map.mapId);
         ClientNet_ClearGameInit(clientNet);
         return -1;
     }
 
-    game->map = Map_create(packet.data.map.width, packet.data.map.height);
+    game->map = Map_create(packet.data.map.width, packet.data.map.height);*/
     // game->state = GAME_STATE_PLAYING; // this will be change
 
     game->numPlayers = packet.data.numPlayers;

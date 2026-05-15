@@ -30,7 +30,8 @@ typedef struct {
 
 
 int Renderer_Init(Renderer* r, const char* title, int width, int height);
-int game_init_renderer(Renderer* r);
+//int game_init_renderer(Renderer* r);
+int game_init_renderer(Renderer* r, int mapId);
 
 
 

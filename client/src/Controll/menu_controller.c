@@ -9,7 +9,7 @@ void menu_init(Game *game, Renderer *renderer)
 
 void menu_loop(Game *game, Renderer *renderer)
 {
-   // Sound_PlayMenuMusic(&game->sound);
+    // Sound_PlayMenuMusic(&game->sound);
 
     SDL_Event event;
     SDL_Point mousePoint;
@@ -191,10 +191,20 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     }
 
     ClientNet_TryReceive(*clientNet);
-    if (ClientNet_HasGameInit(*clientNet))
+    /*if (ClientNet_HasGameInit(*clientNet))
     {
         game_init_renderer(renderer);
-        game_init(game, renderer, *clientNet); 
+        game_init(game, renderer, *clientNet);
+        printf("Game starting\n");
+        game->state = GAME_STATE_COUNTDOWN;
+    }*/
+
+    if (ClientNet_HasGameInit(*clientNet))
+    {
+        game_init(game, renderer, *clientNet);
+
+        game_init_renderer(renderer, game->mapId);
+
         printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }
@@ -247,10 +257,19 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     // ---------------- RECEIVE ----------------
     ClientNet_TryReceive(*clientNet);
-    if (ClientNet_HasGameInit(*clientNet))
+    /*if (ClientNet_HasGameInit(*clientNet))
     {
         game_init_renderer(renderer);
-        game_init(game, renderer, *clientNet); 
+        game_init(game, renderer, *clientNet);
+        printf("Game starting\n");
+        game->state = GAME_STATE_COUNTDOWN;
+    }*/
+    if (ClientNet_HasGameInit(*clientNet))
+    {
+        game_init(game, renderer, *clientNet);
+
+        game_init_renderer(renderer, game->mapId);
+
         printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }
@@ -261,31 +280,26 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     SDL_RenderPresent(renderer->sdlRenderer);
 }
 
-
-
 void countdown_loop(Game *game, Renderer *renderer, ClientNet clientNet)
 {
-    
-    
+
     if (game->state != GAME_STATE_COUNTDOWN)
         return;
 
     ClientNet_TryReceive(clientNet);
-     int countdown = ClientNet_getConutDown(clientNet);
-    if(ClientNet_HasGameStart(clientNet))
+    int countdown = ClientNet_getConutDown(clientNet);
+    if (ClientNet_HasGameStart(clientNet))
     {
-    printf("Countdown: %d\n", countdown);
-  
+        printf("Countdown: %d\n", countdown);
 
-    SDL_RenderClear(renderer->sdlRenderer);
+        SDL_RenderClear(renderer->sdlRenderer);
 
-    if (countdown <= 0)
-    {
-        game->state = GAME_STATE_PLAYING;
-        return;
-    } 
+        if (countdown <= 0)
+        {
+            game->state = GAME_STATE_PLAYING;
+            return;
+        }
     }
-   
 
     char countdownStr[16];
     snprintf(countdownStr, sizeof(countdownStr), "%d", countdown);

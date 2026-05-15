@@ -2,6 +2,8 @@
 
 #include <signal.h>
 
+#include <stdlib.h>
+#include <time.h>
 
 static Server g_server;
 
@@ -13,25 +15,19 @@ void handle_sigint(int sig)
 
 int main(int argc, char *argv[])
 {
-Server server= server_net_init();
-Game game;
-printf("server init");
-ServerConnection(server,2000);    
-printf("Server Init SDL_NET\n");
-printf("Startning the Server\n");
+    srand((unsigned int)time(NULL));
 
+    Server server = server_net_init();
+    Game game;
+    printf("server init");
+    ServerConnection(server, 2000);
+    printf("Server Init SDL_NET\n");
+    printf("Startning the Server\n");
 
+    signal(SIGINT, handle_sigint);
 
-
-
-
-signal(SIGINT, handle_sigint); 
-
-g_server = server;
-signal(SIGINT, handle_sigint);  
-run(server, game);
-return 0;    
+    g_server = server;
+    signal(SIGINT, handle_sigint);
+    run(server, game);
+    return 0;
 }
-
-
-

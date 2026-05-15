@@ -150,7 +150,7 @@ struct Map_type{
     int width;
     int height;
     int tileSize;
-    int mapBuffer[TILE_COUNT_Y][TIlE_COUNT_X];
+    int mapBuffer[TILE_COUNT_Y][TILE_COUNT_X];
 
     Uint32 ticker;
 };
@@ -181,13 +181,13 @@ Map Map_create(int width, int height)
     map->height = height;
      
     map->tileSize = 16;
-    ReadMap = fopen("link/Test.txt", "r");
+    ReadMap = fopen("link/Test2.txt", "r");
     if (ReadMap)
     {
         int item;
         for (int y = 0; y < TILE_COUNT_Y; y++)
         {
-            for (int x = 0; x < TIlE_COUNT_X; x++)
+            for (int x = 0; x < TILE_COUNT_X; x++)
             {
                 if (fscanf(ReadMap, "%d%*c", &item) == 1)
                 {
@@ -227,7 +227,7 @@ int Player_collisionWithOtherPlayer(float x1, float y1, float w1, float h1, floa
 
 int Collision_Map(Map map, float x, float y, float width, float height)
 {
-    float left   = x;
+    /*float left   = x;
     float right  = x + width - 1; // update
     float top    = y;
     float bottom = y + height - 1; // updatw
@@ -247,12 +247,19 @@ int Collision_Map(Map map, float x, float y, float width, float height)
         return 1;
 
     if (A1 == 3 || A2 == 3 || B3 == 3 || B4 == 3)
-        return 3;
+        return 3;*/
 
     return 0;
 }
 
 int checkCollision(Map map, int x, int y) {
+    
+    // För att undvika att spelet kraschar när spelaren är utanför kartan, returnera 1 (kollision) om koordinaterna är utanför kartans gränser
+    if (x < 0 || x >= TILE_COUNT_X || y < 0 || y >= TILE_COUNT_Y)
+    {
+        return 1;
+    }
+
     switch (map->mapBuffer[y][x])
     {
     case 1:    
@@ -341,4 +348,36 @@ void resolveCollisionRate(Map map, Player player, int miliseconds)
 
     // set cooldown 
     map->ticker = now + miliseconds;
+}
+
+MapId getRandomMapId(void)
+{
+    return (MapId)((rand() % 6) + 1);
+}
+
+const char *getMapImagePath(MapId mapId)
+{
+    switch (mapId)
+    {
+    case MAP_DESERT:
+        return "link/Maps/Desert.png";
+
+    case MAP_FOREST:
+        return "link/Maps/Forest.png";
+
+    case MAP_ICELAND:
+        return "link/Maps/Iceland.png";
+
+    case MAP_GRAVEYARD:
+        return "link/Maps/Graveyard.png";
+
+    case MAP_LAVA:
+        return "link/Maps/Lava.png";
+
+    case MAP_PIRATE:
+        return "link/Maps/Pirate.png";
+
+    default:
+        return "link/Maps/Island.png";
+    }
 }
