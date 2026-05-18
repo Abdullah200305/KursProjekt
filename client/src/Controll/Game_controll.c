@@ -82,6 +82,31 @@ void game_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
             lastState = game->state;
         }
     }
+
+    //will updte
+const char *message = "Game over! Click OK to close.";
+if (isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+{
+    message = "Game over!\nPlayer 1 wins.\nClick OK to close.";
+}
+else if (isPlayerAlive(game->players[1]) && !isPlayerAlive(game->players[0]))
+{
+    message = "Game over!\nPlayer 2 wins.\nClick OK to close.";
+}
+else if (!isPlayerAlive(game->players[0]) && !isPlayerAlive(game->players[1]))
+{
+    message = "Game over!\nBoth players died.\nClick OK to close.";
+}
+SDL_ShowSimpleMessageBox(
+    SDL_MESSAGEBOX_INFORMATION,
+    "Game Over",
+    message,
+    renderer->window
+);
+
+
+
+
 }
 
 
