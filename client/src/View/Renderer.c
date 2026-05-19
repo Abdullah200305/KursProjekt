@@ -74,51 +74,51 @@ int Renderer_Init(Renderer* r, const char* title, int width, int height) {
 }
 
 
+int game_init_renderer(Renderer *r, int mapId)
+{
+    const char *mapPath = getMapImagePath((MapId)mapId);
 
-int game_init_renderer(Renderer* r) {
-     
+    printf("[CLIENT] Loading mapId %d: %s\n", mapId, mapPath);
 
-    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/Map/Forest.png");
+    r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, mapPath);
+   
+   
     if (!r->mapBackgroundTexture)
     {
-        fprintf(stderr, "IMG_LoadTexture Error: %s\n", IMG_GetError());
+        fprintf(stderr, "IMG_LoadTexture Error loading map %s: %s\n", mapPath, IMG_GetError());
         Renderer_Destroy(r);
         return -1;
     }
-    
 
-    // player will change 
-    //SPELARE
+    // player will change
+    // SPELARE
     r->playerTexture[0] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player1_Sheet.png");
     r->playerTexture[1] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player2_Sheet.png");
-    r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player3_Sheet.png");
-    r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player/Player4_Sheet.png");
-    for(int i = 0; i < 2; i++)
+    r->playerTexture[2] = IMG_LoadTexture(r->sdlRenderer, "link/Player3_Sheet.png");
+    r->playerTexture[3] = IMG_LoadTexture(r->sdlRenderer, "link/Player4_Sheet.png");
+    for (int i = 0; i < 2; i++)
     {
-        if (!r->playerTexture[i]) {
-        fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i+1,IMG_GetError());
-        Renderer_Destroy(r);
-        return -1;
+        if (!r->playerTexture[i])
+        {
+            fprintf(stderr, "IMG_LoadTexture Error (player %d): %s\n", i + 1, IMG_GetError());
+            Renderer_Destroy(r);
+            return -1;
         }
     }
-    
-    //ANIMATION
+
+    // ANIMATION
     int PLAYER_FRAME_WIDTH = 471;
     int PLAYER_FRAME_HEIGHT = 530;
-    int framesPerRow = 11;
-    
 
-    for (int i = 0; i < 21; i++) {
-        int col = i / 2;              // kolumn
-        int row = i % 2;              // rad (0 eller 1)
-
-        r->playerFrames[i].x = col * PLAYER_FRAME_WIDTH;
-        r->playerFrames[i].y = row * PLAYER_FRAME_HEIGHT;
+    for (int i = 0; i < 18; i++)
+    {
+        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = 0;
         r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
         r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     }
 
-    //ABILITY
+    // ABILITY
     r->abilityTextures[0] = NULL;
     r->abilityTextures[1] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SPEED.png");
     r->abilityTextures[2] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_FREEZE.png");
@@ -126,14 +126,12 @@ int game_init_renderer(Renderer* r) {
     r->abilityTextures[4] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SIZEUP.png");
     r->abilityTextures[5] = IMG_LoadTexture(r->sdlRenderer, "link/ABILITY_SHIELD.png");
 
-    //Initialize SDL Cursor//
+    // Initialize SDL Cursor//
     r->cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    r->cursorHand  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    r->cursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
     SDL_SetCursor(r->cursorArrow);
     // //---------------------//
-    
-
 
     // r->mapBackgroundTexture = IMG_LoadTexture(r->sdlRenderer, "link/MAP_BACKGROUND.png");
     // if (!r->mapBackgroundTexture)
@@ -261,7 +259,7 @@ void Background_Image_Render(Renderer* r) {
 // Render the map based on the map buffer to make collision
 void Render_Map(Renderer* r, Map map) {
     for (int y = 0; y < TILE_COUNT_Y; y++) {
-        for (int x = 0; x < TIlE_COUNT_X; x++)
+        for (int x = 0; x < TILE_COUNT_X; x++)
         {
             int tileType = getMapBufferItems(map,x,y);
 

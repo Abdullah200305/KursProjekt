@@ -3,25 +3,13 @@
 void menu_init(Game *game, Renderer *renderer)
 {
     Sound_Init(&game->sound);
-    
     game->state = GAME_STATE_MENU;
-    game->countdownValue = 0;
-    game->map = NULL;
-    game->bomb = NULL;
-    game->abilitySystem = NULL;
-    game->numPlayers = 0;
-
-    for (int i = 0; i < Max_Players; i++)
-    {
-        game->players[i] = NULL;
-    }
-
     Renderer_Init(renderer, "TIC TAC BOMB", WIDTH, HEIGHT);
 }
 
 void menu_loop(Game *game, Renderer *renderer)
 {
-   Sound_PlayMenuMusic(&game->sound);
+   // Sound_PlayMenuMusic(&game->sound);
 
     SDL_Event event;
     SDL_Point mousePoint;
@@ -290,35 +278,30 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     static int initialized = 0;
     static int connectedAsHost = 0;
 
-    if (clientNet != NULL && *clientNet == NULL)
-    {
-        initialized = 0;
-        connectedAsHost = 0;
-    }
-
     SDL_Event event;
 
     // ---------------- INIT HOST ONCE ----------------//
     if (!initialized)
     {
-        printf("[HOST] Starting server...\n");
+        //printf("[HOST] Starting server...\n");
         system("start ..\\server\\server.exe");
 
         SDL_Delay(10000); // allow server to boot
 
-        printf("[HOST] Connecting as player 1...\n");
+        //printf("[HOST] Connecting as player 1...\n");
 
-        *clientNet = ClientNet_Init("127.0.0.1", 2000);
+        // *clientNet = ClientNet_Init("127.0.0.1", 2000);
+        *clientNet = ClientNet_Init("192.168.1.31", 2000);
 
         if (*clientNet)
         {
             ClientNet_SendJoinRequest(*clientNet);
             connectedAsHost = 1;
-            printf("[HOST] JOIN sent\n");
+            //printf("[HOST] JOIN sent\n");
         }
         else
         {
-            printf("[HOST] CLIENT INIT FAILED\n");
+            //printf("[HOST] CLIENT INIT FAILED\n");
         }
 
         initialized = 1;
@@ -337,7 +320,7 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
         {
             if (*clientNet)
             {
-                printf("[HOST] Start game request sent\n");
+                //printf("[HOST] Start game request sent\n");
                 ClientNet_SendStartGame(*clientNet);
             }
         }
@@ -346,9 +329,10 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
-        game_init_renderer(renderer);
+       
         game_init(game, renderer, *clientNet); 
-        printf("Game starting\n");
+        game_init_renderer(renderer,game->mapId);
+        //printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }
 
@@ -445,16 +429,12 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     static int initialized = 0;
 
-    if (clientNet != NULL && *clientNet == NULL)
-    {
-        initialized = 0;
-    }
-
     SDL_Event event;
 
     if (!initialized)
     {
-        *clientNet = ClientNet_Init("127.0.0.1", 2000);
+        // *clientNet = ClientNet_Init("127.0.0.1", 2000);
+        *clientNet = ClientNet_Init("192.168.1.31", 2000);
         if (!*clientNet)
         {
             printf("Client init failed\n");
@@ -478,9 +458,10 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
     ClientNet_TryReceive(*clientNet);
     if (ClientNet_HasGameInit(*clientNet))
     {
-        game_init_renderer(renderer);
+        
         game_init(game, renderer, *clientNet); 
-        printf("Game starting\n");
+        game_init_renderer(renderer,game->mapId);
+        // printf("Game starting\n");
         game->state = GAME_STATE_COUNTDOWN;
     }
 
@@ -575,7 +556,7 @@ void countdown_loop(Game *game, Renderer *renderer, ClientNet clientNet)
      int countdown = ClientNet_getConutDown(clientNet);
     if(ClientNet_HasGameStart(clientNet))
     {
-    //printf("Countdown: %d\n", countdown);
+    // printf("Countdown: %d\n", countdown);
   
 
     SDL_RenderClear(renderer->sdlRenderer);

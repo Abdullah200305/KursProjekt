@@ -108,6 +108,9 @@ int UpdateCountdown(Server server)
 /*********Game_init********/
 void Game_Init(Server server, Game *game)
 {
+    game->mapId = (rand() % 6) + 1;
+    printf("[SERVER] Selected mapId = %d\n", game->mapId);
+
     game->map = Map_create(WIDTH, HEIGHT);
     game->state = GAME_STATE_PLAYING;
     game->numPlayers = getClientCount(server);
