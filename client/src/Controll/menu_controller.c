@@ -9,7 +9,7 @@ void menu_init(Game *game, Renderer *renderer)
 
 void menu_loop(Game *game, Renderer *renderer)
 {
-   // Sound_PlayMenuMusic(&game->sound);
+    Sound_PlayMenuMusic(&game->sound);
 
     SDL_Event event;
     SDL_Point mousePoint;

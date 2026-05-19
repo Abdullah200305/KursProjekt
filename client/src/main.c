@@ -30,7 +30,7 @@ while (game.running)
             
         case GAME_STATE_PLAYING:
            // printf("Client is in menu playing state\n");
-            game_loop(&game, &renderer, &clientNet);
+            game_loop(&game, &renderer, clientNet);
             break;
 
         case GAME_STATE_CHOOSE_HOST_JOIN:
