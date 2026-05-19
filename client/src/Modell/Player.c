@@ -343,14 +343,7 @@ void setPlayerAnimation(Player player) {
         if (player->vy > 0)      player->animationFrame = 14;
         else if (player->vx > 0) player->animationFrame = 15;  
         else if (player->vx < 0) player->animationFrame = 16; 
-        
-        else if (player->vy < 0) {    
-            player->animationTimer++;
-            if (player->animationTimer >= 6) {
-                player->animationTimer = 0;
-                player->animationFrame = (player->animationFrame == 17) ? 18 : 17;            
-            }
-        }
+        else if (player->vy < 0) player->animationFrame = 17;
         return;
     }
     
