@@ -446,3 +446,166 @@ int game_apply_network_init(Game *game, ClientNet clientNet)
     // printf("[CLIENT] Applied GAME_INIT locally\n");
     return 0;
 }
+
+void game_over_loop(Game *game, Renderer *renderer, ClientNet clientNet)
+{
+    if (game == NULL || renderer == NULL)
+    {
+        return;
+    }
+
+    SDL_Event event;
+    SDL_Point mousePoint;
+
+    int windowW = 0;
+    int windowH = 0;
+
+    SDL_GetMouseState(&mousePoint.x, &mousePoint.y);
+    SDL_GetWindowSize(renderer->window, &windowW, &windowH);
+
+    SDL_Rect bg = {0, 0, windowW, windowH};
+
+    SDL_Rect panelShadow = {windowW / 2 - 310 + 8, 170 + 8, 620, 420};
+    SDL_Rect panel       = {windowW / 2 - 310,     170,     620, 420};
+
+    SDL_Rect titlePlate = {windowW / 2 - 220, 215, 440, 80};
+
+    SDL_Rect menuButton = {windowW / 2 - 190, 355, 380, 80};
+    SDL_Rect exitButton = {windowW / 2 - 190, 465, 380, 80};
+
+    int menuHover = SDL_PointInRect(&mousePoint, &menuButton);
+    int exitHover = SDL_PointInRect(&mousePoint, &exitButton);
+
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+        {
+            game->running = 0;
+        }
+
+        if (event.type == SDL_MOUSEBUTTONDOWN &&
+            event.button.button == SDL_BUTTON_LEFT)
+        {
+            if (menuHover)
+            {
+                if (clientNet != NULL)
+                {
+                    ClientNet_SendDisconnect(clientNet);
+                }
+
+                game->state = GAME_STATE_MENU;
+            }
+
+            if (exitHover)
+            {
+                game->running = 0;
+            }
+        }
+    }
+
+    if (menuHover || exitHover)
+    {
+        SDL_SetCursor(renderer->cursorHand);
+    }
+    else
+    {
+        SDL_SetCursor(renderer->cursorArrow);
+    }
+
+    int clientId = -1;
+
+    if (clientNet != NULL)
+    {
+        clientId = ClientNet_GetClientId(clientNet);
+    }
+
+    int playerWon = 0;
+
+    if (clientId >= 0 && clientId < game->numPlayers && game->players[clientId] != NULL)
+    {
+        playerWon = isPlayerAlive(game->players[clientId]);
+    }
+
+    const char *resultText = "YOU LOST";
+
+    if (playerWon)
+    {
+        resultText = "CONGRATULATIONS";
+    }
+
+    SDL_RenderClear(renderer->sdlRenderer);
+
+    if (renderer->menuBackgroundTexture)
+    {
+        SDL_RenderCopy(renderer->sdlRenderer, renderer->menuBackgroundTexture, NULL, &bg);
+    }
+
+    SDL_SetRenderDrawBlendMode(renderer->sdlRenderer, SDL_BLENDMODE_BLEND);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 160);
+    SDL_RenderFillRect(renderer->sdlRenderer, &bg);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 170);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panelShadow);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 18, 22, 38, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &panel);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 180, 40, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &panel);
+
+    SDL_Rect innerPanel = {panel.x + 8, panel.y + 8, panel.w - 16, panel.h - 16};
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 230, 150, 180);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &innerPanel);
+
+    SDL_Color darkText = {15, 15, 20, 255};
+    SDL_Color lightText = {245, 245, 255, 255};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 170, 25, 235);
+    SDL_RenderFillRect(renderer->sdlRenderer, &titlePlate);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 235, 160, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &titlePlate);
+
+    Render_MenuTextCentered(renderer, resultText, titlePlate, darkText);
+
+    SDL_Rect menuShadow = {menuButton.x + 6, menuButton.y + 6, menuButton.w, menuButton.h};
+    SDL_Rect exitShadow = {exitButton.x + 6, exitButton.y + 6, exitButton.w, exitButton.h};
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 0, 0, 0, 150);
+    SDL_RenderFillRect(renderer->sdlRenderer, &menuShadow);
+    SDL_RenderFillRect(renderer->sdlRenderer, &exitShadow);
+
+    if (menuHover)
+    {
+        SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 215, 70, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 190, 45, 245);
+    }
+
+    SDL_RenderFillRect(renderer->sdlRenderer, &menuButton);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 245, 190, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &menuButton);
+
+    if (exitHover)
+    {
+        SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 135, 45, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 105, 25, 245);
+    }
+
+    SDL_RenderFillRect(renderer->sdlRenderer, &exitButton);
+
+    SDL_SetRenderDrawColor(renderer->sdlRenderer, 255, 220, 120, 255);
+    SDL_RenderDrawRect(renderer->sdlRenderer, &exitButton);
+
+    Render_MenuTextCentered(renderer, "MAIN MENU", menuButton, darkText);
+    Render_MenuTextCentered(renderer, "EXIT", exitButton, lightText);
+
+    SDL_RenderPresent(renderer->sdlRenderer);
+}

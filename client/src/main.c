@@ -49,9 +49,9 @@ while (game.running)
             break;
 
         case GAME_STATE_GAME_OVER:
-            game.running = 0;
+            game_over_loop(&game, &renderer, clientNet);
             break;
-    }
+        }
       
    
     SDL_Delay(16); // Delay to cap the frame rate at ~60 FPS    
