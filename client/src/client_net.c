@@ -1,0 +1,587 @@
+#include "client_net.h"
+#include <SDL2/SDL_net.h>
+#include <SDL2/SDL_timer.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define CLIENT_PACKET_SIZE ((int)sizeof(GameInitPacket))
+
+struct ClientNet_type
+{
+    int connected;
+    int clientId;
+    int countdown;
+    int hasGameInit;
+    int hasGameState;
+    int hasGameStart;
+    int disconnectedPlayerId;
+    GameInitPacket gameInitPacket;
+    GameStatePacket gameStatePacket;
+    UDPsocket socket;
+    IPaddress serverAddress;
+    UDPpacket *sendPacket;
+    UDPpacket *recvPacket;
+    Uint32 lastReceiveTick; 
+};
+
+ClientNet ClientNet_Init(const char *serverIP, Uint16 port)
+{
+    ClientNet client = malloc(sizeof(struct ClientNet_type));
+    if (client == NULL)
+    {
+        return NULL;
+    }
+    client->countdown = 0;
+    client->connected = 0;
+    client->clientId = -1;
+    client->hasGameInit = 0;
+    client->hasGameStart = 0;
+    client->hasGameState = 0;
+    client->disconnectedPlayerId = -1;
+    memset(&client->gameInitPacket, 0, sizeof(GameInitPacket));
+    memset(&client->gameStatePacket, 0, sizeof(GameStatePacket));
+    client->socket = NULL;
+    client->sendPacket = NULL;
+    client->recvPacket = NULL;
+    client->lastReceiveTick = SDL_GetTicks();
+
+    if (SDLNet_Init() < 0)
+    {
+        printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
+        free(client);
+        return NULL;
+    }
+
+    client->socket = SDLNet_UDP_Open(0);
+    if (client->socket == NULL)
+    {
+        printf("SDLNet_UDP_Open failed: %s\n", SDLNet_GetError());
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    if (SDLNet_ResolveHost(&client->serverAddress, serverIP, port) < 0)
+    {
+        printf("SDLNet_ResolveHost failed: %s\n", SDLNet_GetError());
+        SDLNet_UDP_Close(client->socket);
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    // client->sendPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    // client->recvPacket = SDLNet_AllocPacket(CLIENT_PACKET_SIZE);
+    client->recvPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
+    client->sendPacket = SDLNet_AllocPacket(sizeof(GameStatePacket) + 64);
+
+    if (client->sendPacket == NULL || client->recvPacket == NULL)
+    {
+        printf("SDLNet_AllocPacket failed: %s\n", SDLNet_GetError());
+
+        if (client->sendPacket != NULL)
+        {
+            SDLNet_FreePacket(client->sendPacket);
+        }
+
+        if (client->recvPacket != NULL)
+        {
+            SDLNet_FreePacket(client->recvPacket);
+        }
+
+        SDLNet_UDP_Close(client->socket);
+        SDLNet_Quit();
+        free(client);
+        return NULL;
+    }
+
+    client->connected = 1;
+    return client;
+}
+
+int ClientNet_SendJoinRequest(ClientNet client)
+{
+    JoinRequestPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL)
+    {
+        return -1;
+    }
+
+    packet.type = PACKET_JOIN_REQUEST;
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
+    {
+        printf("ClientNet_SendJoinRequest failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+int ClientNet_SendStartGame(ClientNet client)
+{
+    StartGamePacket packet;
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL)
+    {
+        return -1;
+    }
+    packet.type = PACKET_START_GAME;
+    packet.countDown = -1; 
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
+    {
+        printf("ClientNet_SendJoinRequest failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+int ClientNet_SendDisconnect(ClientNet client)
+{
+    DisconnectPacket packet;
+
+    if (client == NULL || client->socket == NULL || client->sendPacket == NULL)
+    {
+        return -1;
+    }
+
+    packet.type = PACKET_DISCONNECT;
+    packet.clientId = client->clientId;
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, &packet, sizeof(packet));
+    client->sendPacket->len = sizeof(packet);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
+    {
+        printf("ClientNet_SendDisconnect failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    printf("[CLIENT] DISCONNECT sent\n");
+    return 0;
+}
+
+int ClientNet_SendInput(ClientNet client, const InputPacket *packet)
+{
+    if (client == NULL || packet == NULL || client->socket == NULL || client->sendPacket == NULL)
+    {
+        return -1;
+    }
+
+    client->sendPacket->address = client->serverAddress;
+    memcpy(client->sendPacket->data, packet, sizeof(InputPacket));
+    client->sendPacket->len = sizeof(InputPacket);
+
+    if (SDLNet_UDP_Send(client->socket, -1, client->sendPacket) == 0)
+    {
+        printf("ClientNet_SendInput failed: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+int ClientNet_TryReceive(ClientNet client)
+{
+    // abody make change here
+    Uint8 packetType;
+
+    if (client == NULL || client->socket == NULL || client->recvPacket == NULL)
+    {
+        return -1;
+    }
+
+    if (SDLNet_UDP_Recv(client->socket, client->recvPacket) == 0)
+    {
+        return 0;
+    }
+
+    client->lastReceiveTick = SDL_GetTicks();
+
+    if (client->recvPacket->len < (int)sizeof(Uint8))
+    {
+        printf("[CLIENT] Received packet too small, len=%d\n", client->recvPacket->len);
+        return 1;
+    }
+
+    memcpy(&packetType, client->recvPacket->data, sizeof(Uint8));
+
+    if (packetType == PACKET_DISCONNECT)
+    {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket))
+        {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        if (packet.clientId == 7777)
+        {
+            printf("[CLIENT] Server disconnected\n");
+            client->connected = 0;
+            return -1;
+        }
+
+        printf("[CLIENT] Player %d disconnected\n", packet.clientId);
+        return 1;
+    }
+    
+    if (packetType == PACKET_JOIN_ACCEPT)
+    {
+        JoinAcceptPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(JoinAcceptPacket))
+        {
+            printf("[CLIENT] JOIN_ACCEPT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(JoinAcceptPacket));
+        client->clientId = packet.clientId;
+
+        printf("[CLIENT] JOIN_ACCEPT received, clientId = %d\n", client->clientId);
+        return 1;
+    }
+
+    if (packetType == PACKET_GAME_INIT)
+    {
+        GameInitPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(GameInitPacket))
+        {
+            printf("[CLIENT] GAME_INIT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(GameInitPacket));
+
+        client->gameInitPacket = packet;
+        client->hasGameInit = 1;
+
+        printf("[CLIENT] GAME_INIT received\n");
+        printf("[CLIENT] mapId = %d\n", packet.data.map.mapId);
+        printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+        printf("[CLIENT] yourClientId = %d\n", packet.data.yourClientId);
+        printf("[CLIENT] bombCarrier = %d\n", packet.data.bomb.bombCarrier);
+
+        for (int i = 0; i < packet.data.numPlayers && i < MAX_PLAYERS; i++)
+        {
+            printf("[CLIENT] player %d -> x=%.1f y=%.1f lives=%d alive=%d\n",
+                   i,
+                   packet.data.players[i].x,
+                   packet.data.players[i].y,
+                   packet.data.players[i].lives,
+                   packet.data.players[i].alive);
+        }
+
+        return 1;
+    }
+
+    if (packetType == PACKET_GAME_STATE)
+    {
+
+        GameStatePacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(GameStatePacket))
+        {
+            printf("[CLIENT] GAME_STATE packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(GameStatePacket));
+
+        client->gameStatePacket = packet;
+        client->hasGameState = 1;
+
+        // abody stop
+        //    printf("[CLIENT] GAME_STATE received\n");
+        //    printf("[CLIENT] numPlayers = %d\n", packet.data.numPlayers);
+
+        return 1;
+    }
+    if (packetType == PACKET_START_GAME)
+    {
+        StartGamePacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(StartGamePacket))
+        {
+            printf("[CLIENT] START_GAME packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(StartGamePacket));
+
+        client->hasGameStart = 1;
+        client->countdown = packet.countDown;
+
+        printf("[CLIENT] START_GAME received, countdown = %d\n", client->countdown);
+
+        return 1;
+    }
+    if (packetType == PACKET_DISCONNECT) {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket)) {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        printf("[CLIENT] Client %d disconnected\n", packet.clientId);
+
+        return 1;
+    }
+
+    // Lagra ID på den bortkopplade spelaren så att game_loop kan sluta rendera den
+    if (packetType == PACKET_DISCONNECT)
+    {
+        DisconnectPacket packet;
+
+        if (client->recvPacket->len < (int)sizeof(DisconnectPacket))
+        {
+            printf("[CLIENT] DISCONNECT packet too small\n");
+            return 1;
+        }
+
+        memcpy(&packet, client->recvPacket->data, sizeof(DisconnectPacket));
+
+        printf("[CLIENT] Client %d disconnected\n", packet.clientId);
+        client->disconnectedPlayerId = packet.clientId;
+
+        return 1;
+    }
+
+    printf("[CLIENT] Received unknown packet type: %d\n", packetType);
+    return 1;
+}
+
+void ClientNet_Destroy(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    if (client->sendPacket != NULL)
+    {
+        SDLNet_FreePacket(client->sendPacket);
+        client->sendPacket = NULL;
+    }
+
+    if (client->recvPacket != NULL)
+    {
+        SDLNet_FreePacket(client->recvPacket);
+        client->recvPacket = NULL;
+    }
+
+    if (client->socket != NULL)
+    {
+        SDLNet_UDP_Close(client->socket);
+        client->socket = NULL;
+    }
+
+    client->connected = 0;
+    client->clientId = -1;
+    SDLNet_Quit();
+    free(client);
+}
+
+int ClientNet_IsConnected(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->connected;
+}
+
+int ClientNet_HasTimedOut(ClientNet client, Uint32 timeoutMs)
+{
+    if (client == NULL || !client->connected)
+    {
+        return 0;
+    }
+
+    return SDL_TICKS_PASSED(SDL_GetTicks(), client->lastReceiveTick + timeoutMs);
+}
+
+int ClientNet_HasGameInit(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->hasGameInit;
+}
+
+GameInitPacket ClientNet_GetGameInitPacket(ClientNet client)
+{
+    GameInitPacket packet;
+    memset(&packet, 0, sizeof(GameInitPacket));
+
+    if (client == NULL)
+    {
+        return packet;
+    }
+
+    return client->gameInitPacket;
+}
+
+void ClientNet_ClearGameInit(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    client->hasGameInit = 0;
+}
+
+int ClientNet_GetClientId(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return -1;
+    }
+
+    return client->clientId;
+}
+
+int ClientNet_getConutDown(ClientNet client)
+{
+    return client->countdown;
+}
+
+void ClientNet_SetClientId(ClientNet client, int clientId)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    client->clientId = clientId;
+}
+
+int ClientNet_hasCountdown(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->hasGameStart;
+}
+
+int ClientNet_HasGameState(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->hasGameState;
+}
+int ClientNet_HasGameStart(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return 0;
+    }
+
+    return client->hasGameStart;
+}
+
+GameStatePacket ClientNet_GetGameStatePacket(ClientNet client)
+{
+    GameStatePacket packet;
+    memset(&packet, 0, sizeof(GameStatePacket));
+
+    if (client == NULL)
+    {
+        return packet;
+    }
+
+    return client->gameStatePacket;
+}
+
+void ClientNet_ClearGameState(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    client->hasGameState = 0;
+}
+
+int ClientNet_GetDisconnectedPlayerId(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return -1;
+    }
+
+    return client->disconnectedPlayerId;
+}
+
+void ClientNet_ClearDisconnectedPlayerId(ClientNet client)
+{
+    if (client == NULL)
+    {
+        return;
+    }
+
+    client->disconnectedPlayerId = -1;
+}
+
+void get_local_ip(char *buffer)
+{
+    char hostname[256];
+
+    // get computer name
+    if (SDLNet_ResolveHost(NULL, hostname, 0) == -1)
+    {
+        strcpy(buffer, "Unknown");
+        return;
+    }
+
+    IPaddress ip;
+
+    // resolve hostname to IP
+    if (SDLNet_ResolveHost(&ip, hostname, 0) == -1)
+    {
+        strcpy(buffer, "Error");
+        return;
+    }
+
+    Uint32 addr = SDL_SwapBE32(ip.host);
+
+    sprintf(buffer, "%d.%d.%d.%d",
+            (addr >> 24) & 0xFF,
+            (addr >> 16) & 0xFF,
+            (addr >> 8) & 0xFF,
+            addr & 0xFF);
+
+    printf("Getting local IP address...%d.%d.%d.%d\n",
+           (addr >> 24) & 0xFF,
+           (addr >> 16) & 0xFF,
+           (addr >> 8) & 0xFF,
+           addr & 0xFF);
+}
