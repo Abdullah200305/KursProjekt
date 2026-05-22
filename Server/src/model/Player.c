@@ -1,4 +1,6 @@
 #include "Player.h"
+#include <SDL2/SDL.h>
+
 
 struct  Player_type
 {
@@ -353,17 +355,10 @@ void setPlayerAnimation(Player player) {
 
     //SHIELD ANIMATION
     if (player->shieldTimer > 0) {
-        if (player->vy > 0)      player->animationFrame = 14;
-        else if (player->vx > 0) player->animationFrame = 15;  
-        else if (player->vx < 0) player->animationFrame = 16; 
-        
-        else if (player->vy < 0) {    
-            player->animationTimer++;
-            if (player->animationTimer >= 6) {
-                player->animationTimer = 0;
-                player->animationFrame = (player->animationFrame == 17) ? 18 : 17;            
-            }
-        }
+        if (player->vy > 0) {player->animationFrame = 14;}
+        else if (player->vx > 0) {player->animationFrame = 15;}
+        else if (player->vx < 0){player->animationFrame = 16; }
+        else if (player->vy < 0) {player->animationFrame = 17;}
         return;
     }
     
