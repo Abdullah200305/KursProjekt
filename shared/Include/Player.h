@@ -11,6 +11,7 @@ Player initPlayer(float x, float y);
 void damagePlayer(Player player);
 void updatePlayer(Player player);
 int isPlayerAlive(Player player);
+void setPlayerWinner(Player player, int value);
 int isPlayerWinner(Player player);
 void clampPlayerToMap(Player player, float minX, float minY, float maxX, float maxY);
 void stopPlayer(Player player);

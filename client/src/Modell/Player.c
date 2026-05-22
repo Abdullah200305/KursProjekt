@@ -105,6 +105,11 @@ int isPlayerAlive(Player player)
     return player->alive;
 }
 
+void setPlayerWinner(Player player, int value)
+{
+    player->winner = value;
+}
+
 int isPlayerWinner(Player player)
 {
     return player->winner;
@@ -314,20 +319,20 @@ void setPlayerAnimation(Player player) {
 
     //DEATH ANIMATION
     if (player->alive == 0) {
-        player->animationFrame = 20;
+        player->animationFrame = 19;
         return;
     }
 
     //WIN ANIMATION
     if (player->winner) {
-        if (player->animationFrame != 18 && player->animationFrame != 19) {
-            player->animationFrame = 18;
+        if (player->animationFrame != 17 && player->animationFrame != 18) {
+            player->animationFrame = 17;
             player->animationTimer = 0;
         }
         player->animationTimer++;
         if (player->animationTimer >= 10) {
             player->animationTimer = 0;
-            player->animationFrame = (player->animationFrame == 18) ? 19 : 18;
+            player->animationFrame = (player->animationFrame == 17) ? 18 : 17;
         }
         return;
     }
