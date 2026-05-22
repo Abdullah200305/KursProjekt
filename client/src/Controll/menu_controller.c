@@ -290,8 +290,8 @@ void host_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
         //printf("[HOST] Connecting as player 1...\n");
 
-         *clientNet = ClientNet_Init("127.0.0.1", 2000);
-        //*clientNet = ClientNet_Init("192.168.1.31", 2000);
+         //*clientNet = ClientNet_Init("127.0.0.1", 2000);
+        *clientNet = ClientNet_Init("172.20.10.2", 2000);
 
         if (*clientNet)
         {
@@ -433,8 +433,8 @@ void client_setup_loop(Game *game, Renderer *renderer, ClientNet *clientNet)
 
     if (!initialized)
     {
-         *clientNet = ClientNet_Init("127.0.0.1", 2000);
-        // *clientNet = ClientNet_Init("192.168.1.31", 2000);
+         //*clientNet = ClientNet_Init("127.0.0.1", 2000);
+        *clientNet = ClientNet_Init("172.20.10.2", 2000);
         if (!*clientNet)
         {
             printf("Client init failed\n");
