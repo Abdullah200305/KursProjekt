@@ -286,11 +286,6 @@ void setPlayerSpeedYX(Player player, float speedY, float speedX)
     player->speedX = speedX;
 }
 
-void setPlayerWinner(Player player, int value)
-{
-    player->winner = value;
-}
-
 
 
 //Timers

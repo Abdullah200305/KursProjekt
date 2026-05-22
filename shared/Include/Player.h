@@ -55,7 +55,6 @@ void setPlayerSizeUpTimer(Player player, float timer);
 void setPlayerShield(Player player, int value);
 void setPlayerShieldTimer(Player player, float timer);
 void setPlayerAnimation(Player player);
-void setPlayerWinner(Player player, int value);
 
 //MISC FUNCTIONS
 
