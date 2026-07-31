@@ -33,6 +33,7 @@ void run(Server server, Game game)
 
 
             case SERVER_RUNNING:
+            printf("Game is running! Updating game state...\n");
             Game_Update(server, &game);
             break;
            

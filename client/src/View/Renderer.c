@@ -112,12 +112,12 @@ int game_init_renderer(Renderer *r, int mapId)
     int framesPerRow = 11;
     
 
-    for (int i = 0; i < 21; i++) {
-        int col = i / 2;              // kolumn
-        int row = i % 2;              // rad (0 eller 1)
-
-        r->playerFrames[i].x = col * PLAYER_FRAME_WIDTH;
-        r->playerFrames[i].y = row * PLAYER_FRAME_HEIGHT;
+    // for (int i = 0; i < 21; i++) {
+    //     int col = i / 2;              // kolumn
+    //     int row = i % 2;              // rad (0 eller 1)
+ for (int i = 0; i < 20; i++) {
+        r->playerFrames[i].x = i * PLAYER_FRAME_WIDTH;
+        r->playerFrames[i].y = 0;
         r->playerFrames[i].w = PLAYER_FRAME_WIDTH;
         r->playerFrames[i].h = PLAYER_FRAME_HEIGHT;
     }
