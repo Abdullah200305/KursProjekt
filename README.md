@@ -1,4 +1,4 @@
-# Bomb to Boom
+# Tick Tock Boom
 
 Ett 2D multiplayer-spel skrivet i C med SDL2, byggt som ett klient-server-projekt.
 
