@@ -2,6 +2,8 @@
 
 Ett 2D multiplayer-spel skrivet i C med SDL2, byggt som ett klient-server-projekt.
 
+![Meny](client/link/MENU_BACKGROUND.png)
+
 ## 1. Spelöversikt
 
 Spelet är ett 2D multiplayer-spel där fyra spelare tävlar mot varandra. Målet är att vara den sista överlevande spelaren.
@@ -26,6 +28,9 @@ Spelet är ett 2D multiplayer-spel där fyra spelare tävlar mot varandra. Måle
 
 - Spelet utspelar sig på en 2D-karta.
 - Kartan innehåller slumpmässigt placerade items.
+- Flera kartteman finns att välja mellan:
+
+![Kartor](docs/maps_overview.png)
 
 ## 5. Power-ups (Items)
 
@@ -41,6 +46,10 @@ Under spelets gång kan spelare plocka upp olika förmågor:
 - En spelare förlorar när alla liv är slut.
 - Spelet fortsätter tills endast en spelare är kvar.
 - Den sista spelaren som överlever vinner spelet.
+
+## Spelare
+
+<img src="client/link/Player/Player1.png" alt="Spelarkaraktär" width="200" />
 
 ## Projektstruktur
 
